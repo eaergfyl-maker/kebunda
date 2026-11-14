@@ -1,0 +1,78 @@
+"""Every dataset on the challenge resource list, and exactly how FieldShift uses it.
+
+status:
+    live      pulled from the provider at request or build time, no key needed
+    key       live when an optional key is set in .env, curated fallback otherwise
+    curated   values assembled from published sources and shipped in data/
+    proxy     a related NASA product stands in (stated wherever it is shown)
+    map       shown as a NASA GIBS map layer only
+    planned   named as an information gap and an extension point; not ingested yet
+"""
+from __future__ import annotations
+
+SOURCES: list[dict] = [
+    {"id": "smap", "name": "SMAP", "agency": "NASA", "group": "Soil moisture and groundwater", "status": "proxy",
+     "use": "Root-zone wetness and drought months. MERRA-2 root-zone wetness (via POWER) stands in for SMAP L4; SMAP L4 is a map layer.",
+     "url": "https://earthdata.nasa.gov/data/platforms/space-based-platforms/smap"},
+    {"id": "nldas", "name": "NLDAS / GLDAS", "agency": "NASA", "group": "Soil moisture and groundwater", "status": "map",
+     "use": "GLDAS deep soil moisture as a monthly map layer back to 2000.", "url": "https://earthdata.nasa.gov/"},
+    {"id": "grace", "name": "GRACE / GRACE-FO", "agency": "NASA", "group": "Soil moisture and groundwater", "status": "curated",
+     "use": "Regional water-storage trend as context for irrigated fields, plus a map layer.", "url": "https://grace.jpl.nasa.gov/"},
+    {"id": "ecostress", "name": "ECOSTRESS", "agency": "NASA", "group": "Heat and evapotranspiration", "status": "proxy",
+     "use": "Thermal stress. MODIS land-surface temperature (1 km) and MOD16 ET (500 m) stand in for the 70 m product.",
+     "url": "https://ecostress.jpl.nasa.gov/data"},
+    {"id": "openet", "name": "OpenET", "agency": "OpenET", "group": "Heat and evapotranspiration", "status": "key",
+     "use": "30 m field ET for western states when OPENET_API_KEY is set; MOD16 otherwise.", "url": "https://openetdata.org/"},
+    {"id": "power", "name": "NASA POWER", "agency": "NASA", "group": "Heat and evapotranspiration", "status": "live",
+     "use": "24 years of daily temperature, humidity, wind and sunshine for any coordinate: growing degree days, frost, heat days, reference ET.",
+     "url": "https://power.larc.nasa.gov/"},
+    {"id": "gpm", "name": "GPM / IMERG", "agency": "NASA", "group": "Rain and extremes", "status": "live",
+     "use": "Daily satellite rainfall: storm size, erosive rain days, and one of three sources in the fused rainfall estimate.",
+     "url": "https://gpm.nasa.gov/data"},
+    {"id": "prism", "name": "PRISM", "agency": "Oregon State University", "group": "Rain and extremes", "status": "planned",
+     "use": "Gauge-based reference. Daymet (same class of product, keyless API) is used in its place.", "url": "https://prism.oregonstate.edu/"},
+    {"id": "daymet", "name": "Daymet", "agency": "NASA ORNL DAAC", "group": "Rain and extremes", "status": "live",
+     "use": "1 km station-interpolated rainfall: the ground reference that sets the weight of each satellite product.",
+     "url": "https://daymet.ornl.gov/"},
+    {"id": "era5", "name": "ERA5", "agency": "ECMWF / Copernicus", "group": "Rain and extremes", "status": "planned",
+     "use": "Independent reanalysis for places with sparse stations; needs a Copernicus account.",
+     "url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels"},
+    {"id": "cocorahs", "name": "CoCoRaHS", "agency": "Colorado Climate Center", "group": "Rain and extremes", "status": "planned",
+     "use": "Volunteer rain gauges for hyper-local storms; a comparison chart is a marked extension point.", "url": "https://cocorahs.org/Maps"},
+    {"id": "landsat", "name": "Landsat", "agency": "NASA / USGS", "group": "Vegetation and bare fields", "status": "planned",
+     "use": "The 30 m reference grid all layers are harmonised toward; within-field variability is reported as a gap.",
+     "url": "https://earthexplorer.usgs.gov/"},
+    {"id": "modis", "name": "MODIS / VIIRS", "agency": "NASA", "group": "Vegetation and bare fields", "status": "live",
+     "use": "250 m NDVI every 16 days: bare-field months and a check on the assumed crop calendar. Also map layers.",
+     "url": "https://lpdaac.usgs.gov/products/"},
+    {"id": "sentinel2", "name": "Copernicus Sentinel-2", "agency": "ESA", "group": "Vegetation and bare fields", "status": "planned",
+     "use": "10-20 m greenness for within-field zoning; needs a Copernicus account.", "url": "https://dataspace.copernicus.eu/"},
+    {"id": "naip", "name": "NAIP", "agency": "USDA", "group": "Vegetation and bare fields", "status": "planned",
+     "use": "1 m imagery for drawing field boundaries; a boundary-drawing overlay is a marked extension point.",
+     "url": "https://naip-usdaonline.hub.arcgis.com/"},
+    {"id": "srtm", "name": "SRTM", "agency": "NASA", "group": "Terrain and landscape", "status": "live",
+     "use": "30 m elevation: slope for the runoff and erosion models, plus a map layer.", "url": "https://earthdata.nasa.gov/data/instruments/srtm"},
+    {"id": "gedi", "name": "GEDI", "agency": "NASA", "group": "Terrain and landscape", "status": "map",
+     "use": "Woody biomass around the field (windbreaks, riparian strips) as a map layer.", "url": "https://gedi.umd.edu/data"},
+    {"id": "nlcd", "name": "USGS NLCD", "agency": "USGS", "group": "Terrain and landscape", "status": "planned",
+     "use": "30 m land cover. MODIS land cover is shown as a map layer in its place.", "url": "https://usgs.gov/centers/eros/science/national-land-cover-database"},
+    {"id": "landfire", "name": "USFS LANDFIRE", "agency": "USFS", "group": "Terrain and landscape", "status": "planned",
+     "use": "Perennial vegetation context around the field.", "url": "https://landfire.gov/"},
+    {"id": "ssurgo", "name": "SSURGO / Web Soil Survey", "agency": "USDA NRCS", "group": "Soil, crops and markets", "status": "live",
+     "use": "Texture, organic matter, water-holding capacity, erodibility, runoff class, drainage, pH and salinity for the map unit under the field.",
+     "url": "https://websoilsurvey.nrcs.usda.gov/app/"},
+    {"id": "cdl", "name": "Cropland Data Layer / CropScape", "agency": "USDA NASS", "group": "Soil, crops and markets", "status": "live",
+     "use": "Six years of crop type at the field: confirms or sets the baseline rotation.", "url": "https://nassgeodata.gmu.edu/CropScape/"},
+    {"id": "nass", "name": "NASS QuickStats", "agency": "USDA NASS", "group": "Soil, crops and markets", "status": "key",
+     "use": "County yields when USDA_NASS_API_KEY is set; curated reference yields otherwise.", "url": "https://quickstats.nass.usda.gov/"},
+    {"id": "gaez", "name": "FAO GAEZ", "agency": "FAO", "group": "Soil, crops and markets", "status": "curated",
+     "use": "Its suitability method is applied locally: each crop is screened against this field's own season, water, heat and soil.",
+     "url": "https://gaez.fao.org/"},
+    {"id": "nwis", "name": "USGS NWIS", "agency": "USGS", "group": "Soil, crops and markets", "status": "curated",
+     "use": "Local well and river records cited for each benchmark farm's water context.", "url": "https://waterdata.usgs.gov/nwis"},
+    {"id": "ams", "name": "USDA AMS Market News", "agency": "USDA AMS", "group": "Soil, crops and markets", "status": "curated",
+     "use": "Multi-year average prices and volatility per crop; local buyer notes per benchmark farm.", "url": "https://ams.usda.gov/market-news"},
+    {"id": "agdata", "name": "USDA Ag Data Commons", "agency": "USDA NAL", "group": "Soil, crops and markets", "status": "curated",
+     "use": "Long-term rotation trials used to sanity-check the soil carbon and yield-response parameters.",
+     "url": "https://nal.usda.gov/services/agdatacommons"},
+]

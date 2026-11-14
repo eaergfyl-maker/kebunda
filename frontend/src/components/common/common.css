@@ -1,0 +1,75 @@
+/* Styles for shared primitives, the glossary and the export controls. */
+
+.stat { min-width: 0; }
+.stat-label { font-size: var(--text-xs); color: var(--ink-faint); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.stat-value { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.15; margin-top: 2px; }
+.stat-sub { font-size: var(--text-xs); color: var(--ink-soft); margin-top: 2px; }
+.tone-good { color: var(--good); }
+.tone-warn { color: var(--warn); }
+.tone-bad { color: var(--bad); }
+
+.delta { font-size: var(--text-sm); font-weight: 600; white-space: nowrap; }
+.delta span { font-size: 0.7em; }
+.delta-better { color: var(--good); }
+.delta-worse { color: var(--bad); }
+.delta-same { color: var(--ink-faint); }
+
+.scorebar { position: relative; background: var(--paper-sunk); border-radius: 999px; width: 100%; }
+.scorebar-fill { height: 100%; border-radius: 999px; transition: width 380ms var(--ease); }
+.scorebar-whisker { position: absolute; top: 50%; height: 2px; margin-top: -1px; background: var(--ink); opacity: 0.55; }
+.scorebar-whisker::before, .scorebar-whisker::after {
+  content: ""; position: absolute; top: -3px; width: 2px; height: 8px; background: var(--ink);
+}
+.scorebar-whisker::before { left: 0; }
+.scorebar-whisker::after { right: 0; }
+.scorebar-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); border-radius: 1px; }
+
+.tab-badge {
+  margin-left: 6px; background: var(--paper-sunk); border-radius: 999px; padding: 1px 7px; font-size: var(--text-xs); color: var(--ink-soft);
+}
+
+.meter { display: inline-block; height: 6px; background: var(--paper-sunk); border-radius: 3px; overflow: hidden; vertical-align: middle; }
+.meter span { display: block; height: 100%; border-radius: 3px; }
+
+.support-note {
+  display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-3) var(--s-4);
+  background: linear-gradient(90deg, #eef3e6, var(--paper-raised)); border: 1px solid #cfdcc0; border-left: 4px solid var(--forest);
+  border-radius: var(--radius); font-size: var(--text-sm); color: var(--ink-soft);
+}
+.support-note strong { color: var(--ink); }
+.support-icon { font-size: 1.2rem; line-height: 1.2; }
+
+/* glossary */
+.term { position: relative; display: inline; }
+.term-trigger {
+  border: 0; background: transparent; padding: 0; cursor: help; color: inherit; font: inherit;
+  text-decoration: underline dotted var(--ink-faint); text-underline-offset: 3px;
+}
+.term-pop {
+  position: absolute; z-index: 60; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+  width: min(320px, 78vw); background: var(--forest); color: #f3efe4; border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4); box-shadow: var(--shadow-2); font-size: var(--text-sm); line-height: 1.45; font-weight: 400;
+  text-align: left; text-transform: none; letter-spacing: 0; font-family: var(--font-ui); white-space: normal;
+}
+.term-pop::after {
+  content: ""; position: absolute; left: 50%; top: 100%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--forest);
+}
+.term-pop strong { display: block; font-family: var(--font-display); font-size: var(--text-md); margin-bottom: 2px; color: #fff; }
+.term-pop em { display: block; margin-top: 6px; font-style: normal; color: var(--wheat); font-size: var(--text-xs); }
+
+.drawer-backdrop { position: fixed; inset: 0; background: rgba(29, 43, 34, 0.35); z-index: 80; animation: fade-in 160ms var(--ease); }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 94vw); background: var(--paper-raised); z-index: 90;
+  box-shadow: var(--shadow-3); display: flex; flex-direction: column; animation: drawer-in 240ms var(--ease);
+}
+@keyframes drawer-in { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+.drawer-head { padding: var(--s-5); border-bottom: 1px solid var(--rule); }
+.drawer-body { padding: var(--s-4) var(--s-5) var(--s-6); overflow-y: auto; }
+.glossary-entry { padding: var(--s-3) 0; border-bottom: 1px solid var(--rule); }
+.glossary-entry h4 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.glossary-entry .also { font-weight: 400; color: var(--ink-faint); font-size: var(--text-xs); }
+.glossary-entry p { font-size: var(--text-sm); color: var(--ink-soft); margin-top: 4px; }
+.glossary-entry .why { color: var(--forest-2); }
+
+/* export */
+.export-menu { display: flex; gap: var(--s-2); flex-wrap: wrap; }

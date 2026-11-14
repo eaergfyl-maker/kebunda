@@ -1,0 +1,103 @@
+{
+  "id": "delta-ms",
+  "name": "Mississippi Delta soybean ground",
+  "short_name": "Mississippi Delta",
+  "region": "Lower Mississippi Alluvial Valley",
+  "state": "MS",
+  "county": "Washington",
+  "lat": 33.4,
+  "lon": -90.85,
+  "area_ha": 40.5,
+  "headline": "Fifty inches of rain, most of it when nothing is growing, and an aquifer falling under the summer pumps.",
+  "story": "A 100-acre furrow-irrigated field east of Stoneville has grown soybeans every year on record. Soybeans leave little residue, so winter and spring storms fall on bare beds and carry soil and nutrients to the bayou. Summers are humid and hot, nights stay warm, soybean cyst nematode and herbicide-resistant pigweed build under one crop, and the alluvial aquifer that feeds the furrows is declining. Organic matter is low.",
+  "challenge_tags": [
+    "Winter rain on bare beds",
+    "Low organic matter",
+    "One crop, every year",
+    "Aquifer decline"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "furrow",
+      "label": "Furrow, groundwater",
+      "allocation_mm": 460,
+      "sustainable_mm": 300,
+      "efficiency": 0.6,
+      "cost_per_mm_acre": 0.22,
+      "source": "Mississippi River Valley alluvial aquifer"
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "row_planter",
+      "combine",
+      "corn_header",
+      "flex_header"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 120,
+    "erosivity_method": "rusle"
+  },
+  "baseline_rotation": {
+    "name": "Continuous soybean, winter fallow",
+    "years": [
+      [
+        "soybean"
+      ]
+    ],
+    "tillage": "conventional",
+    "note": "The Cropland Data Layer shows soybean on this field in each of the last six years. Edit the baseline if your records differ."
+  },
+  "water_context": {
+    "aquifer": "Mississippi River Valley alluvial aquifer",
+    "in_situ_trend_m_yr": -0.25,
+    "in_situ_source": "Yazoo Mississippi Delta Joint Water Management District semi-annual well surveys (central Delta average)",
+    "note": "A cone of depression has formed in the central Delta. Surge valves, tailwater recovery and computerised hole selection are promoted to cut furrow losses."
+  },
+  "reference_yields": {
+    "soybean": 62,
+    "corn": 195,
+    "cotton": 1250,
+    "sorghum": 105,
+    "winter_wheat": 62,
+    "oats": 75,
+    "triticale": 4.0,
+    "sunflower": 1700
+  },
+  "local_market": {
+    "cotton": {
+      "access": 0.95,
+      "note": "Gins and warehouses throughout the Delta."
+    },
+    "corn": {
+      "access": 0.9,
+      "note": "River elevators and poultry feed demand."
+    },
+    "soybean": {
+      "access": 1.0,
+      "note": "Greenville river terminals bid for export."
+    },
+    "sorghum": {
+      "access": 0.6,
+      "note": "Fewer buyers; check river elevator bids."
+    },
+    "winter_wheat": {
+      "access": 0.7,
+      "note": "River elevators take soft red winter wheat."
+    }
+  },
+  "default_priorities": {
+    "water": 6,
+    "soil": 9,
+    "erosion": 8,
+    "pest": 8,
+    "income": 6
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, MODIS (see observation provenance)",
+    "USDA NRCS SSURGO via Soil Data Access",
+    "Mississippi State University Delta planning budgets (reference yields)",
+    "USDA ARS Crop Production Systems Research Unit, Stoneville (cover crop and rotation trials)"
+  ]
+}

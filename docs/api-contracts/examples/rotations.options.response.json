@@ -1,0 +1,391 @@
+{
+ "dimensions": [
+  {
+   "id": "water",
+   "label": "Save water and ride out drought",
+   "help": "Uses less irrigation or rain per dollar earned, and suffers less in a dry year."
+  },
+  {
+   "id": "soil",
+   "label": "Build organic matter and nitrogen",
+   "help": "Raises organic matter, adds nitrogen from legumes, keeps roots alive more of the year."
+  },
+  {
+   "id": "erosion",
+   "label": "Keep soil covered and in place",
+   "help": "Keeps the ground covered when hard rain falls, so soil and nutrients stay put."
+  },
+  {
+   "id": "pest",
+   "label": "Break pest, weed and disease cycles",
+   "help": "Changes crop families and planting seasons so pests, weeds and diseases cannot settle in."
+  },
+  {
+   "id": "income",
+   "label": "Income, forage and markets",
+   "help": "Net return, how steady it is from year to year, forage value, and whether a buyer is nearby."
+  }
+ ],
+ "priority_presets": [
+  {
+   "id": "balanced",
+   "label": "Balanced",
+   "description": "Every goal counts the same.",
+   "priorities": {
+    "water": 6,
+    "soil": 6,
+    "erosion": 6,
+    "pest": 6,
+    "income": 6
+   }
+  },
+  {
+   "id": "water_first",
+   "label": "Stretch the water",
+   "description": "The well or the rain is the limit.",
+   "priorities": {
+    "water": 10,
+    "soil": 5,
+    "erosion": 4,
+    "pest": 4,
+    "income": 6
+   }
+  },
+  {
+   "id": "soil_builder",
+   "label": "Build the soil",
+   "description": "Organic matter, nitrogen and cover come first.",
+   "priorities": {
+    "water": 5,
+    "soil": 10,
+    "erosion": 9,
+    "pest": 5,
+    "income": 4
+   }
+  },
+  {
+   "id": "clean_fields",
+   "label": "Break the cycles",
+   "description": "Weeds, insects or disease are the main fight.",
+   "priorities": {
+    "water": 4,
+    "soil": 5,
+    "erosion": 5,
+    "pest": 10,
+    "income": 6
+   }
+  },
+  {
+   "id": "cash_flow",
+   "label": "Protect cash flow",
+   "description": "Any change has to pay its way.",
+   "priorities": {
+    "water": 4,
+    "soil": 4,
+    "erosion": 4,
+    "pest": 4,
+    "income": 10
+   }
+  }
+ ],
+ "tillage_systems": [
+  {
+   "id": "conventional",
+   "label": "Conventional tillage"
+  },
+  {
+   "id": "reduced",
+   "label": "Reduced / strip tillage"
+  },
+  {
+   "id": "no_till",
+   "label": "No-till"
+  }
+ ],
+ "risk_tolerance": [
+  {
+   "id": "low",
+   "label": "Cautious",
+   "help": "Prefer small changes and proven local markets."
+  },
+  {
+   "id": "medium",
+   "label": "Open",
+   "help": "Willing to try a new crop or practice if the case is good."
+  },
+  {
+   "id": "high",
+   "label": "Adventurous",
+   "help": "Rank purely on the outcomes; do not penalise change."
+  }
+ ],
+ "equipment": [
+  {
+   "id": "row_planter",
+   "label": "Row-crop planter"
+  },
+  {
+   "id": "grain_drill",
+   "label": "Grain drill or air seeder"
+  },
+  {
+   "id": "combine",
+   "label": "Combine with grain platform"
+  },
+  {
+   "id": "corn_header",
+   "label": "Corn header"
+  },
+  {
+   "id": "flex_header",
+   "label": "Flex or draper header"
+  },
+  {
+   "id": "row_crop_header",
+   "label": "Row-crop or sunflower header"
+  },
+  {
+   "id": "cotton_picker",
+   "label": "Cotton picker or stripper"
+  },
+  {
+   "id": "hay_equipment",
+   "label": "Swather and baler"
+  },
+  {
+   "id": "transplanter",
+   "label": "Vegetable transplanter"
+  },
+  {
+   "id": "tomato_harvester",
+   "label": "Tomato harvester (usually custom)"
+  }
+ ],
+ "crops": [
+  {
+   "id": "corn",
+   "name": "Corn (grain)",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "warm_grass",
+   "legume": false
+  },
+  {
+   "id": "soybean",
+   "name": "Soybean",
+   "role": "cash",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "warm_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "winter_wheat",
+   "name": "Winter wheat",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "winter",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "spring_wheat",
+   "name": "Spring wheat",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "barley",
+   "name": "Spring barley",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "oats",
+   "name": "Oats",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "sorghum",
+   "name": "Grain sorghum (milo)",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "warm_grass",
+   "legume": false
+  },
+  {
+   "id": "millet",
+   "name": "Proso millet",
+   "role": "cash",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "warm_grass",
+   "legume": false
+  },
+  {
+   "id": "cotton",
+   "name": "Upland cotton",
+   "role": "cash",
+   "family": "mallow",
+   "cycle": "spring",
+   "functional_group": "warm_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "sunflower",
+   "name": "Sunflower",
+   "role": "cash",
+   "family": "aster",
+   "cycle": "spring",
+   "functional_group": "warm_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "canola",
+   "name": "Winter canola",
+   "role": "cash",
+   "family": "brassica",
+   "cycle": "winter",
+   "functional_group": "cool_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "dry_pea",
+   "name": "Dry pea",
+   "role": "cash",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "chickpea",
+   "name": "Chickpea (garbanzo)",
+   "role": "cash",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "lentil",
+   "name": "Lentil",
+   "role": "cash",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "alfalfa",
+   "name": "Alfalfa hay",
+   "role": "cash",
+   "family": "legume",
+   "cycle": "perennial",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "tomato",
+   "name": "Processing tomato",
+   "role": "cash",
+   "family": "nightshade",
+   "cycle": "spring",
+   "functional_group": "warm_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "safflower",
+   "name": "Safflower",
+   "role": "cash",
+   "family": "aster",
+   "cycle": "spring",
+   "functional_group": "warm_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "triticale",
+   "name": "Triticale forage",
+   "role": "forage",
+   "family": "grass",
+   "cycle": "winter",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "sorghum_sudan",
+   "name": "Sorghum-sudangrass",
+   "role": "cover",
+   "family": "grass",
+   "cycle": "spring",
+   "functional_group": "warm_grass",
+   "legume": false
+  },
+  {
+   "id": "cereal_rye",
+   "name": "Cereal rye cover",
+   "role": "cover",
+   "family": "grass",
+   "cycle": "winter",
+   "functional_group": "cool_grass",
+   "legume": false
+  },
+  {
+   "id": "crimson_clover",
+   "name": "Crimson clover cover",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "winter",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "hairy_vetch",
+   "name": "Hairy vetch cover",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "winter",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "winter_pea",
+   "name": "Austrian winter pea cover",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "winter",
+   "functional_group": "cool_broadleaf",
+   "legume": true
+  },
+  {
+   "id": "radish",
+   "name": "Tillage radish cover",
+   "role": "cover",
+   "family": "brassica",
+   "cycle": "winter",
+   "functional_group": "cool_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "cover_mix",
+   "name": "Rye + vetch + radish mix",
+   "role": "cover",
+   "family": "mix",
+   "cycle": "winter",
+   "functional_group": "cool_grass",
+   "legume": false
+  }
+ ]
+}

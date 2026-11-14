@@ -1,0 +1,94 @@
+{
+ "limits": {
+  "temp_delta_c": {
+   "min": -1.0,
+   "max": 5.0,
+   "step": 0.5,
+   "unit": "°C",
+   "label": "Warmer growing seasons",
+   "plain": "Shifts every month's temperatures. Changes planting dates, heat days, frost days and how thirsty the air is."
+  },
+  "rain_pct": {
+   "min": -50.0,
+   "max": 30.0,
+   "step": 5.0,
+   "unit": "%",
+   "label": "More or less rain",
+   "plain": "Scales yearly rain and snow. Same number of storms, each one bigger or smaller."
+  },
+  "storm_intensity_pct": {
+   "min": 0.0,
+   "max": 60.0,
+   "step": 5.0,
+   "unit": "%",
+   "label": "Rain arriving in heavier bursts",
+   "plain": "The same total rain falls in fewer, heavier storms. More runs off, less soaks in, and bare soil erodes faster."
+  },
+  "water_cap_pct": {
+   "min": 0.0,
+   "max": 100.0,
+   "step": 5.0,
+   "unit": "% of allocation",
+   "label": "Irrigation water you can pump",
+   "plain": "Cuts the irrigation allocation. 100% is today's allocation; 0% is no irrigation at all."
+  }
+ },
+ "presets": [
+  {
+   "id": "today",
+   "label": "Today's climate",
+   "description": "The 2001-2024 record as observed.",
+   "scenario": {
+    "temp_delta_c": 0.0,
+    "rain_pct": 0.0,
+    "storm_intensity_pct": 0.0,
+    "water_cap_pct": 100.0
+   }
+  },
+  {
+   "id": "hot_dry_summer",
+   "label": "Hot, dry decade",
+   "description": "A run of years like 2012 or 2022: 2 C warmer, a fifth less rain.",
+   "scenario": {
+    "temp_delta_c": 2.0,
+    "rain_pct": -20.0,
+    "storm_intensity_pct": 10.0,
+    "water_cap_pct": 100.0
+   }
+  },
+  {
+   "id": "water_cut",
+   "label": "Allocation cut by 40%",
+   "description": "A groundwater plan or a dry-year curtailment trims pumping.",
+   "scenario": {
+    "temp_delta_c": 0.5,
+    "rain_pct": 0.0,
+    "storm_intensity_pct": 0.0,
+    "water_cap_pct": 60.0
+   }
+  },
+  {
+   "id": "gully_washers",
+   "label": "Fewer, heavier storms",
+   "description": "Same rain in bigger bursts, as the heaviest-day trend suggests.",
+   "scenario": {
+    "temp_delta_c": 1.0,
+    "rain_pct": 5.0,
+    "storm_intensity_pct": 40.0,
+    "water_cap_pct": 100.0
+   }
+  },
+  {
+   "id": "mid_century",
+   "label": "Mid-century outlook",
+   "description": "A plausible 2050s combination: warmer, slightly drier, stormier, less water to pump.",
+   "scenario": {
+    "temp_delta_c": 2.5,
+    "rain_pct": -10.0,
+    "storm_intensity_pct": 25.0,
+    "water_cap_pct": 75.0
+   }
+  }
+ ],
+ "note": "Scenarios shift the observed 2001-2024 record. They are stress tests, not forecasts."
+}

@@ -1,0 +1,123 @@
+{
+ "field_id": "cornbelt-ia",
+ "rows": [
+  {
+   "crop_id": "corn",
+   "name": "Corn (grain)",
+   "family": "grass",
+   "role": "cash",
+   "feasible": true,
+   "suitability": 1.0,
+   "suitability_class": "Very suitable",
+   "limiting_factors": [],
+   "reasons": [],
+   "relative_yield_factors": {
+    "water": 1.0,
+    "heat": 1.0,
+    "timing": 1.0
+   },
+   "net_return_per_acre": 414.0,
+   "irrigation_mm": 0.0,
+   "water_use_mm": 820.0,
+   "plant_month": 3,
+   "harvest_month": 9,
+   "market_access": 1.0,
+   "market_verified": true,
+   "has_local_yield": true,
+   "equipment_missing": [],
+   "drought_tolerance": 0.35,
+   "legume": false,
+   "deep_rooted": false
+  },
+  {
+   "crop_id": "soybean",
+   "name": "Soybean",
+   "family": "legume",
+   "role": "cash",
+   "feasible": true,
+   "suitability": 1.0,
+   "suitability_class": "Very suitable",
+   "limiting_factors": [],
+   "reasons": [],
+   "relative_yield_factors": {
+    "water": 1.0,
+    "heat": 1.0,
+    "timing": 1.0
+   },
+   "net_return_per_acre": 390.0,
+   "irrigation_mm": 0.0,
+   "water_use_mm": 801.0,
+   "plant_month": 4,
+   "harvest_month": 8,
+   "market_access": 1.0,
+   "market_verified": true,
+   "has_local_yield": true,
+   "equipment_missing": [],
+   "drought_tolerance": 0.45,
+   "legume": true,
+   "deep_rooted": false
+  },
+  {
+   "crop_id": "winter_wheat",
+   "name": "Winter wheat",
+   "family": "grass",
+   "role": "cash",
+   "feasible": true,
+   "suitability": 1.0,
+   "suitability_class": "Very suitable",
+   "limiting_factors": [],
+   "reasons": [],
+   "relative_yield_factors": {
+    "water": 1.0,
+    "heat": 1.0,
+    "timing": 1.0
+   },
+   "net_return_per_acre": 141.0,
+   "irrigation_mm": 0.0,
+   "water_use_mm": 842.0,
+   "plant_month": 9,
+   "harvest_month": 6,
+   "market_access": 0.5,
+   "market_verified": true,
+   "has_local_yield": true,
+   "equipment_missing": [
+    "grain_drill"
+   ],
+   "drought_tolerance": 0.6,
+   "legume": false,
+   "deep_rooted": true
+  },
+  {
+   "crop_id": "spring_wheat",
+   "name": "Spring wheat",
+   "family": "grass",
+   "role": "cash",
+   "feasible": true,
+   "suitability": 1.0,
+   "suitability_class": "Very suitable",
+   "limiting_factors": [],
+   "reasons": [],
+   "relative_yield_factors": {
+    "water": 1.0,
+    "heat": 1.0,
+    "timing": 1.0
+   },
+   "net_return_per_acre": 93.0,
+   "irrigation_mm": 0.0,
+   "water_use_mm": 761.0,
+   "plant_month": 3,
+   "harvest_month": 6,
+   "market_access": 0.8,
+   "market_verified": false,
+   "has_local_yield": true,
+   "equipment_missing": [
+    "grain_drill"
+   ],
+   "drought_tolerance": 0.5,
+   "legume": false,
+   "deep_rooted": false
+  }
+ ],
+ "method": "Each crop is grown alone on this field in the model. Suitability is its relative yield after water, heat, salinity, pH and drainage limits, in the spirit of FAO GAEZ suitability classes.",
+ "mean_suitability": 0.89
+}

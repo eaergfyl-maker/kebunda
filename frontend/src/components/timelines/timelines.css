@@ -1,0 +1,42 @@
+/* Timeline and chart styles. OWNER: Member 2. */
+
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--text-xs); color: var(--ink-soft); margin-top: 6px; }
+.chart-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.chart-swatch-line { width: 18px; height: 0; border-top: 3px solid; display: inline-block; }
+.chart-swatch-box { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+.hazard-strip {
+  display: grid; grid-template-columns: 132px 1fr; gap: var(--s-3); align-items: end;
+  background: var(--paper-sunk); border-radius: var(--radius); padding: var(--s-3) var(--s-4);
+}
+.hazard-strip-label { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-sm); }
+.hazard-strip-bars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; align-items: end; }
+.hazard-bar { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.hazard-bar div { width: 100%; max-width: 34px; border-radius: 4px 4px 0 0; }
+
+.vuln-block { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-3) var(--s-4); background: #fff; }
+.vuln-head { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; font-size: var(--text-sm); }
+.vuln-head .dot { margin-top: 6px; width: 10px; height: 10px; }
+.vuln-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); align-items: center; }
+
+.anomaly-scale { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-xs); color: var(--ink-faint); }
+.anomaly-scale i { width: 120px; height: 8px; border-radius: 4px; display: inline-block; }
+
+.ladder { position: relative; padding: 22px 0 4px; }
+.ladder-row { display: grid; grid-template-columns: 250px 1fr 36px; gap: var(--s-3); align-items: center; padding: 4px 0; }
+.ladder-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: var(--text-sm); min-width: 0; }
+.ladder-label > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ladder-track { position: relative; height: 16px; background: var(--paper-sunk); border-radius: 8px; }
+.ladder-bar { height: 100%; border-radius: 8px; min-width: 4px; }
+.ladder-value { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: var(--text-xs); color: var(--ink-soft); }
+.ladder-conf { font-size: var(--text-xs); font-weight: 650; text-align: right; color: var(--ink-soft); }
+.ladder-fieldmark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--wheat); border-radius: 1px; }
+.ladder-key { position: absolute; top: 0; right: 0; font-size: var(--text-xs); font-weight: 650; color: #8a6510; display: flex; align-items: center; gap: 6px; }
+.ladder-key i { width: 2px; height: 12px; background: var(--wheat); display: inline-block; }
+.ladder-axis { display: flex; justify-content: space-between; margin-left: calc(250px + var(--s-3)); margin-right: calc(36px + var(--s-3)); padding-top: 4px; }
+
+@media (max-width: 760px) {
+  .hazard-strip { grid-template-columns: 1fr; }
+  .ladder-row { grid-template-columns: 130px 1fr 30px; }
+  .ladder-axis { margin-left: calc(130px + var(--s-3)); }
+}

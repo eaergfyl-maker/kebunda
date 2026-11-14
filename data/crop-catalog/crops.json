@@ -1,0 +1,1808 @@
+{
+ "version": "1.0",
+ "units": {
+  "temperature": "deg C",
+  "water": "mm",
+  "mass": "t/ha dry matter",
+  "nitrogen": "kg N/ha",
+  "economics": "USD per acre; yield in yield_unit per acre; cost excludes nitrogen, irrigation and land"
+ },
+ "sources": [
+  "FAO Irrigation & Drainage Paper 56 (Kc, rooting depth, depletion fraction)",
+  "FAO Irrigation & Drainage Paper 33/66 (yield response factor Ky)",
+  "Maas & Hoffman 1977 / FAO 29 (salinity thresholds)",
+  "USDA NRCS RUSLE2 crop database and Agronomy Technical Notes (residue, cover)",
+  "SARE Managing Cover Crops Profitably, 3rd ed. (cover-crop traits, N credits)",
+  "University extension crop budgets and USDA NASS/AMS 2019-2024 price averages (economics)"
+ ],
+ "note": "Trait values are mid-range planning numbers for comparing rotations, not cultivar-specific agronomic recommendations.",
+ "equipment_labels": {
+  "row_planter": "Row-crop planter",
+  "grain_drill": "Grain drill or air seeder",
+  "combine": "Combine with grain platform",
+  "corn_header": "Corn header",
+  "flex_header": "Flex or draper header",
+  "row_crop_header": "Row-crop or sunflower header",
+  "cotton_picker": "Cotton picker or stripper",
+  "hay_equipment": "Swather and baler",
+  "transplanter": "Vegetable transplanter",
+  "tomato_harvester": "Tomato harvester (usually custom)"
+ },
+ "crops": [
+  {
+   "id": "corn",
+   "name": "Corn (grain)",
+   "family": "grass",
+   "functional_group": "warm_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 1550,
+   "t_plant_c": 10,
+   "dry_down_months": 1,
+   "min_season_months": 5,
+   "kc_mid": 1.2,
+   "root_depth_m": 1.5,
+   "ky": 1.25,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 1.0,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 200,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 9.5,
+   "root_t_ha": 2.6,
+   "residue_cover_coef": 0.4,
+   "residue_decay_month": 0.09,
+   "canopy_max": 0.95,
+   "salinity_threshold_ds_m": 1.7,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "corn",
+     "break_years": 1
+    },
+    {
+     "group": "fusarium_cereal",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "corn rootworm",
+    "gray leaf spot",
+    "Goss's wilt"
+   ],
+   "equipment": [
+    "row_planter",
+    "combine",
+    "corn_header"
+   ],
+   "economics": {
+    "yield_ref": 200,
+    "yield_unit": "bu",
+    "price": 4.9,
+    "cost_per_acre": 430,
+    "price_cv": 0.22,
+    "yield_cv": 0.16,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.35,
+   "market_default": 0.95,
+   "drought_tolerance": 0.35,
+   "deep_rooted": false,
+   "benefits": [
+    "Leaves the most residue of any grain crop, which feeds soil organic matter",
+    "Strong, liquid market almost everywhere"
+   ],
+   "cautions": [
+    "Highest water and nitrogen demand of the common grains",
+    "Yield drops fast when heat hits at tasseling"
+   ]
+  },
+  {
+   "id": "soybean",
+   "name": "Soybean",
+   "family": "legume",
+   "functional_group": "warm_broadleaf",
+   "legume": true,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 1450,
+   "t_plant_c": 15,
+   "dry_down_months": 0,
+   "min_season_months": 5,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.2,
+   "ky": 0.85,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0.6,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 35,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 4.0,
+   "root_t_ha": 1.3,
+   "residue_cover_coef": 0.55,
+   "residue_decay_month": 0.16,
+   "canopy_max": 0.95,
+   "salinity_threshold_ds_m": 5.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": true,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "soybean",
+     "break_years": 2
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [
+    "soybean cyst nematode",
+    "sudden death syndrome",
+    "white mold"
+   ],
+   "equipment": [
+    "row_planter",
+    "combine",
+    "flex_header"
+   ],
+   "economics": {
+    "yield_ref": 58,
+    "yield_unit": "bu",
+    "price": 11.8,
+    "cost_per_acre": 290,
+    "price_cv": 0.2,
+    "yield_cv": 0.14,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.3,
+   "market_default": 0.95,
+   "drought_tolerance": 0.45,
+   "deep_rooted": false,
+   "benefits": [
+    "Fixes most of its own nitrogen and leaves a credit for the next crop",
+    "Breaks corn pest cycles"
+   ],
+   "cautions": [
+    "Leaves little, fast-rotting residue, so soil is exposed after harvest",
+    "Soybean cyst nematode builds if grown too often"
+   ]
+  },
+  {
+   "id": "winter_wheat",
+   "name": "Winter wheat",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 2400,
+   "t_plant_c": 18,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.6,
+   "ky": 1.05,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 32,
+   "heat_loss_pct_per_day": 1.2,
+   "min_winter_tmin_c": -18,
+   "winterkill": false,
+   "n_demand_kg_ha": 110,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 25,
+   "residue_t_ha": 6.0,
+   "root_t_ha": 2.0,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.07,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 6.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    },
+    {
+     "group": "fusarium_cereal",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "wheat streak mosaic",
+    "Fusarium head blight",
+    "take-all"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 60,
+    "yield_unit": "bu",
+    "price": 6.4,
+    "cost_per_acre": 200,
+    "price_cv": 0.24,
+    "yield_cv": 0.2,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.5,
+   "market_default": 0.9,
+   "drought_tolerance": 0.6,
+   "deep_rooted": true,
+   "benefits": [
+    "Covers the soil through fall, winter and spring",
+    "Uses winter and spring moisture, finishing before peak summer heat",
+    "Stubble traps snow and shades soil"
+   ],
+   "cautions": [
+    "Needs a drill and a timely fall planting window",
+    "Lower gross income per acre than summer row crops"
+   ]
+  },
+  {
+   "id": "spring_wheat",
+   "name": "Spring wheat",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1550,
+   "t_plant_c": 4,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.3,
+   "ky": 1.15,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 32,
+   "heat_loss_pct_per_day": 1.3,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 110,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 15,
+   "residue_t_ha": 5.0,
+   "root_t_ha": 1.6,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.07,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 6.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    },
+    {
+     "group": "fusarium_cereal",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "Fusarium head blight",
+    "Hessian fly"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 55,
+    "yield_unit": "bu",
+    "price": 7.0,
+    "cost_per_acre": 200,
+    "price_cv": 0.24,
+    "yield_cv": 0.22,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.4,
+   "market_default": 0.8,
+   "drought_tolerance": 0.5,
+   "deep_rooted": false,
+   "benefits": [
+    "Cool-season grass that splits the workload away from fall seeding"
+   ],
+   "cautions": [
+    "Grain fill runs into summer heat in warm regions"
+   ]
+  },
+  {
+   "id": "barley",
+   "name": "Spring barley",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1400,
+   "t_plant_c": 4,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.2,
+   "ky": 1.0,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 32,
+   "heat_loss_pct_per_day": 1.2,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 90,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 15,
+   "residue_t_ha": 4.5,
+   "root_t_ha": 1.5,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.07,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 8.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    },
+    {
+     "group": "fusarium_cereal",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "net blotch",
+    "Fusarium head blight"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 80,
+    "yield_unit": "bu",
+    "price": 5.5,
+    "cost_per_acre": 195,
+    "price_cv": 0.22,
+    "yield_cv": 0.2,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.55,
+   "market_default": 0.6,
+   "drought_tolerance": 0.55,
+   "deep_rooted": false,
+   "benefits": [
+    "Earliest-maturing small grain, so it dodges late-summer drought",
+    "Most salt-tolerant grain"
+   ],
+   "cautions": [
+    "Malting contracts are local and limited; feed barley prices are lower"
+   ]
+  },
+  {
+   "id": "oats",
+   "name": "Oats",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1500,
+   "t_plant_c": 4,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.2,
+   "ky": 1.0,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 31,
+   "heat_loss_pct_per_day": 1.3,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 70,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 30,
+   "residue_t_ha": 4.5,
+   "root_t_ha": 1.5,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.08,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 5.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "oat",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "crown rust"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 80,
+    "yield_unit": "bu",
+    "price": 3.8,
+    "cost_per_acre": 170,
+    "price_cv": 0.22,
+    "yield_cv": 0.2,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.7,
+   "market_default": 0.5,
+   "drought_tolerance": 0.45,
+   "deep_rooted": false,
+   "benefits": [
+    "Low-input third crop that breaks corn and soybean pest cycles",
+    "Good forage and straw value; ideal nurse crop for clover or alfalfa"
+   ],
+   "cautions": [
+    "Thin grain markets in most regions; check for a buyer or feed use first"
+   ]
+  },
+  {
+   "id": "sorghum",
+   "name": "Grain sorghum (milo)",
+   "family": "grass",
+   "functional_group": "warm_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 1250,
+   "t_plant_c": 16,
+   "dry_down_months": 1,
+   "min_season_months": 4,
+   "kc_mid": 1.05,
+   "root_depth_m": 1.7,
+   "ky": 0.9,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 38,
+   "heat_loss_pct_per_day": 0.5,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 120,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 7.5,
+   "root_t_ha": 2.5,
+   "residue_cover_coef": 0.4,
+   "residue_decay_month": 0.09,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 6.8,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "sorghum",
+     "break_years": 1
+    },
+    {
+     "group": "fusarium_cereal",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "sugarcane aphid",
+    "head smut"
+   ],
+   "equipment": [
+    "row_planter",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 100,
+    "yield_unit": "bu",
+    "price": 4.8,
+    "cost_per_acre": 250,
+    "price_cv": 0.23,
+    "yield_cv": 0.2,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.5,
+   "market_default": 0.8,
+   "drought_tolerance": 0.85,
+   "deep_rooted": true,
+   "benefits": [
+    "Uses roughly a third less water than corn and waits out dry spells",
+    "Deep roots and heavy stubble protect the soil"
+   ],
+   "cautions": [
+    "Sugarcane aphid needs scouting",
+    "Usually sells at a discount to corn"
+   ]
+  },
+  {
+   "id": "millet",
+   "name": "Proso millet",
+   "family": "grass",
+   "functional_group": "warm_grass",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 950,
+   "t_plant_c": 17,
+   "dry_down_months": 0,
+   "min_season_months": 3,
+   "kc_mid": 1.0,
+   "root_depth_m": 1.2,
+   "ky": 0.75,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 38,
+   "heat_loss_pct_per_day": 0.3,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 70,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 4.0,
+   "root_t_ha": 1.4,
+   "residue_cover_coef": 0.55,
+   "residue_decay_month": 0.09,
+   "canopy_max": 0.85,
+   "salinity_threshold_ds_m": 4.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "millet",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 2200,
+    "yield_unit": "lb",
+    "price": 0.11,
+    "cost_per_acre": 150,
+    "price_cv": 0.35,
+    "yield_cv": 0.25,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.4,
+   "market_default": 0.45,
+   "drought_tolerance": 0.9,
+   "deep_rooted": false,
+   "benefits": [
+    "Shortest season and lowest water use of any grain; fits after a failed crop",
+    "Good transition crop back to wheat"
+   ],
+   "cautions": [
+    "Small, volatile birdseed market",
+    "Shallow roots leave deep water unused"
+   ]
+  },
+  {
+   "id": "cotton",
+   "name": "Upland cotton",
+   "family": "mallow",
+   "functional_group": "warm_broadleaf",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 15.6,
+   "gdd_to_maturity": 1200,
+   "t_plant_c": 17,
+   "dry_down_months": 1,
+   "min_season_months": 6,
+   "kc_mid": 1.18,
+   "root_depth_m": 1.5,
+   "ky": 0.85,
+   "depletion_fraction": 0.65,
+   "heat_tmax_c": 38,
+   "heat_loss_pct_per_day": 0.4,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 110,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 3.5,
+   "root_t_ha": 1.0,
+   "residue_cover_coef": 0.3,
+   "residue_decay_month": 0.1,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 7.7,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "cotton",
+     "break_years": 2
+    },
+    {
+     "group": "verticillium",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [
+    "reniform nematode",
+    "Verticillium wilt",
+    "tarnished plant bug"
+   ],
+   "equipment": [
+    "row_planter",
+    "cotton_picker"
+   ],
+   "economics": {
+    "yield_ref": 1000,
+    "yield_unit": "lb",
+    "price": 0.8,
+    "cost_per_acre": 560,
+    "price_cv": 0.21,
+    "yield_cv": 0.18,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.05,
+   "market_default": 0.8,
+   "drought_tolerance": 0.7,
+   "deep_rooted": false,
+   "benefits": [
+    "Heat- and salt-tolerant with deep roots",
+    "High value per unit of water"
+   ],
+   "cautions": [
+    "Leaves very little residue; fields sit nearly bare from picking to planting",
+    "Long season leaves a narrow cover-crop window"
+   ]
+  },
+  {
+   "id": "sunflower",
+   "name": "Sunflower",
+   "family": "aster",
+   "functional_group": "warm_broadleaf",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 6.7,
+   "gdd_to_maturity": 1400,
+   "t_plant_c": 12,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.1,
+   "root_depth_m": 2.0,
+   "ky": 0.95,
+   "depletion_fraction": 0.45,
+   "heat_tmax_c": 36,
+   "heat_loss_pct_per_day": 0.6,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 90,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 20,
+   "residue_t_ha": 4.5,
+   "root_t_ha": 1.5,
+   "residue_cover_coef": 0.3,
+   "residue_decay_month": 0.1,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 4.8,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "sunflower",
+     "break_years": 3
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 3
+    }
+   ],
+   "named_pests": [
+    "Sclerotinia head rot",
+    "sunflower moth"
+   ],
+   "equipment": [
+    "row_planter",
+    "combine",
+    "row_crop_header"
+   ],
+   "economics": {
+    "yield_ref": 1800,
+    "yield_unit": "lb",
+    "price": 0.25,
+    "cost_per_acre": 260,
+    "price_cv": 0.22,
+    "yield_cv": 0.22,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.2,
+   "market_default": 0.55,
+   "drought_tolerance": 0.75,
+   "deep_rooted": true,
+   "benefits": [
+    "Taproot reaches water and nitrogen below other crops' roots",
+    "Broadleaf break in grass-heavy rotations"
+   ],
+   "cautions": [
+    "Dries the deep profile; the next crop may start short of moisture",
+    "Needs a crusher or birdseed buyer within hauling distance"
+   ]
+  },
+  {
+   "id": "canola",
+   "name": "Winter canola",
+   "family": "brassica",
+   "functional_group": "cool_broadleaf",
+   "legume": false,
+   "role": "cash",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 2250,
+   "t_plant_c": 18,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.1,
+   "root_depth_m": 1.4,
+   "ky": 1.0,
+   "depletion_fraction": 0.6,
+   "heat_tmax_c": 30,
+   "heat_loss_pct_per_day": 1.5,
+   "min_winter_tmin_c": -9,
+   "winterkill": false,
+   "n_demand_kg_ha": 140,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 40,
+   "residue_t_ha": 5.0,
+   "root_t_ha": 1.5,
+   "residue_cover_coef": 0.45,
+   "residue_decay_month": 0.11,
+   "canopy_max": 0.95,
+   "salinity_threshold_ds_m": 9.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "brassica",
+     "break_years": 3
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 3
+    }
+   ],
+   "named_pests": [
+    "blackleg",
+    "Sclerotinia stem rot"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 2000,
+    "yield_unit": "lb",
+    "price": 0.24,
+    "cost_per_acre": 270,
+    "price_cv": 0.22,
+    "yield_cv": 0.28,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.3,
+   "market_default": 0.5,
+   "drought_tolerance": 0.55,
+   "deep_rooted": false,
+   "benefits": [
+    "Broadleaf winter crop that cleans up grassy weeds in wheat",
+    "Taproot loosens compacted layers"
+   ],
+   "cautions": [
+    "Can winter-kill; yields swing more than wheat",
+    "Needs a crush plant or delivery point nearby",
+    "Sensitive to sulfonylurea herbicide carryover"
+   ]
+  },
+  {
+   "id": "dry_pea",
+   "name": "Dry pea",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1350,
+   "t_plant_c": 4.5,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.15,
+   "root_depth_m": 0.9,
+   "ky": 1.15,
+   "depletion_fraction": 0.4,
+   "heat_tmax_c": 29,
+   "heat_loss_pct_per_day": 1.5,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 30,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 2.8,
+   "root_t_ha": 0.8,
+   "residue_cover_coef": 0.5,
+   "residue_decay_month": 0.16,
+   "canopy_max": 0.85,
+   "salinity_threshold_ds_m": 3.4,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": true,
+   "pest_groups": [
+    {
+     "group": "pulse_root_rot",
+     "break_years": 3
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [
+    "Aphanomyces root rot",
+    "pea weevil"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine",
+    "flex_header"
+   ],
+   "economics": {
+    "yield_ref": 2000,
+    "yield_unit": "lb",
+    "price": 0.14,
+    "cost_per_acre": 190,
+    "price_cv": 0.26,
+    "yield_cv": 0.26,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.5,
+   "market_default": 0.5,
+   "drought_tolerance": 0.6,
+   "deep_rooted": false,
+   "benefits": [
+    "Fixes nitrogen and uses little water, leaving moisture for the next crop",
+    "Replaces fallow in dryland wheat systems"
+   ],
+   "cautions": [
+    "Shallow roots and little residue",
+    "Aphanomyces root rot if pulses return too soon",
+    "Wilts in early heat"
+   ]
+  },
+  {
+   "id": "chickpea",
+   "name": "Chickpea (garbanzo)",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1600,
+   "t_plant_c": 6,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.0,
+   "root_depth_m": 1.0,
+   "ky": 0.9,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 33,
+   "heat_loss_pct_per_day": 0.9,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 20,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 2.5,
+   "root_t_ha": 0.8,
+   "residue_cover_coef": 0.5,
+   "residue_decay_month": 0.16,
+   "canopy_max": 0.8,
+   "salinity_threshold_ds_m": 2.5,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": true,
+   "pest_groups": [
+    {
+     "group": "pulse_root_rot",
+     "break_years": 3
+    },
+    {
+     "group": "ascochyta",
+     "break_years": 3
+    }
+   ],
+   "named_pests": [
+    "Ascochyta blight"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine",
+    "flex_header"
+   ],
+   "economics": {
+    "yield_ref": 1500,
+    "yield_unit": "lb",
+    "price": 0.3,
+    "cost_per_acre": 250,
+    "price_cv": 0.3,
+    "yield_cv": 0.28,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.2,
+   "market_default": 0.4,
+   "drought_tolerance": 0.7,
+   "deep_rooted": false,
+   "benefits": [
+    "Highest-value pulse; tolerates dry finishes better than pea or lentil"
+   ],
+   "cautions": [
+    "Ascochyta blight needs fungicide planning",
+    "Contract and price swings are large"
+   ]
+  },
+  {
+   "id": "lentil",
+   "name": "Lentil",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1450,
+   "t_plant_c": 5,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.05,
+   "root_depth_m": 0.7,
+   "ky": 0.9,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 30,
+   "heat_loss_pct_per_day": 1.3,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 30,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 2.0,
+   "root_t_ha": 0.7,
+   "residue_cover_coef": 0.5,
+   "residue_decay_month": 0.16,
+   "canopy_max": 0.75,
+   "salinity_threshold_ds_m": 1.7,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": true,
+   "pest_groups": [
+    {
+     "group": "pulse_root_rot",
+     "break_years": 3
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [
+    "Aphanomyces root rot"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine",
+    "flex_header"
+   ],
+   "economics": {
+    "yield_ref": 1300,
+    "yield_unit": "lb",
+    "price": 0.3,
+    "cost_per_acre": 200,
+    "price_cv": 0.3,
+    "yield_cv": 0.28,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.2,
+   "market_default": 0.4,
+   "drought_tolerance": 0.65,
+   "deep_rooted": false,
+   "benefits": [
+    "Fixes nitrogen with very low water use"
+   ],
+   "cautions": [
+    "Shortest, thinnest crop: weak weed competition and very little residue"
+   ]
+  },
+  {
+   "id": "alfalfa",
+   "name": "Alfalfa hay",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cash",
+   "cycle": "perennial",
+   "t_base_c": 5,
+   "gdd_to_maturity": 0,
+   "t_plant_c": 8,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 2.5,
+   "ky": 1.1,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 36,
+   "heat_loss_pct_per_day": 0.3,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 120,
+   "n_scavenge_kg_ha": 60,
+   "residue_t_ha": 1.5,
+   "root_t_ha": 6.0,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.14,
+   "canopy_max": 0.95,
+   "salinity_threshold_ds_m": 2.0,
+   "ph_min": 6.4,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "alfalfa",
+     "break_years": 1
+    },
+    {
+     "group": "pulse_root_rot",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [
+    "alfalfa weevil",
+    "autotoxicity when re-seeded too soon"
+   ],
+   "equipment": [
+    "grain_drill",
+    "hay_equipment"
+   ],
+   "economics": {
+    "yield_ref": 5.0,
+    "yield_unit": "ton",
+    "price": 200,
+    "cost_per_acre": 330,
+    "price_cv": 0.2,
+    "yield_cv": 0.18,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 1.0,
+   "market_default": 0.7,
+   "drought_tolerance": 0.6,
+   "deep_rooted": true,
+   "benefits": [
+    "Perennial cover: living roots twelve months a year for several years",
+    "Builds soil nitrogen and structure; very deep roots"
+   ],
+   "cautions": [
+    "Highest seasonal water use of any crop here",
+    "Ties the field up for 3-5 years and needs hay equipment and a hay market"
+   ]
+  },
+  {
+   "id": "tomato",
+   "name": "Processing tomato",
+   "family": "nightshade",
+   "functional_group": "warm_broadleaf",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 1350,
+   "t_plant_c": 14,
+   "dry_down_months": 0,
+   "min_season_months": 4,
+   "kc_mid": 1.15,
+   "root_depth_m": 1.2,
+   "ky": 1.05,
+   "depletion_fraction": 0.4,
+   "heat_tmax_c": 36,
+   "heat_loss_pct_per_day": 0.8,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 200,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 0,
+   "residue_t_ha": 2.5,
+   "root_t_ha": 0.8,
+   "residue_cover_coef": 0.3,
+   "residue_decay_month": 0.2,
+   "canopy_max": 0.85,
+   "salinity_threshold_ds_m": 2.5,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "solanaceous",
+     "break_years": 3
+    },
+    {
+     "group": "verticillium",
+     "break_years": 3
+    }
+   ],
+   "named_pests": [
+    "Fusarium wilt",
+    "root-knot nematode",
+    "Verticillium wilt"
+   ],
+   "equipment": [
+    "transplanter",
+    "tomato_harvester"
+   ],
+   "economics": {
+    "yield_ref": 50,
+    "yield_unit": "ton",
+    "price": 105,
+    "cost_per_acre": 3500,
+    "price_cv": 0.12,
+    "yield_cv": 0.14,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0,
+   "market_default": 0.3,
+   "drought_tolerance": 0.3,
+   "deep_rooted": false,
+   "benefits": [
+    "Very high value per acre under contract"
+   ],
+   "cautions": [
+    "Needs a cannery contract",
+    "Soil-borne disease pressure demands a 3-year break",
+    "Leaves almost no residue"
+   ]
+  },
+  {
+   "id": "safflower",
+   "name": "Safflower",
+   "family": "aster",
+   "functional_group": "warm_broadleaf",
+   "legume": false,
+   "role": "cash",
+   "cycle": "spring",
+   "t_base_c": 5,
+   "gdd_to_maturity": 1750,
+   "t_plant_c": 7,
+   "dry_down_months": 0,
+   "min_season_months": 5,
+   "kc_mid": 1.1,
+   "root_depth_m": 2.2,
+   "ky": 0.8,
+   "depletion_fraction": 0.6,
+   "heat_tmax_c": 38,
+   "heat_loss_pct_per_day": 0.4,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 100,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 40,
+   "residue_t_ha": 4.0,
+   "root_t_ha": 1.6,
+   "residue_cover_coef": 0.3,
+   "residue_decay_month": 0.1,
+   "canopy_max": 0.85,
+   "salinity_threshold_ds_m": 6.5,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": true,
+   "pest_groups": [
+    {
+     "group": "safflower",
+     "break_years": 3
+    },
+    {
+     "group": "sclerotinia",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [
+    "Phytophthora root rot"
+   ],
+   "equipment": [
+    "grain_drill",
+    "combine"
+   ],
+   "economics": {
+    "yield_ref": 2200,
+    "yield_unit": "lb",
+    "price": 0.27,
+    "cost_per_acre": 250,
+    "price_cv": 0.22,
+    "yield_cv": 0.24,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.1,
+   "market_default": 0.45,
+   "drought_tolerance": 0.9,
+   "deep_rooted": true,
+   "benefits": [
+    "Can be grown on stored soil moisture with little or no irrigation",
+    "Deepest taproot here; recovers nitrate and water from below other crops"
+   ],
+   "cautions": [
+    "Oilseed buyers are few; confirm a contract",
+    "Dislikes wet soil and humid weather at flowering"
+   ]
+  },
+  {
+   "id": "triticale",
+   "name": "Triticale forage",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "forage",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1500,
+   "t_plant_c": 18,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.1,
+   "root_depth_m": 1.3,
+   "ky": 1.0,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 32,
+   "heat_loss_pct_per_day": 0.5,
+   "min_winter_tmin_c": -15,
+   "winterkill": false,
+   "n_demand_kg_ha": 90,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 40,
+   "residue_t_ha": 1.5,
+   "root_t_ha": 2.0,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.08,
+   "canopy_max": 0.92,
+   "salinity_threshold_ds_m": 6.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill",
+    "hay_equipment"
+   ],
+   "economics": {
+    "yield_ref": 4.0,
+    "yield_unit": "ton",
+    "price": 150,
+    "cost_per_acre": 220,
+    "price_cv": 0.18,
+    "yield_cv": 0.18,
+    "grazing_value_per_acre": 0
+   },
+   "forage_value": 0.9,
+   "market_default": 0.55,
+   "drought_tolerance": 0.6,
+   "deep_rooted": false,
+   "benefits": [
+    "Winter forage harvested in spring: a second income from the off-season",
+    "Roots hold soil and take up leftover nitrogen through winter"
+   ],
+   "cautions": [
+    "Needs hay or silage equipment and a livestock outlet",
+    "Harvest must not delay the summer crop"
+   ]
+  },
+  {
+   "id": "sorghum_sudan",
+   "name": "Sorghum-sudangrass",
+   "family": "grass",
+   "functional_group": "warm_grass",
+   "legume": false,
+   "role": "cover",
+   "cycle": "spring",
+   "t_base_c": 10,
+   "gdd_to_maturity": 800,
+   "t_plant_c": 17,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.05,
+   "root_depth_m": 1.5,
+   "ky": 0.9,
+   "depletion_fraction": 0.55,
+   "heat_tmax_c": 40,
+   "heat_loss_pct_per_day": 0.2,
+   "min_winter_tmin_c": null,
+   "winterkill": false,
+   "n_demand_kg_ha": 60,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 40,
+   "residue_t_ha": 7.0,
+   "root_t_ha": 3.0,
+   "residue_cover_coef": 0.5,
+   "residue_decay_month": 0.09,
+   "canopy_max": 0.92,
+   "salinity_threshold_ds_m": 6.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "sorghum",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 38,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 70
+   },
+   "forage_value": 0.9,
+   "market_default": 0.5,
+   "drought_tolerance": 0.85,
+   "deep_rooted": false,
+   "benefits": [
+    "Fast summer biomass that smothers weeds and breaks compaction",
+    "Can be grazed or hayed"
+   ],
+   "cautions": [
+    "Uses summer water; in dry regions it can cost the next crop moisture",
+    "Prussic acid risk for livestock after frost"
+   ]
+  },
+  {
+   "id": "cereal_rye",
+   "name": "Cereal rye cover",
+   "family": "grass",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1900,
+   "t_plant_c": 18,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 1.2,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -30,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 45,
+   "residue_t_ha": 5.0,
+   "root_t_ha": 2.2,
+   "residue_cover_coef": 0.65,
+   "residue_decay_month": 0.08,
+   "canopy_max": 0.92,
+   "salinity_threshold_ds_m": 8.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 32,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 35
+   },
+   "forage_value": 0.6,
+   "market_default": 0.5,
+   "drought_tolerance": 0.7,
+   "deep_rooted": false,
+   "benefits": [
+    "Hardiest cover: establishes late and survives any winter",
+    "Takes up leftover nitrate before it leaches; mulch suppresses weeds"
+   ],
+   "cautions": [
+    "Can tie up nitrogen and dry the seedbed ahead of corn if terminated late",
+    "Terminate 10-14 days before planting corn"
+   ]
+  },
+  {
+   "id": "crimson_clover",
+   "name": "Crimson clover cover",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1700,
+   "t_plant_c": 20,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 0.6,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -9,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 70,
+   "n_scavenge_kg_ha": 10,
+   "residue_t_ha": 3.5,
+   "root_t_ha": 1.2,
+   "residue_cover_coef": 0.65,
+   "residue_decay_month": 0.2,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 1.5,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "clover",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 34,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 30
+   },
+   "forage_value": 0.7,
+   "market_default": 0.5,
+   "drought_tolerance": 0.4,
+   "deep_rooted": false,
+   "benefits": [
+    "Fixes nitrogen for the next crop",
+    "Feeds pollinators if allowed to bloom"
+   ],
+   "cautions": [
+    "Winter-kills in cold regions",
+    "Needs to reach bloom for the full nitrogen credit"
+   ]
+  },
+  {
+   "id": "hairy_vetch",
+   "name": "Hairy vetch cover",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1900,
+   "t_plant_c": 20,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 0.8,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -20,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 90,
+   "n_scavenge_kg_ha": 10,
+   "residue_t_ha": 4.0,
+   "root_t_ha": 1.2,
+   "residue_cover_coef": 0.65,
+   "residue_decay_month": 0.2,
+   "canopy_max": 0.9,
+   "salinity_threshold_ds_m": 1.5,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "vetch",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 42,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 25
+   },
+   "forage_value": 0.6,
+   "market_default": 0.5,
+   "drought_tolerance": 0.5,
+   "deep_rooted": false,
+   "benefits": [
+    "Largest nitrogen credit of the winter legumes; winter-hardy"
+   ],
+   "cautions": [
+    "Hard seed can volunteer in wheat",
+    "Needs late termination, which uses spring moisture"
+   ]
+  },
+  {
+   "id": "winter_pea",
+   "name": "Austrian winter pea cover",
+   "family": "legume",
+   "functional_group": "cool_broadleaf",
+   "legume": true,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1600,
+   "t_plant_c": 18,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 0.8,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 32,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -10,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 70,
+   "n_scavenge_kg_ha": 10,
+   "residue_t_ha": 3.5,
+   "root_t_ha": 1.0,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.2,
+   "canopy_max": 0.88,
+   "salinity_threshold_ds_m": 2.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "pulse_root_rot",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 36,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 30
+   },
+   "forage_value": 0.7,
+   "market_default": 0.5,
+   "drought_tolerance": 0.5,
+   "deep_rooted": false,
+   "benefits": [
+    "Nitrogen-fixing winter cover that breaks down quickly"
+   ],
+   "cautions": [
+    "Shares root rots with pea, lentil and chickpea",
+    "Winter-kills in harsh winters"
+   ]
+  },
+  {
+   "id": "radish",
+   "name": "Tillage radish cover",
+   "family": "brassica",
+   "functional_group": "cool_broadleaf",
+   "legume": false,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1100,
+   "t_plant_c": 22,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 1.2,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -7,
+   "winterkill": true,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 0,
+   "n_scavenge_kg_ha": 55,
+   "residue_t_ha": 4.0,
+   "root_t_ha": 1.8,
+   "residue_cover_coef": 0.6,
+   "residue_decay_month": 0.3,
+   "canopy_max": 0.92,
+   "salinity_threshold_ds_m": 4.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "brassica",
+     "break_years": 2
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 28,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 25
+   },
+   "forage_value": 0.5,
+   "market_default": 0.5,
+   "drought_tolerance": 0.5,
+   "deep_rooted": false,
+   "benefits": [
+    "Thick taproot opens compacted layers and captures leftover nitrogen",
+    "Winter-kills, leaving a clean seedbed"
+   ],
+   "cautions": [
+    "Residue disappears by spring, so pair it with a grass",
+    "Must be seeded early to grow enough"
+   ]
+  },
+  {
+   "id": "cover_mix",
+   "name": "Rye + vetch + radish mix",
+   "family": "mix",
+   "functional_group": "cool_grass",
+   "legume": false,
+   "role": "cover",
+   "cycle": "winter",
+   "t_base_c": 0,
+   "gdd_to_maturity": 1900,
+   "t_plant_c": 19,
+   "dry_down_months": 0,
+   "min_season_months": 0,
+   "kc_mid": 1.0,
+   "root_depth_m": 1.2,
+   "ky": 1.0,
+   "depletion_fraction": 0.5,
+   "heat_tmax_c": 35,
+   "heat_loss_pct_per_day": 0,
+   "min_winter_tmin_c": -25,
+   "winterkill": false,
+   "n_demand_kg_ha": 0,
+   "n_credit_kg_ha": 40,
+   "n_scavenge_kg_ha": 40,
+   "residue_t_ha": 5.0,
+   "root_t_ha": 2.2,
+   "residue_cover_coef": 0.65,
+   "residue_decay_month": 0.12,
+   "canopy_max": 0.93,
+   "salinity_threshold_ds_m": 5.0,
+   "ph_min": 5.8,
+   "ph_max": 8.3,
+   "wet_feet_tolerant": false,
+   "humidity_sensitive": false,
+   "pest_groups": [
+    {
+     "group": "small_grain",
+     "break_years": 1
+    }
+   ],
+   "named_pests": [],
+   "equipment": [
+    "grain_drill"
+   ],
+   "economics": {
+    "yield_ref": 0,
+    "yield_unit": "none",
+    "price": 0,
+    "cost_per_acre": 44,
+    "price_cv": 0,
+    "yield_cv": 0,
+    "grazing_value_per_acre": 40
+   },
+   "forage_value": 0.7,
+   "market_default": 0.5,
+   "drought_tolerance": 0.6,
+   "deep_rooted": false,
+   "benefits": [
+    "Grass, legume and brassica together: cover, nitrogen and compaction relief in one pass"
+   ],
+   "cautions": [
+    "Costs more and needs a compromise termination date"
+   ]
+  }
+ ]
+}

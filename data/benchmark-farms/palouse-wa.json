@@ -1,0 +1,114 @@
+{
+  "id": "palouse-wa",
+  "name": "Palouse hills wheat-fallow",
+  "short_name": "Palouse, Washington",
+  "region": "Inland Pacific Northwest, intermediate rainfall zone",
+  "state": "WA",
+  "county": "Whitman",
+  "lat": 46.86,
+  "lon": -117.7,
+  "area_ha": 64.8,
+  "headline": "Steep loess hills, winter rain on thawing ground, and a field that sits bare every other year.",
+  "story": "A 160-acre dryland field west of Colfax alternates winter wheat with a tilled summer fallow to bank moisture. The Palouse has lost topsoil faster than almost anywhere in the country: rain and snowmelt run off frozen, bare slopes. Summers are getting hotter and drier at grain fill. The question is whether a crop can replace the fallow year without starving the wheat of water.",
+  "challenge_tags": [
+    "Erosion on steep slopes",
+    "Fallow every second year",
+    "Hot, dry grain fill"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "none",
+      "label": "Dryland",
+      "allocation_mm": 0,
+      "sustainable_mm": 0,
+      "efficiency": 0,
+      "cost_per_mm_acre": 0,
+      "source": null
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": false,
+    "equipment": [
+      "grain_drill",
+      "combine",
+      "flex_header"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 110,
+    "erosivity_method": "req_nwrr"
+  },
+  "baseline_rotation": {
+    "name": "Winter wheat - summer fallow",
+    "years": [
+      [
+        "winter_wheat"
+      ],
+      []
+    ],
+    "tillage": "conventional",
+    "note": "The Cropland Data Layer shows a strict winter wheat - fallow alternation on this field since 2019."
+  },
+  "water_context": {
+    "aquifer": "Columbia River Basalt Group (not used for this field)",
+    "in_situ_trend_m_yr": null,
+    "in_situ_source": "USGS NWIS, Palouse River at Hooper",
+    "note": "This is dryland farming. The water that matters is winter precipitation stored in six feet of loess."
+  },
+  "reference_yields": {
+    "winter_wheat": 115,
+    "spring_wheat": 80,
+    "barley": 100,
+    "dry_pea": 2800,
+    "chickpea": 2100,
+    "lentil": 1800,
+    "canola": 3000,
+    "oats": 110,
+    "triticale": 5.0,
+    "safflower": 1900,
+    "sunflower": 1900
+  },
+  "local_market": {
+    "winter_wheat": {
+      "access": 1.0,
+      "note": "Soft white wheat moves by barge to Portland for export; every elevator handles it."
+    },
+    "spring_wheat": {
+      "access": 0.95,
+      "note": "Standard elevator crop."
+    },
+    "barley": {
+      "access": 0.75,
+      "note": "Feed barley through local co-ops; malting contracts are limited."
+    },
+    "dry_pea": {
+      "access": 0.85,
+      "note": "Pulse processors in Colfax, Spangle and Moscow."
+    },
+    "chickpea": {
+      "access": 0.9,
+      "note": "The Palouse is the national centre of chickpea processing."
+    },
+    "lentil": {
+      "access": 0.9,
+      "note": "Local processors clean and export lentils."
+    },
+    "canola": {
+      "access": 0.75,
+      "note": "Crush plant at Warden, about 90 minutes away."
+    }
+  },
+  "default_priorities": {
+    "water": 6,
+    "soil": 8,
+    "erosion": 10,
+    "pest": 5,
+    "income": 6
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, MODIS (see observation provenance)",
+    "USDA NRCS SSURGO via Soil Data Access",
+    "Washington State University Extension dryland enterprise budgets (reference yields)",
+    "USDA ARS Palouse Conservation Field Station erosion research (frozen-soil erosivity, Req)"
+  ],
+  "reference_yields_basis": "Water-unlimited potential for the Palouse. This is a dryland field, so the soil-water balance applies the moisture limit that separates wheat after fallow from wheat after a crop."
+}
