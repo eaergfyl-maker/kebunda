@@ -1,0 +1,32 @@
+{
+ "field_id": "cornbelt-ia",
+ "priorities": {
+  "water": 4,
+  "soil": 8,
+  "erosion": 9,
+  "pest": 6,
+  "income": 7
+ },
+ "constraints": {
+  "risk_tolerance": "medium",
+  "exclude_crops": []
+ },
+ "custom_strategies": [
+  {
+   "name": "My rotation",
+   "years": [
+    [
+     "corn"
+    ],
+    [
+     "soybean"
+    ],
+    [
+     "oats",
+     "crimson_clover"
+    ]
+   ],
+   "tillage": "reduced"
+  }
+ ]
+}

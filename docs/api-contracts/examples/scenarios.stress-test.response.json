@@ -1,0 +1,573 @@
+{
+ "field_id": "cornbelt-ia",
+ "scenario": {
+  "temp_delta_c": 2.0,
+  "rain_pct": -20.0,
+  "storm_intensity_pct": 10.0,
+  "water_cap_pct": 100.0
+ },
+ "limits": {
+  "temp_delta_c": {
+   "min": -1.0,
+   "max": 5.0,
+   "step": 0.5,
+   "unit": "°C",
+   "label": "Warmer growing seasons",
+   "plain": "Shifts every month's temperatures. Changes planting dates, heat days, frost days and how thirsty the air is."
+  },
+  "rain_pct": {
+   "min": -50.0,
+   "max": 30.0,
+   "step": 5.0,
+   "unit": "%",
+   "label": "More or less rain",
+   "plain": "Scales yearly rain and snow. Same number of storms, each one bigger or smaller."
+  },
+  "storm_intensity_pct": {
+   "min": 0.0,
+   "max": 60.0,
+   "step": 5.0,
+   "unit": "%",
+   "label": "Rain arriving in heavier bursts",
+   "plain": "The same total rain falls in fewer, heavier storms. More runs off, less soaks in, and bare soil erodes faster."
+  },
+  "water_cap_pct": {
+   "min": 0.0,
+   "max": 100.0,
+   "step": 5.0,
+   "unit": "% of allocation",
+   "label": "Irrigation water you can pump",
+   "plain": "Cuts the irrigation allocation. 100% is today's allocation; 0% is no irrigation at all."
+  }
+ },
+ "climate_shift": {
+  "annual_precip_mm": {
+   "today": 994.0,
+   "scenario": 795.0,
+   "delta": -199.0
+  },
+  "reference_et_mm": {
+   "today": 1013.0,
+   "scenario": 1076.0,
+   "delta": 63.0
+  },
+  "heat_days_35": {
+   "today": 3.0,
+   "scenario": 10.0,
+   "delta": 7.0
+  },
+  "frost_days": {
+   "today": 132.0,
+   "scenario": 111.0,
+   "delta": -21.0
+  },
+  "erosivity_r": {
+   "today": 3433.0,
+   "scenario": 2439.0,
+   "delta": -994.0
+  },
+  "rain_per_wet_day_mm": {
+   "today": 9.0,
+   "scenario": 8.0,
+   "delta": -1.0
+  },
+  "irrigation_allocation_mm": {
+   "today": null,
+   "scenario": null,
+   "delta": null
+  }
+ },
+ "strategies": [
+  {
+   "id": "baseline",
+   "role": "baseline",
+   "name": "Corn → Soybean",
+   "years": [
+    [
+     "corn"
+    ],
+    [
+     "soybean"
+    ]
+   ],
+   "tillage": "conventional",
+   "feasible": true,
+   "fit": {
+    "today": 57.0,
+    "scenario": 56.5,
+    "delta": -0.5
+   },
+   "scores": {
+    "water": {
+     "today": 93.0,
+     "scenario": 95.2,
+     "delta": 2.2
+    },
+    "soil": {
+     "today": 29.4,
+     "scenario": 29.2,
+     "delta": -0.2
+    },
+    "erosion": {
+     "today": 65.6,
+     "scenario": 67.6,
+     "delta": 2.0
+    },
+    "pest": {
+     "today": 50.0,
+     "scenario": 50.0,
+     "delta": 0.0
+    },
+    "income": {
+     "today": 63.1,
+     "scenario": 56.9,
+     "delta": -6.2
+    }
+   },
+   "metrics": {
+    "irrigation_mm_yr": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "water_stress_pct": {
+     "today": 0.1,
+     "scenario": 8.1,
+     "delta": 8.0
+    },
+    "soil_loss_tons_ac_yr": {
+     "today": 2.3,
+     "scenario": 1.75,
+     "delta": -0.55
+    },
+    "bare_months_per_year": {
+     "today": 4.5,
+     "scenario": 4.5,
+     "delta": 0.0
+    },
+    "runoff_mm_yr": {
+     "today": 37.0,
+     "scenario": 24.0,
+     "delta": -13.0
+    },
+    "net_return_per_acre_yr": {
+     "today": 520.0,
+     "scenario": 389.0,
+     "delta": -131.0
+    },
+    "soc_change_t_ha_yr": {
+     "today": -0.225,
+     "scenario": -0.319,
+     "delta": -0.09
+    },
+    "crop_water_use_mm_yr": {
+     "today": 810.0,
+     "scenario": 772.0,
+     "delta": -38.0
+    }
+   },
+   "yields": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "today": 223.0,
+     "scenario": 183.3,
+     "unit": "bu",
+     "change_pct": -18.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "soybean",
+     "crop_name": "Soybean",
+     "today": 64.0,
+     "scenario": 58.2,
+     "unit": "bu",
+     "change_pct": -9.0,
+     "limiting": "water"
+    }
+   ],
+   "flags": [],
+   "net_retained_pct": 75.0,
+   "bad_year_net_per_acre": {
+    "today": 239.0,
+    "scenario": 73.0
+   },
+   "phases": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 3,
+     "end_month": 8,
+     "plant_calendar_month": 3,
+     "end_calendar_month": 8,
+     "duration_months": 6,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    },
+    {
+     "crop_id": "soybean",
+     "crop_name": "Soybean",
+     "kind": "cash",
+     "year_index": 1,
+     "plant_month": 16,
+     "end_month": 20,
+     "plant_calendar_month": 4,
+     "end_calendar_month": 8,
+     "duration_months": 5,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    }
+   ]
+  },
+  {
+   "id": "step-34623436",
+   "role": "step",
+   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "years": [
+    [
+     "corn",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ]
+   ],
+   "tillage": "no_till",
+   "feasible": true,
+   "fit": {
+    "today": 76.2,
+    "scenario": 74.9,
+    "delta": -1.3
+   },
+   "scores": {
+    "water": {
+     "today": 100.0,
+     "scenario": 93.9,
+     "delta": -6.1
+    },
+    "soil": {
+     "today": 76.5,
+     "scenario": 82.0,
+     "delta": 5.5
+    },
+    "erosion": {
+     "today": 100.0,
+     "scenario": 100.0,
+     "delta": 0.0
+    },
+    "pest": {
+     "today": 55.0,
+     "scenario": 55.0,
+     "delta": 0.0
+    },
+    "income": {
+     "today": 61.7,
+     "scenario": 52.6,
+     "delta": -9.1
+    }
+   },
+   "metrics": {
+    "irrigation_mm_yr": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "water_stress_pct": {
+     "today": 0.0,
+     "scenario": 9.9,
+     "delta": 9.9
+    },
+    "soil_loss_tons_ac_yr": {
+     "today": 0.06,
+     "scenario": 0.04,
+     "delta": -0.02
+    },
+    "bare_months_per_year": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "runoff_mm_yr": {
+     "today": 5.0,
+     "scenario": 3.0,
+     "delta": -2.0
+    },
+    "net_return_per_acre_yr": {
+     "today": 488.0,
+     "scenario": 346.0,
+     "delta": -142.0
+    },
+    "soc_change_t_ha_yr": {
+     "today": 0.268,
+     "scenario": 0.31,
+     "delta": 0.04
+    },
+    "crop_water_use_mm_yr": {
+     "today": 787.0,
+     "scenario": 793.0,
+     "delta": 6.0
+    }
+   },
+   "yields": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "today": 223.6,
+     "scenario": 183.6,
+     "unit": "bu",
+     "change_pct": -18.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "soybean",
+     "crop_name": "Soybean",
+     "today": 64.0,
+     "scenario": 56.3,
+     "unit": "bu",
+     "change_pct": -12.0,
+     "limiting": "water"
+    }
+   ],
+   "flags": [],
+   "net_retained_pct": 71.0,
+   "bad_year_net_per_acre": {
+    "today": 233.0,
+    "scenario": 68.0
+   },
+   "phases": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 3,
+     "end_month": 8,
+     "plant_calendar_month": 3,
+     "end_calendar_month": 8,
+     "duration_months": 6,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    },
+    {
+     "crop_id": "cereal_rye",
+     "crop_name": "Cereal rye cover",
+     "kind": "cover",
+     "year_index": 0,
+     "plant_month": 9,
+     "end_month": 15,
+     "plant_calendar_month": 9,
+     "end_calendar_month": 3,
+     "duration_months": 7,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": 0.751,
+     "winterkills": false,
+     "issues": []
+    }
+   ]
+  },
+  {
+   "id": "match-35075079",
+   "role": "match",
+   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "years": [
+    [
+     "corn",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ],
+    [
+     "sorghum",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ]
+   ],
+   "tillage": "no_till",
+   "feasible": true,
+   "fit": {
+    "today": 74.6,
+    "scenario": 73.9,
+    "delta": -0.7
+   },
+   "scores": {
+    "water": {
+     "today": 100.0,
+     "scenario": 95.5,
+     "delta": -4.5
+    },
+    "soil": {
+     "today": 81.1,
+     "scenario": 85.7,
+     "delta": 4.6
+    },
+    "erosion": {
+     "today": 100.0,
+     "scenario": 100.0,
+     "delta": 0.0
+    },
+    "pest": {
+     "today": 55.0,
+     "scenario": 55.0,
+     "delta": 0.0
+    },
+    "income": {
+     "today": 54.2,
+     "scenario": 48.3,
+     "delta": -5.9
+    }
+   },
+   "metrics": {
+    "irrigation_mm_yr": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "water_stress_pct": {
+     "today": 0.0,
+     "scenario": 8.6,
+     "delta": 8.6
+    },
+    "soil_loss_tons_ac_yr": {
+     "today": 0.06,
+     "scenario": 0.04,
+     "delta": -0.02
+    },
+    "bare_months_per_year": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "runoff_mm_yr": {
+     "today": 5.0,
+     "scenario": 3.0,
+     "delta": -2.0
+    },
+    "net_return_per_acre_yr": {
+     "today": 407.0,
+     "scenario": 310.0,
+     "delta": -97.0
+    },
+    "soc_change_t_ha_yr": {
+     "today": 0.291,
+     "scenario": 0.33,
+     "delta": 0.04
+    },
+    "crop_water_use_mm_yr": {
+     "today": 778.0,
+     "scenario": 793.0,
+     "delta": 15.0
+    }
+   },
+   "yields": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "today": 223.6,
+     "scenario": 184.6,
+     "unit": "bu",
+     "change_pct": -17.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "soybean",
+     "crop_name": "Soybean",
+     "today": 64.0,
+     "scenario": 56.4,
+     "unit": "bu",
+     "change_pct": -12.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "sorghum",
+     "crop_name": "Grain sorghum (milo)",
+     "today": 114.4,
+     "scenario": 106.4,
+     "unit": "bu",
+     "change_pct": -7.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "soybean",
+     "crop_name": "Soybean",
+     "today": 64.0,
+     "scenario": 57.5,
+     "unit": "bu",
+     "change_pct": -10.0,
+     "limiting": "water"
+    }
+   ],
+   "flags": [],
+   "net_retained_pct": 76.0,
+   "bad_year_net_per_acre": {
+    "today": 223.0,
+    "scenario": 87.0
+   },
+   "phases": [
+    {
+     "crop_id": "corn",
+     "crop_name": "Corn (grain)",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 3,
+     "end_month": 8,
+     "plant_calendar_month": 3,
+     "end_calendar_month": 8,
+     "duration_months": 6,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    },
+    {
+     "crop_id": "cereal_rye",
+     "crop_name": "Cereal rye cover",
+     "kind": "cover",
+     "year_index": 0,
+     "plant_month": 9,
+     "end_month": 15,
+     "plant_calendar_month": 9,
+     "end_calendar_month": 3,
+     "duration_months": 7,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": 0.751,
+     "winterkills": false,
+     "issues": []
+    }
+   ]
+  }
+ ],
+ "ranking_today": [
+  "step-34623436",
+  "match-35075079",
+  "baseline"
+ ],
+ "ranking_scenario": [
+  "step-34623436",
+  "match-35075079",
+  "baseline"
+ ],
+ "ranking_changed": false,
+ "verdict": "Under this scenario \"Corn + Cereal rye → Soybean + Rye + vetch + radish mix\" comes out ahead (it also leads today). Net return moves least for \"Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix\".",
+ "note": "Scenarios shift the observed 2001-2024 record; they are stress tests, not forecasts.",
+ "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, Extension agents and crop advisers."
+}

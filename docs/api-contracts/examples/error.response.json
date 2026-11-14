@@ -1,0 +1,5 @@
+{
+ "error": "field_not_found",
+ "detail": "No field with id 'atlantis'.",
+ "hint": "List benchmark farms with GET /api/v1/farms, or create one with POST /api/v1/farms/custom."
+}

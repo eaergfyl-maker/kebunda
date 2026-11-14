@@ -1,0 +1,65 @@
+{
+ "field_id": "cornbelt-ia",
+ "strategies": [
+  {
+   "id": "baseline",
+   "role": "baseline",
+   "name": "Corn → Soybean",
+   "years": [
+    [
+     "corn"
+    ],
+    [
+     "soybean"
+    ]
+   ],
+   "tillage": "conventional"
+  },
+  {
+   "id": "step-34623436",
+   "role": "step",
+   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "years": [
+    [
+     "corn",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ]
+   ],
+   "tillage": "no_till"
+  },
+  {
+   "id": "match-35075079",
+   "role": "match",
+   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "years": [
+    [
+     "corn",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ],
+    [
+     "sorghum",
+     "cereal_rye"
+    ],
+    [
+     "soybean",
+     "cover_mix"
+    ]
+   ],
+   "tillage": "no_till"
+  }
+ ],
+ "scenario": {
+  "temp_delta_c": 2.0,
+  "rain_pct": -20.0,
+  "storm_intensity_pct": 10.0,
+  "water_cap_pct": 100.0
+ }
+}
