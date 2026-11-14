@@ -28,13 +28,13 @@
   "provenance": {
     "source": "USDA NRCS",
     "dataset": "SSURGO via Soil Data Access (dominant component, 0-30 cm weighted)",
-    "access": "live",
+    "access": "cache",
     "resolution_m": 30,
     "cadence": "static survey",
     "period": null,
     "url": "https://websoilsurvey.nrcs.usda.gov/app/",
     "note": "Map units are drawn at 1:12,000-1:24,000. Inclusions of other soils inside the unit are normal.",
-    "retrieved_at": "2026-11-14T11:21:34+00:00"
+    "retrieved_at": "2026-11-14T12:32:51+00:00"
   },
   "id": "palouse-wa"
 }
