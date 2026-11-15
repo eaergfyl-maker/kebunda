@@ -182,5 +182,4 @@ The full list of the challenge's datasets and how each is used is in the app und
 FieldShift's models are monthly, single-field planning models built to rank rotations
 against each other. They do not see compaction, tile lines, nematodes, varieties, contracts
 or within-field variation, and their dollar figures are not a budget. Every result page says
-so, and every strategy lists what to check with a County Extension agent or Certified Crop
-Adviser before acting.
+so, and every strategy lists what to check with DOA, MADA or MARDI officers before acting.
