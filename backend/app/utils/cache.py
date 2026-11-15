@@ -1,4 +1,4 @@
-"""Tiny JSON file cache under data/cache/ (gitignored). Keeps live NASA/USDA pulls fast and polite."""
+"""Tiny JSON file cache under data/cache/ (gitignored). Keeps live NASA and partner-service pulls fast and polite."""
 from __future__ import annotations
 
 import hashlib

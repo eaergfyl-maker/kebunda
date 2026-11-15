@@ -1,4 +1,4 @@
-"""Shared HTTP plumbing for every live connector (NASA and USDA).
+"""Shared HTTP plumbing for every live connector (NASA and global soil, crop and gauge services).
 
 Design rules:
   * every call is cached under data/cache/ and falls back to a stale cache entry when the
@@ -68,7 +68,7 @@ def fetch(
     namespace: str,
     url: str,
     *,
-    params: dict | None = None,
+    params: dict | list[tuple] | None = None,
     method: str = "GET",
     json_body: Any = None,
     headers: dict | None = None,
@@ -78,7 +78,8 @@ def fetch(
     retries: int = 2,
 ) -> tuple[Any, str]:
     """Fetch JSON (or text) with caching. Returns (payload, access) where access is live|cache."""
-    key = f"{method} {url} {sorted((params or {}).items())} {json_body}"
+    flat = sorted(params.items()) if isinstance(params, dict) else list(params or [])
+    key = f"{method} {url} {flat} {json_body}"
     cached = cache.get(namespace, key, ttl_hours)
     if cached is not None:
         return cached, ACCESS_CACHE
