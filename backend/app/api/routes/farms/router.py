@@ -13,14 +13,14 @@ NOT_FOUND = {404: {"model": ErrorResponse}}
 
 @router.get("", response_model=list[FarmSummary], summary="List the benchmark farms")
 def list_farms() -> list[dict]:
-    """Five real fields with pre-harmonised NASA and USDA observations. Instant and offline."""
+    """Five real Malaysian fields with pre-harmonised NASA, Sentinel-2, SoilGrids and GAEZ observations. Instant and offline."""
     return field_store.list_benchmarks()
 
 
 @router.post("/custom", response_model=FieldOverview, responses={503: {"model": ErrorResponse}},
              summary="Build a field live from any coordinate")
 def create_custom(body: CustomFieldRequest) -> dict:
-    """Pulls NASA POWER, GPM IMERG, MODIS NDVI, SRTM, Daymet, SSURGO and the Cropland Data Layer
+    """Pulls NASA POWER, GPM IMERG, SRTM, Sentinel-2 NDVI, ISRIC SoilGrids, FAO GAEZ and the nearest GHCN rain gauge
     for the coordinate (a few seconds, cached afterwards) and returns the same overview as a
     benchmark farm. The returned `id` works with every other endpoint."""
     f = field_store.create_custom_field(body.lat, body.lon, body.name, body.area_ha, body.irrigated, body.allocation_mm)

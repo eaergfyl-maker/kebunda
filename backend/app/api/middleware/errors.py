@@ -34,7 +34,7 @@ def install(app: FastAPI) -> None:
     async def upstream(_: Request, exc: ConnectorError) -> JSONResponse:
         return JSONResponse(status_code=503, content=_body(
             "data_source_unavailable", str(exc),
-            "A live NASA or USDA service did not answer. Benchmark farms keep working offline; retry the live query shortly."))
+            "A live NASA or partner data service did not answer. Benchmark farms keep working offline; retry the live query shortly."))
 
     @app.exception_handler(RequestValidationError)
     async def validation(_: Request, exc: RequestValidationError) -> JSONResponse:
