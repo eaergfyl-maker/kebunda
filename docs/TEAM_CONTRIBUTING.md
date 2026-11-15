@@ -116,8 +116,8 @@ Create `pages/MyPage.tsx` and add one entry to `PAGES` in `pages/pageRegistry.ts
 
 ### Add a farmer control
 
-Farmer inputs live in `hooks/useFieldShift.tsx` (`priorities`, `constraints`, `scenario`,
-`customStrategies`, `baselineOverride`, `units`). Read and set them with `useFieldShift()`;
+Farmer inputs live in `hooks/useKebunda.tsx` (`priorities`, `constraints`, `scenario`,
+`customStrategies`, `baselineOverride`, `units`). Read and set them with `useKebunda()`;
 the comparison refetches by itself. A new constraint or scenario dial needs a backend field
 first: ask Member 1, or add it to `backend/app/models/schemas/requests.py` in a
 `feat/backend-*` pull request.
@@ -149,6 +149,23 @@ real payloads to read or mock against are in `docs/api-contracts/examples/`.
   `controls.css`, `common.css`, `pages.css`). Add your rules there, not in `global.css`.
 - Shared primitives (`Card`, `Tabs`, `Stat`, `Delta`, `ScoreBar`, `ProvenanceBadge`,
   `SupportNotJudgment`) are in `components/common/ui.tsx`.
+
+## English and Bahasa Malaysia
+
+The header has an EN / BM switch. The choice is saved in the browser (`kebunda.lang`).
+
+- Wrap every piece of interface text in `t()` from `useT()` (`@/i18n/LanguageProvider`):
+  `t("Rain per year")`, `t("{n} days", { n })`. The English text is the key; keep
+  `{placeholders}` identical in both languages.
+- Crop and rotation names from the API go through `tName(name)`; month labels through `useMonths()`.
+- Outside React (export templates, plain helpers) use `translate(lang, text, vars)`.
+- Add the Malay text to `src/i18n/ms.ts`, one `"English": "Melayu",` per line. Glossary
+  entries live in `src/i18n/glossary.ms.ts`.
+- Run `npm run i18n:check` before pushing: it lists literal `t("…")` keys with no Malay
+  entry. Keys built at runtime (labels from data, ternaries) are not seen by the checker,
+  so add those by hand.
+- Missing translations fall back to English, so nothing breaks; narrative text written by
+  the backend (explanations, insights) stays English for now.
 
 ## Writing for farmers
 

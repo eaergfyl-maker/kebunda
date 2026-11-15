@@ -1,6 +1,7 @@
 import { Rectangle, Tooltip } from "react-leaflet";
 
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 
 import type { OverlayProps } from "./overlayRegistry";
 
@@ -20,6 +21,7 @@ function square(lat: number, lon: number, size_m: number): [[number, number], [n
  */
 export function PixelFootprints({ field }: OverlayProps) {
   const units = useUnits();
+  const { t } = useT();
   if (!field) return null;
   const { lat, lon } = field.farm;
   const sizes = new Map<number, string[]>();
@@ -37,7 +39,7 @@ export function PixelFootprints({ field }: OverlayProps) {
           pathOptions={{ color: COLORS[i % COLORS.length], weight: 1.5, dashArray: "6 5", fill: true, fillOpacity: 0.03 }}
         >
           <Tooltip sticky>
-            <strong>One pixel: {units.distance(size)} across</strong>
+            <strong>{t("One pixel: {d} across", { d: units.distance(size) })}</strong>
             <br />
             {labels.join(" · ")}
           </Tooltip>
@@ -47,7 +49,7 @@ export function PixelFootprints({ field }: OverlayProps) {
         <Tooltip sticky>
           <strong>{field.farm.short_name}</strong>
           <br />
-          The field: {units.area(field.farm.area_ha)}, about {units.distance(field.fusion.field_width_m)} across
+          {t("The field: {a}, about {d} across", { a: units.area(field.farm.area_ha), d: units.distance(field.fusion.field_width_m) })}
         </Tooltip>
       </Rectangle>
     </>

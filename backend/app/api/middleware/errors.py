@@ -11,7 +11,7 @@ from app.services.analysis import InvalidRotation
 from app.services.field_store import FieldNotFound
 from app.services.nasa_connectors.base import ConnectorError
 
-log = logging.getLogger("fieldshift.api")
+log = logging.getLogger("kebunda.api")
 
 
 def _body(error: str, detail: str, hint: str | None = None) -> dict:

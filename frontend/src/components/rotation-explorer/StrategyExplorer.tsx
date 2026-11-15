@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 
 import { Term } from "@/components/common/glossary/Term";
 import { Card, Segmented, SupportNotJudgment, Tabs } from "@/components/common/ui";
+import { useT } from "@/i18n/LanguageProvider";
 import { ROLE_COLOR } from "@/styles/theme";
 import type { CompareResponse, FieldOverview } from "@/types/api";
 
@@ -20,6 +21,7 @@ import { PANELS } from "./evidence-panels/panelRegistry";
 import { SequenceBuilder } from "./sequence-builder/SequenceBuilder";
 
 export function StrategyExplorer({ field, comparison, refreshing }: { field: FieldOverview; comparison: CompareResponse; refreshing: boolean }) {
+  const { t, tName } = useT();
   const strategies = comparison.strategies;
   const baseline = strategies[0];
   const [selectedId, setSelectedId] = useState<string>(comparison.summary.top_id);
@@ -39,14 +41,14 @@ export function StrategyExplorer({ field, comparison, refreshing }: { field: Fie
   return (
     <div className="stack" id="rotations">
       <Card
-        title="Rotation strategies, side by side"
-        subtitle={<>{comparison.summary.statement} Scores are 0-100; the black tick on each bar is your current rotation and the whisker is the <Term id="confidence">uncertainty</Term>.</>}
-        action={<Segmented label="View" value={view} onChange={setView} options={[{ id: "cards", label: "Cards" }, { id: "table", label: "Table" }]} />}
+        title={t("Rotation strategies, side by side")}
+        subtitle={<>{comparison.summary.statement} {t("Scores are 0-100; the black tick on each bar is your current rotation and the whisker is the")} <Term id="confidence">{t("uncertainty")}</Term>.</>}
+        action={<Segmented label={t("View")} value={view} onChange={setView} options={[{ id: "cards", label: t("Cards") }, { id: "table", label: t("Table") }]} />}
       >
         {(comparison.baseline_assumed || comparison.baseline_note) && (
           <p className={`notice ${comparison.baseline_assumed ? "notice-warn" : "notice-info"}`} style={{ marginBottom: 12 }}>
-            <strong>About the <Term id="baseline">current rotation</Term>:</strong> {comparison.baseline_note}{" "}
-            <button className="btn btn-sm" onClick={() => setBuilderOpen(true)}>Correct it</button>
+            <strong>{t("About the")} <Term id="baseline">{t("current rotation")}</Term>:</strong> {comparison.baseline_note}{" "}
+            <button className="btn btn-sm" onClick={() => setBuilderOpen(true)}>{t("Correct it")}</button>
           </p>
         )}
         <div className={refreshing ? "refreshing" : ""}>
@@ -63,17 +65,16 @@ export function StrategyExplorer({ field, comparison, refreshing }: { field: Fie
           )}
         </div>
         <p className="xs faint" style={{ marginTop: 10 }}>
-          Searched {comparison.search.rotations_screened} crop sequences from {comparison.search.crops_considered.length} crops that fit this field,
-          simulated {comparison.search.rotations_simulated} variants, and kept options that differ meaningfully from one another.
+          {t("Searched {a} crop sequences from {b} crops that fit this field, simulated {c} variants, and kept options that differ meaningfully from one another.", { a: comparison.search.rotations_screened, b: comparison.search.crops_considered.length, c: comparison.search.rotations_simulated })}
         </p>
       </Card>
 
       <Card
-        title={<><span className="dot" style={{ background: ROLE_COLOR[selected.role], marginRight: 8, width: 12, height: 12 }} />{selected.role === "baseline" ? "Your current rotation" : selected.title}: {selected.name}</>}
-        subtitle={def.question}
+        title={<><span className="dot" style={{ background: ROLE_COLOR[selected.role], marginRight: 8, width: 12, height: 12 }} />{selected.role === "baseline" ? t("Your current rotation") : t(selected.title)}: {tName(selected.name)}</>}
+        subtitle={t(def.question)}
       >
-        <Tabs label="Explanation" value={def.id} onChange={setPanel}
-          tabs={PANELS.map((p) => ({ id: p.id, label: p.number ? <><span className="pillar-num">{p.number}</span>{p.label}</> : p.label, badge: p.count?.(selected) }))} />
+        <Tabs label={t("Explanation")} value={def.id} onChange={setPanel}
+          tabs={PANELS.map((p) => ({ id: p.id, label: p.number ? <><span className="pillar-num">{p.number}</span>{t(p.label)}</> : t(p.label), badge: p.count?.(selected) }))} />
         <div className={`panel-body fade-in ${refreshing ? "refreshing" : ""}`} key={`${selected.id}:${def.id}`}>
           <def.Component strategy={selected} baseline={baseline} comparison={comparison} field={field} />
         </div>
@@ -81,12 +82,12 @@ export function StrategyExplorer({ field, comparison, refreshing }: { field: Fie
       </Card>
 
       <Card
-        title="Build your own rotation"
-        subtitle="Have something else in mind, or is the current rotation shown wrong? Put it together and score it with the same models."
-        action={<button className="btn btn-sm" onClick={() => setBuilderOpen((o) => !o)}>{builderOpen ? "Hide builder" : "Open builder"}</button>}
+        title={t("Build your own rotation")}
+        subtitle={t("Have something else in mind, or is the current rotation shown wrong? Put it together and score it with the same models.")}
+        action={<button className="btn btn-sm" onClick={() => setBuilderOpen((o) => !o)}>{builderOpen ? t("Hide builder") : t("Open builder")}</button>}
       >
         {builderOpen ? <SequenceBuilder fieldId={field.id} baselineYears={baseline.years} baselineTillage={baseline.tillage} />
-          : <p className="small muted">Add years, pick crops and cover crops, choose a tillage system. Your rotation appears as an extra card above.</p>}
+          : <p className="small muted">{t("Add years, pick crops and cover crops, choose a tillage system. Your rotation appears as an extra card above.")}</p>}
       </Card>
     </div>
   );

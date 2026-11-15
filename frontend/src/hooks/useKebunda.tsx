@@ -12,7 +12,7 @@ import type { Constraints, Priorities, RotationSpec, Scenario } from "@/types/ap
 export const NEUTRAL_SCENARIO: Scenario = { temp_delta_c: 0, rain_pct: 0, storm_intensity_pct: 0, water_cap_pct: 100 };
 export type UnitSystem = "us" | "metric";
 
-interface FieldShiftState {
+interface KebundaState {
   /** Priorities the farmer has moved. Empty means "use this field's defaults". */
   priorities: Partial<Priorities>;
   setPriority: (id: keyof Priorities, value: number) => void;
@@ -36,7 +36,7 @@ interface FieldShiftState {
   resetForField: () => void;
 }
 
-const Ctx = createContext<FieldShiftState | null>(null);
+const Ctx = createContext<KebundaState | null>(null);
 
 function loadJson<T>(key: string, fallback: T): T {
   try {
@@ -47,18 +47,18 @@ function loadJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function FieldShiftProvider({ children }: { children: ReactNode }) {
+export function KebundaProvider({ children }: { children: ReactNode }) {
   const [priorities, setPrioritiesState] = useState<Partial<Priorities>>({});
   const [constraints, setConstraints] = useState<Constraints>({});
   const [scenario, setScenario] = useState<Scenario>(NEUTRAL_SCENARIO);
   const [customStrategies, setCustomStrategies] = useState<RotationSpec[]>([]);
   const [baselineOverride, setBaselineOverride] = useState<RotationSpec | null>(null);
-  const [units, setUnitsState] = useState<UnitSystem>(() => loadJson<UnitSystem>("fieldshift.units.my", "metric"));
-  const [reviewed, setReviewed] = useState<Record<string, boolean>>(() => loadJson("fieldshift.reviewed", {}));
+  const [units, setUnitsState] = useState<UnitSystem>(() => loadJson<UnitSystem>("kebunda.units.my", "metric"));
+  const [reviewed, setReviewed] = useState<Record<string, boolean>>(() => loadJson("kebunda.reviewed", {}));
 
   useEffect(() => {
     try {
-      window.localStorage.setItem("fieldshift.reviewed", JSON.stringify(reviewed));
+      window.localStorage.setItem("kebunda.reviewed", JSON.stringify(reviewed));
     } catch {
       /* private mode: the checklist simply does not persist */
     }
@@ -67,7 +67,7 @@ export function FieldShiftProvider({ children }: { children: ReactNode }) {
   const setUnits = useCallback((u: UnitSystem) => {
     setUnitsState(u);
     try {
-      window.localStorage.setItem("fieldshift.units.my", JSON.stringify(u));
+      window.localStorage.setItem("kebunda.units.my", JSON.stringify(u));
     } catch {
       /* ignore */
     }
@@ -91,7 +91,7 @@ export function FieldShiftProvider({ children }: { children: ReactNode }) {
     setBaselineOverride(null);
   }, []);
 
-  const value = useMemo<FieldShiftState>(
+  const value = useMemo<KebundaState>(
     () => ({
       priorities, setPriority, setPriorities: setPrioritiesState, constraints, setConstraint,
       resetConstraints: () => setConstraints({}), scenario, setScenario, customStrategies, setCustomStrategies,
@@ -102,9 +102,9 @@ export function FieldShiftProvider({ children }: { children: ReactNode }) {
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
-export function useFieldShift(): FieldShiftState {
+export function useKebunda(): KebundaState {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useFieldShift must be used inside <FieldShiftProvider>");
+  if (!ctx) throw new Error("useKebunda must be used inside <KebundaProvider>");
   return ctx;
 }
 

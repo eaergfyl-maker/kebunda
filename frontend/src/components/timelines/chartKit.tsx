@@ -6,7 +6,7 @@
  */
 import type { ReactNode } from "react";
 
-import { MONTH_INITIALS } from "@/hooks/useUnits";
+import { useMonths } from "@/i18n/LanguageProvider";
 import { CHART } from "@/styles/theme";
 
 export interface Box {
@@ -73,10 +73,11 @@ export function YAxis({ b, ticks, y, format = (v) => String(v), title, side = "l
 
 /** Twelve month letters under a chart. `x(m)` is the centre of month m. */
 export function MonthAxis({ b, x, months = 12 }: { b: Box; x: (m: number) => number; months?: number }) {
+  const { initials } = useMonths();
   return (
     <g>
       {Array.from({ length: months }, (_, m) => (
-        <text key={m} x={x(m)} y={b.height - b.bottom + 14} fontSize={10} fill={CHART.faint} textAnchor="middle">{MONTH_INITIALS[m % 12]}</text>
+        <text key={m} x={x(m)} y={b.height - b.bottom + 14} fontSize={10} fill={CHART.faint} textAnchor="middle">{initials[m % 12]}</text>
       ))}
     </g>
   );

@@ -9,8 +9,8 @@
  *   why    why a farmer choosing a rotation should care
  *   also   the abbreviation or the scientist's name for it
  *
- * TODO (Member 3): multi-language entries (add `plain_es`, `why_es` and a language switch in
- *   useFieldShift), and a `say` field with a phonetic spelling for a read-aloud / voice mode.
+ * Bahasa Malaysia text lives in i18n/glossary.ms.ts, keyed by id: add the Malay entry there too.
+ * TODO (Member 3): a `say` field with a phonetic spelling for a read-aloud / voice mode.
  */
 
 export type GlossaryTopic = "Satellites" | "Water" | "Soil" | "Weather" | "Rotation" | "This tool";
@@ -30,22 +30,22 @@ export const GLOSSARY: GlossaryEntry[] = [
     plain: "A satellite measure of how much living green plant covers the ground. Near 0.1-0.2 is bare soil or dead stubble; 0.8 is a thick, healthy canopy.",
     why: "Low greenness in a rainy month means bare, unprotected soil. A dip in mid-season means the crop is under stress." },
   { id: "smap", term: "SMAP soil moisture", also: "Soil Moisture Active Passive", topic: "Satellites",
-    plain: "A NASA satellite that senses how wet the top couple of inches of soil are, every two to three days. Each reading covers a square about 6 miles across.",
+    plain: "A NASA satellite that senses how wet the top 5 cm of soil are, every two to three days. Each reading covers a square about 9 km across.",
     why: "It shows when droughts start and whether there is moisture to plant into, but it averages over thousands of hectares, not your field." },
   { id: "root_zone_anomaly", term: "Root-zone moisture anomaly", also: "SMAP L4 / MERRA-2 root-zone wetness", topic: "Satellites",
     plain: "How much wetter or drier than normal the soil is where roots grow, for that time of year. Below -1 is a notably dry month.",
     why: "Counting dry months per year shows whether droughts are becoming more common where you farm." },
   { id: "gpm", term: "GPM IMERG rainfall", also: "Global Precipitation Measurement", topic: "Satellites",
-    plain: "Rainfall measured from orbit every half hour, in squares about 6 miles across.",
+    plain: "Rainfall measured from orbit every half hour, in squares about 10 km across.",
     why: "It captures how hard it rains, not just how much, which is what moves soil. It can miss or exaggerate storms a gauge would catch." },
   { id: "ecostress", term: "ECOSTRESS", also: "land-surface temperature and plant water use", topic: "Satellites",
     plain: "A sensor on the Space Station that takes the temperature of the ground and plants in detail fine enough to see parts of a field.",
     why: "Plants short of water stop cooling themselves and heat up. Hot patches show where a crop is struggling." },
   { id: "lst", term: "Land-surface temperature", also: "LST, skin temperature", topic: "Satellites",
-    plain: "How hot the ground or crop canopy itself is, not the air above it. Bare dry soil can run 20-30 degrees F hotter than the air.",
+    plain: "How hot the ground or crop canopy itself is, not the air above it. Bare dry soil can run 10-15 °C hotter than the air.",
     why: "A cool surface means plants have water to evaporate. A hot one means dry, bare or stressed ground." },
   { id: "grace", term: "GRACE water storage", also: "GRACE-FO, terrestrial water storage", topic: "Satellites",
-    plain: "Twin satellites that weigh all the water in a region, including deep groundwater, by sensing tiny changes in gravity. One reading covers an area about 200 miles across.",
+    plain: "Twin satellites that weigh all the water in a region, including deep groundwater, by sensing tiny changes in gravity. One reading covers an area about 300 km across.",
     why: "It shows whether the regional aquifer is being drawn down faster than it refills. It cannot tell you about one well." },
   { id: "modis", term: "MODIS", also: "Moderate Resolution Imaging Spectroradiometer", topic: "Satellites",
     plain: "A NASA sensor that photographs the whole Earth almost daily in squares 250 metres to 1 km across, since 2000.",
@@ -120,10 +120,10 @@ export const GLOSSARY: GlossaryEntry[] = [
     plain: "Malaysia is warm all year; the seasons are set by rain. The northeast monsoon (Nov-Mar) floods the east coast, the southwest monsoon (May-Sep) is drier.",
     why: "With no winter, planting dates follow the rains: this tool plants the first crop of the year at the start of the wettest window and chains the rest after it." },
   { id: "heat_days", term: "Heat days", topic: "Weather",
-    plain: "Days when the temperature reaches 35 C (95 F) or more.",
+    plain: "Days when the temperature reaches 35 °C or more.",
     why: "Heat at flowering or grain fill cuts yield even with plenty of water. Some crops shrug it off; corn and peas do not." },
   { id: "erosive_rain", term: "Erosive rain", also: "rainfall erosivity, R factor", topic: "Weather",
-    plain: "Rain heavy enough to splash and carry soil, counted here as days with more than half an inch.",
+    plain: "Rain heavy enough to splash and carry soil, counted here as days with more than 12.5 mm.",
     why: "A few big storms do most of the erosion in a year, so what matters is whether the soil is covered when they come." },
   { id: "trend", term: "Trend", topic: "Weather",
     plain: "Whether something has been rising or falling over the 24-year record, and whether the change is clear or could be chance.",

@@ -40,7 +40,7 @@ export const ACCESS_LABEL: Record<Access, { label: string; tone: "good" | "info"
   curated: { label: "Curated", tone: "info", help: "Assembled from published sources, not measured at this field." },
   proxy: { label: "Stand-in", tone: "warn", help: "A related NASA product is standing in for the named one." },
   unavailable: { label: "Missing", tone: "bad", help: "Could not be retrieved. Results that depend on it are less certain." },
-  model: { label: "Modelled", tone: "info", help: "Computed by FieldShift from the observed layers." },
+  model: { label: "Modelled", tone: "info", help: "Computed by Kebunda from the observed layers." },
 };
 
 export const KIND_LABEL: Record<CropKind, string> = { cash: "Cash crop", cover: "Cover crop", forage: "Forage", perennial: "Perennial" };

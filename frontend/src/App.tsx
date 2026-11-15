@@ -1,15 +1,17 @@
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
-import { FieldShiftProvider } from "@/hooks/useFieldShift";
+import { KebundaProvider } from "@/hooks/useKebunda";
+import { LanguageProvider, useT } from "@/i18n/LanguageProvider";
 import { AppShell } from "@/pages/AppShell";
 import { PAGES } from "@/pages/pageRegistry";
 
 function NotFound() {
+  const { t } = useT();
   return (
     <div className="container" style={{ padding: "64px 24px" }}>
-      <h1>Nothing grows here</h1>
-      <p className="muted" style={{ margin: "8px 0 16px" }}>That page does not exist.</p>
-      <Link className="btn btn-primary" to="/">Back to the fields</Link>
+      <h1>{t("Nothing grows here")}</h1>
+      <p className="muted" style={{ margin: "8px 0 16px" }}>{t("That page does not exist.")}</p>
+      <Link className="btn btn-primary" to="/">{t("Back to the fields")}</Link>
     </div>
   );
 }
@@ -17,7 +19,8 @@ function NotFound() {
 /** Routes come from pages/pageRegistry.tsx. Add pages there, not here. */
 export default function App() {
   return (
-    <FieldShiftProvider>
+    <LanguageProvider>
+    <KebundaProvider>
       <BrowserRouter>
         <AppShell>
           <Routes>
@@ -26,6 +29,7 @@ export default function App() {
           </Routes>
         </AppShell>
       </BrowserRouter>
-    </FieldShiftProvider>
+    </KebundaProvider>
+    </LanguageProvider>
   );
 }

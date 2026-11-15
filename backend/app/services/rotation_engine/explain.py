@@ -210,7 +210,7 @@ def evidence(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict, 
                       "24 years of NASA POWER weather run through the rotation, every phase in every year"))
     for mid, dim, statement, detail, method in model:
         if dim in wanted or strategy["role"] == "baseline":
-            items.append({"kind": "modelled", "id": mid, "source": "FieldShift model", "dataset": method, "access": "model",
+            items.append({"kind": "modelled", "id": mid, "source": "Kebunda model", "dataset": method, "access": "model",
                           "statement": statement, "detail": detail, "value": None, "unit": None, "dimension": dim})
     return items
 

@@ -19,7 +19,7 @@ import httpx
 from app.config import settings
 from app.utils import cache
 
-log = logging.getLogger("fieldshift.connectors")
+log = logging.getLogger("kebunda.connectors")
 
 _transport: httpx.BaseTransport | None = None
 
@@ -96,7 +96,7 @@ def fetch(
                 timeout=timeout_s or settings.http_timeout_s,
                 transport=_transport,
                 follow_redirects=True,
-                headers={"User-Agent": "fieldshift-decision-support/1.0", **(headers or {})},
+                headers={"User-Agent": "kebunda-decision-support/1.0", **(headers or {})},
             ) as client:
                 resp = client.request(method, url, params=params, json=json_body)
                 resp.raise_for_status()

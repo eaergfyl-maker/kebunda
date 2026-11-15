@@ -10,14 +10,16 @@
  * TODO (Member 3): save and name constraint sets per field ("with the neighbour's drill").
  */
 import { useRotationOptions } from "@/hooks/useData";
-import { useFieldShift } from "@/hooks/useFieldShift";
+import { useKebunda } from "@/hooks/useKebunda";
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import type { FieldOverview, RiskTolerance } from "@/types/api";
 
 export function ConstraintsPanel({ field }: { field: FieldOverview }) {
   const { data: options } = useRotationOptions();
-  const { constraints, setConstraint, resetConstraints } = useFieldShift();
+  const { constraints, setConstraint, resetConstraints } = useKebunda();
   const units = useUnits();
+  const { t, tName } = useT();
   const mgmt = field.farm.management;
   const irrigatedByDefault = mgmt.irrigation.type !== "none";
   const irrigated = constraints.irrigation_available ?? irrigatedByDefault;
@@ -37,14 +39,14 @@ export function ConstraintsPanel({ field }: { field: FieldOverview }) {
   return (
     <div className="stack">
       <fieldset className="constraint-group">
-        <legend>Water</legend>
+        <legend>{t("Water")}</legend>
         <label className="check">
           <input type="checkbox" checked={irrigated} onChange={(e) => setConstraint("irrigation_available", e.target.checked === irrigatedByDefault ? undefined : e.target.checked)} />
-          This field can be irrigated
+          {t("This field can be irrigated")}
         </label>
         {irrigated && (
           <label className="stack-sm">
-            <span className="small spread"><span>Water you can apply in a year</span><strong className="num">{units.water(allocation)}</strong></span>
+            <span className="small spread"><span>{t("Water you can apply in a year")}</span><strong className="num">{units.water(allocation)}</strong></span>
             <input type="range" min={100} max={1200} step={10} value={allocation} style={{ ["--pct" as string]: `${((allocation - 100) / 1100) * 100}%`, ["--track-fill" as string]: "var(--dim-water)" }}
               onChange={(e) => setConstraint("water_allocation_mm", Number(e.target.value))} />
           </label>
@@ -52,44 +54,44 @@ export function ConstraintsPanel({ field }: { field: FieldOverview }) {
       </fieldset>
 
       <fieldset className="constraint-group">
-        <legend>Equipment on the farm</legend>
+        <legend>{t("Equipment on the farm")}</legend>
         <div className="check-grid">
           {(options?.equipment ?? []).map((e) => (
-            <label key={e.id} className="check"><input type="checkbox" checked={equipment.includes(e.id)} onChange={() => toggleEquipment(e.id)} />{e.label}</label>
+            <label key={e.id} className="check"><input type="checkbox" checked={equipment.includes(e.id)} onChange={() => toggleEquipment(e.id)} />{t(e.label)}</label>
           ))}
         </div>
         <label className="check">
           <input type="checkbox" checked={constraints.custom_hire_available ?? mgmt.custom_hire_available} onChange={(e) => setConstraint("custom_hire_available", e.target.checked)} />
-          I can hire or borrow what I do not own
+          {t("I can hire or borrow what I do not own")}
         </label>
       </fieldset>
 
       <fieldset className="constraint-group">
-        <legend>How much change are you open to?</legend>
-        <div className="segmented" role="group" aria-label="Appetite for change">
+        <legend>{t("How much change are you open to?")}</legend>
+        <div className="segmented" role="group" aria-label={t("Appetite for change")}>
           {(options?.risk_tolerance ?? []).map((r) => (
-            <button key={r.id} aria-pressed={risk === r.id} title={r.help} onClick={() => setConstraint("risk_tolerance", r.id === "medium" ? undefined : r.id)}>{r.label}</button>
+            <button key={r.id} aria-pressed={risk === r.id} title={t(r.help)} onClick={() => setConstraint("risk_tolerance", r.id === "medium" ? undefined : r.id)}>{t(r.label)}</button>
           ))}
         </div>
-        <p className="xs faint">{options?.risk_tolerance.find((r) => r.id === risk)?.help}</p>
+        <p className="xs faint">{t(options?.risk_tolerance.find((r) => r.id === risk)?.help ?? "")}</p>
         <div className="check-grid">
-          <label className="check"><input type="checkbox" checked={constraints.allow_cover_crops ?? true} onChange={(e) => setConstraint("allow_cover_crops", e.target.checked ? undefined : false)} />Consider cover crops</label>
-          <label className="check"><input type="checkbox" checked={constraints.allow_tillage_change ?? true} onChange={(e) => setConstraint("allow_tillage_change", e.target.checked ? undefined : false)} />Consider less tillage</label>
-          <label className="check"><input type="checkbox" checked={constraints.livestock ?? mgmt.livestock} onChange={(e) => setConstraint("livestock", e.target.checked)} />Livestock can graze covers</label>
+          <label className="check"><input type="checkbox" checked={constraints.allow_cover_crops ?? true} onChange={(e) => setConstraint("allow_cover_crops", e.target.checked ? undefined : false)} />{t("Consider cover crops")}</label>
+          <label className="check"><input type="checkbox" checked={constraints.allow_tillage_change ?? true} onChange={(e) => setConstraint("allow_tillage_change", e.target.checked ? undefined : false)} />{t("Consider less tillage")}</label>
+          <label className="check"><input type="checkbox" checked={constraints.livestock ?? mgmt.livestock} onChange={(e) => setConstraint("livestock", e.target.checked)} />{t("Livestock can graze covers")}</label>
         </div>
       </fieldset>
 
       <fieldset className="constraint-group">
-        <legend>Crops I will not grow</legend>
+        <legend>{t("Crops I will not grow")}</legend>
         <div className="row-wrap">
           {cashCrops.map((c) => (
             <button key={c.id} className={`crop-toggle ${excluded.includes(c.id) ? "is-off" : ""}`} aria-pressed={excluded.includes(c.id)} onClick={() => toggleExcluded(c.id)}>
-              {c.name.replace(/ \(.*\)/, "")}
+              {tName(c.name).replace(/ \(.*\)/, "")}
             </button>
           ))}
         </div>
       </fieldset>
-      {changed && <button className="btn btn-ghost btn-sm" style={{ alignSelf: "flex-start" }} onClick={resetConstraints}>Reset to this field's defaults</button>}
+      {changed && <button className="btn btn-ghost btn-sm" style={{ alignSelf: "flex-start" }} onClick={resetConstraints}>{t("Reset to this field's defaults")}</button>}
     </div>
   );
 }

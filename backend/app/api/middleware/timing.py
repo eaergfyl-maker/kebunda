@@ -6,7 +6,7 @@ import time
 
 from fastapi import FastAPI, Request
 
-log = logging.getLogger("fieldshift.api")
+log = logging.getLogger("kebunda.api")
 
 
 def install(app: FastAPI) -> None:

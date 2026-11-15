@@ -1,6 +1,6 @@
 """Spatial harmonisation and confidence scoring.
 
-The sensors feeding FieldShift see the world at wildly different scales: GRACE weighs
+The sensors feeding Kebunda see the world at wildly different scales: GRACE weighs
 water over ~300 km, MERRA-2 cells are ~55 km, GAEZ ~9 km, SMAP 9 km, IMERG 10 km, MODIS
 250-1000 m, SoilGrids 250 m, SRTM 30 m, Sentinel-2 10 m, and a Malaysian smallholding is a
 few hundred metres across. This module

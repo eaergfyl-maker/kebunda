@@ -37,11 +37,11 @@ class Settings:
             if o.strip()
         ]
     )
-    data_dir: Path = Path(os.getenv("FIELDSHIFT_DATA_DIR", str(REPO_ROOT / "data")))
-    # Set FIELDSHIFT_OFFLINE=1 to forbid all outbound requests (tests, demos without wifi).
-    offline: bool = os.getenv("FIELDSHIFT_OFFLINE", "0") == "1"
-    http_timeout_s: float = float(os.getenv("FIELDSHIFT_HTTP_TIMEOUT", "45"))
-    cache_ttl_hours: float = float(os.getenv("FIELDSHIFT_CACHE_TTL_HOURS", "720"))
+    data_dir: Path = Path(os.getenv("KEBUNDA_DATA_DIR", str(REPO_ROOT / "data")))
+    # Set KEBUNDA_OFFLINE=1 to forbid all outbound requests (tests, demos without wifi).
+    offline: bool = os.getenv("KEBUNDA_OFFLINE", "0") == "1"
+    http_timeout_s: float = float(os.getenv("KEBUNDA_HTTP_TIMEOUT", "45"))
+    cache_ttl_hours: float = float(os.getenv("KEBUNDA_CACHE_TTL_HOURS", "720"))
     # Optional keys: each one only unlocks an *extra* live source.
     nasa_earthdata_token: str = os.getenv("NASA_EARTHDATA_TOKEN", "")
 

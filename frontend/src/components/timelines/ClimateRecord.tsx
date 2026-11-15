@@ -12,7 +12,8 @@
 import { useState } from "react";
 
 import { Term } from "@/components/common/glossary/Term";
-import { MONTH_INITIALS, MONTHS, useUnits } from "@/hooks/useUnits";
+import { useUnits } from "@/hooks/useUnits";
+import { useMonths, useT } from "@/i18n/LanguageProvider";
 import { CHART } from "@/styles/theme";
 import type { FieldOverview } from "@/types/api";
 
@@ -32,6 +33,8 @@ function anomalyColor(z: number | null): string {
 
 export function ClimateRecord({ field }: { field: FieldOverview }) {
   const units = useUnits();
+  const { t } = useT();
+  const { months: MONTHS, initials: MONTH_INITIALS } = useMonths();
   const [series, setSeries] = useState<SeriesId>("heat_days_35");
   const [hover, setHover] = useState<{ y: number; m: number } | null>(null);
   const years = field.series.years;
@@ -40,12 +43,12 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
   const depth = (v: number) => units.waterValue(v).toFixed(units.system === "us" ? 1 : 0);
   // fmt formats a value on the axis; delta formats a change per decade for the trend sentence
   const options: { id: SeriesId; label: string; fmt: (v: number) => string; delta: (v: number) => string; color: string; zeroBased: boolean }[] = [
-    { id: "heat_days_35", label: `Days at ${units.temp(35)} or hotter`, fmt: (v) => v.toFixed(0), delta: (v) => `${v.toFixed(1)} days`, color: CHART.temp, zeroBased: true },
-    { id: "precip_mm", label: "Yearly rain and snow", fmt: depth, delta: (v) => units.water(v), color: CHART.precip, zeroBased: true },
-    { id: "max_1day_mm", label: "Wettest single day", fmt: depth, delta: (v) => units.water(v), color: "#2c6e91", zeroBased: true },
-    { id: "erosive_days", label: "Heavy-rain days", fmt: (v) => v.toFixed(0), delta: (v) => `${v.toFixed(1)} days`, color: "#2c6e91", zeroBased: true },
-    { id: "tmean_c", label: "Average temperature", fmt: (v) => units.tempValue(v).toFixed(1), delta: (v) => units.tempDelta(v).replace("+", ""), color: CHART.temp, zeroBased: false },
-    { id: "warm_season_wet_root", label: "Growing-season soil wetness (0-1)", fmt: (v) => v.toFixed(2), delta: (v) => v.toFixed(3), color: CHART.moisture, zeroBased: false },
+    { id: "heat_days_35", label: t("Days at {temp} or hotter", { temp: units.temp(35) }), fmt: (v) => v.toFixed(0), delta: (v) => t("{n} days", { n: v.toFixed(1) }), color: CHART.temp, zeroBased: true },
+    { id: "precip_mm", label: t("Yearly rainfall"), fmt: depth, delta: (v) => units.water(v), color: CHART.precip, zeroBased: true },
+    { id: "max_1day_mm", label: t("Wettest single day"), fmt: depth, delta: (v) => units.water(v), color: "#2c6e91", zeroBased: true },
+    { id: "erosive_days", label: t("Heavy-rain days"), fmt: (v) => v.toFixed(0), delta: (v) => t("{n} days", { n: v.toFixed(1) }), color: "#2c6e91", zeroBased: true },
+    { id: "tmean_c", label: t("Average temperature"), fmt: (v) => units.tempValue(v).toFixed(1), delta: (v) => units.tempDelta(v).replace("+", ""), color: CHART.temp, zeroBased: false },
+    { id: "warm_season_wet_root", label: t("Growing-season soil wetness (0-1)"), fmt: (v) => v.toFixed(2), delta: (v) => v.toFixed(3), color: CHART.moisture, zeroBased: false },
   ];
   const opt = options.find((o) => o.id === series)!;
   const values = field.climate.annual[series] ?? [];
@@ -71,17 +74,16 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
     <div className="stack">
       {driestYear && wettestYear && (
         <Takeaway>
-          Since {years[0]}, the soil here was driest in {driestYear.yr} and wettest in {wettestYear.yr}. Use the squares below to see whether dry spells are becoming more common, and the second chart to see whether rain, heat or temperature is changing.
+          {t("Since {y0}, the soil here was driest in {dry} and wettest in {wet}. Use the squares below to see whether dry spells are becoming more common, and the second chart to see whether rain, heat or temperature is changing.", { y0: years[0], dry: driestYear.yr, wet: wettestYear.yr })}
         </Takeaway>
       )}
       <div>
-        <h4>Drought fingerprint: every month since {years[0]}</h4>
+        <h4>{t("Drought fingerprint: every month since {y}", { y: years[0] })}</h4>
         <p className="small muted">
-          Each square is one month. Brown means the <Term id="root_zone_anomaly">root zone</Term> was drier than normal for that month;
-          teal means wetter. Read down a column to see one year, across a row to see how a month has changed.
+          {t("Each square is one month. Brown means the")} <Term id="root_zone_anomaly">{t("root zone")}</Term> {t("was drier than normal for that month; teal means wetter. Read down a column to see one year, across a row to see how a month has changed.")}
         </p>
         <div className="table-scroll">
-          <svg viewBox={`0 0 720 ${12 * 15 + 26}`} style={{ width: "100%", minWidth: 520, height: "auto", display: "block" }} role="img" aria-label="Root-zone soil moisture anomaly by month and year">
+          <svg viewBox={`0 0 720 ${12 * 15 + 26}`} style={{ width: "100%", minWidth: 520, height: "auto", display: "block" }} role="img" aria-label={t("Root-zone soil moisture anomaly by month and year")}>
             {MONTH_INITIALS.map((l, m) => <text key={m} x={30} y={m * 15 + 11.5} fontSize={9.5} fill={CHART.faint} textAnchor="end">{l}</text>)}
             {years.map((yr, yi) => (
               <g key={yr}>
@@ -97,21 +99,21 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
         <div className="spread small" style={{ flexWrap: "wrap", marginTop: 4 }}>
           <span className="muted" aria-live="polite">
             {hover && z[hover.y]?.[hover.m] !== null && z[hover.y]?.[hover.m] !== undefined
-              ? <><strong>{MONTHS[hover.m]} {years[hover.y]}</strong>: {describeZ(z[hover.y][hover.m] as number)} · {units.water(field.series.precip[hover.y][hover.m] ?? 0)} of rain</>
-              : "Hover a square for the month."}
+              ? <><strong>{MONTHS[hover.m]} {years[hover.y]}</strong>: {t(describeZ(z[hover.y][hover.m] as number))} · {t("{r} of rain", { r: units.water(field.series.precip[hover.y][hover.m] ?? 0) })}</>
+              : t("Hover a square for the month.")}
           </span>
-          <span className="anomaly-scale"><span>much drier</span><i style={{ background: "linear-gradient(to right, rgb(160,96,38), #f1ebdc, rgb(32,124,134))" }} /><span>much wetter</span></span>
+          <span className="anomaly-scale"><span>{t("much drier")}</span><i style={{ background: "linear-gradient(to right, rgb(160,96,38), #f1ebdc, rgb(32,124,134))" }} /><span>{t("much wetter")}</span></span>
         </div>
       </div>
 
       <div>
         <div className="spread" style={{ flexWrap: "wrap", marginBottom: 6 }}>
-          <h4>Year by year, with the trend</h4>
-          <select value={series} onChange={(e) => setSeries(e.target.value as SeriesId)} aria-label="Series to chart">
+          <h4>{t("Year by year, with the trend")}</h4>
+          <select value={series} onChange={(e) => setSeries(e.target.value as SeriesId)} aria-label={t("Series to chart")}>
             {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>
         </div>
-        <Svg b={b} label={`${opt.label} by year`}>
+        <Svg b={b} label={opt.label}>
           <YAxis b={b} ticks={niceTicks(floor, hi, 4)} y={y} format={opt.fmt} />
           {opt.zeroBased && values.map((v, i) => v !== null && (
             <rect key={i} x={x(i) - 8} y={y(v)} width={16} height={Math.max(0, y(0) - y(v))} rx={3} fill={opt.color} opacity={0.3}>
@@ -125,10 +127,10 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
         </Svg>
         {trend && (
           <p className="small" style={{ marginTop: 4 }}>
-            <span className={`chip ${trend.significant ? "chip-warn" : ""}`}>{trend.significant ? "Clear trend" : "No clear trend yet"}</span>{" "}
+            <span className={`chip ${trend.significant ? "chip-warn" : ""}`}>{trend.significant ? t("Clear trend") : t("No clear trend yet")}</span>{" "}
             <span className="muted">
-              {trend.per_decade >= 0 ? "Rising" : "Falling"} by {opt.delta(Math.abs(trend.per_decade))} per decade
-              {trend.significant ? "." : ". A dashed line means the change could be chance: 24 years is a short record."}
+              {t(trend.per_decade >= 0 ? "Rising by {x} per decade" : "Falling by {x} per decade", { x: opt.delta(Math.abs(trend.per_decade)) })}
+              {trend.significant ? "." : `. ${t("A dashed line means the change could be chance: 24 years is a short record.")}`}
             </span>
           </p>
         )}

@@ -1,10 +1,10 @@
-# FieldShift — Adapting Farms with NASA Data
+# Kebunda — Adapting Farms with NASA Data
 
 > **2026 NASA Space Apps Challenge:** [Field Shift: Adapting Farms with NASA Data](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/?tab=details)
 
 ## Mission & Overview
 
-**FieldShift** is a farmer-centered agricultural decision-support platform that combines **NASA Earth observations** with **local soil information, crop characteristics, and farmer priorities** to help growers explore, evaluate, and compare multi-year crop-rotation strategies that strengthen soil health and build resilience to changing climate and water conditions.
+**Kebunda** is a farmer-centered agricultural decision-support platform that combines **NASA Earth observations** with **local soil information, crop characteristics, and farmer priorities** to help growers explore, evaluate, and compare multi-year crop-rotation strategies that strengthen soil health and build resilience to changing climate and water conditions.
 
 This tool is built to **support—never replace—farmer judgment and local agricultural expertise**, translating multi-resolution satellite telemetry and agro-climatic models into clear, actionable insights alongside transparent uncertainty and local review checklists.
 
@@ -179,7 +179,7 @@ The full list of the challenge's datasets and how each is used is in the app und
 
 ## Limits
 
-FieldShift's models are monthly, single-field planning models built to rank rotations
+Kebunda's models are monthly, single-field planning models built to rank rotations
 against each other. They do not see compaction, tile lines, nematodes, varieties, contracts
 or within-field variation, and their dollar figures are not a budget. Every result page says
 so, and every strategy lists what to check with DOA, MADA or MARDI officers before acting.

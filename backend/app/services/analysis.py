@@ -16,7 +16,7 @@ from app.services.vulnerability_analyzer import calendar as vuln
 from app.services.vulnerability_analyzer import insights as insight_mod
 from app.utils.stats import mean
 
-DISCLAIMER = ("FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, "
+DISCLAIMER = ("Kebunda surfaces patterns and possibilities from public data. It supports, and never replaces, "
               "the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers.")
 
 _bundles: OrderedDict[str, dict] = OrderedDict()

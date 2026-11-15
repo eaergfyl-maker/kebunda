@@ -4,6 +4,7 @@
  */
 import type { CSSProperties, ReactNode } from "react";
 
+import { useT } from "@/i18n/LanguageProvider";
 import type { ApiError } from "@/services/apiClient";
 import { ACCESS_LABEL, scoreTone } from "@/styles/theme";
 import type { Access } from "@/types/api";
@@ -30,17 +31,19 @@ export function Card({ title, subtitle, action, children, className = "", id }: 
 }
 
 export function Loading({ label = "Loading", height = 120 }: { label?: string; height?: number }) {
+  const { t } = useT();
   return (
     <div className="skeleton" style={{ height }} role="status" aria-live="polite">
-      <span className="sr-only">{label}…</span>
+      <span className="sr-only">{t(label)}…</span>
     </div>
   );
 }
 
 export function ErrorNotice({ error, title = "This could not be loaded" }: { error: ApiError; title?: string }) {
+  const { t } = useT();
   return (
     <div className="notice notice-bad" role="alert">
-      <strong>{title}.</strong> {error.message}
+      <strong>{t(title)}.</strong> {error.message}
       {error.hint && <div className="small" style={{ marginTop: 4 }}>{error.hint}</div>}
     </div>
   );
@@ -48,11 +51,13 @@ export function ErrorNotice({ error, title = "This could not be loaded" }: { err
 
 /** Where a number came from: live from the provider, curated, a stand-in product, or missing. */
 export function ProvenanceBadge({ access, source, compact = false }: { access: Access | null | undefined; source?: string | null; compact?: boolean }) {
+  const { t } = useT();
   const meta = ACCESS_LABEL[access ?? "unavailable"];
+  const label = t(meta.label);
   return (
-    <span className={`chip chip-${meta.tone}`} title={`${source ? source + ". " : ""}${meta.help}`}>
+    <span className={`chip chip-${meta.tone}`} title={`${source ? source + ". " : ""}${t(meta.help)}`}>
       <span className="dot" style={{ background: "currentColor", opacity: 0.7 }} />
-      {compact ? meta.label : source ? `${source} · ${meta.label}` : meta.label}
+      {compact ? label : source ? `${source} · ${label}` : label}
     </span>
   );
 }
@@ -80,15 +85,16 @@ export function Delta({ direction, rising, children }: { direction: "better" | "
 export function ScoreBar({ value, color, baseline, uncertainty, label, height = 8 }: {
   value: number; color?: string; baseline?: number; uncertainty?: number; label?: string; height?: number;
 }) {
+  const { t } = useT();
   const tone = scoreTone(value);
   const fill = color ?? (tone === "good" ? "var(--good)" : tone === "warn" ? "var(--warn)" : "var(--bad)");
   const lo = Math.max(0, value - (uncertainty ?? 0));
   const hi = Math.min(100, value + (uncertainty ?? 0));
   return (
-    <div className="scorebar" style={{ height }} role="img" aria-label={`${label ?? "Score"} ${Math.round(value)} out of 100`}>
+    <div className="scorebar" style={{ height }} role="img" aria-label={t("{label} {n} out of 100", { label: label ?? t("Score"), n: Math.round(value) })}>
       <div className="scorebar-fill" style={{ width: `${value}%`, background: fill }} />
       {uncertainty ? <div className="scorebar-whisker" style={{ left: `${lo}%`, width: `${hi - lo}%` }} /> : null}
-      {baseline !== undefined && <div className="scorebar-mark" style={{ left: `${baseline}%` }} title={`Current rotation: ${Math.round(baseline)}`} />}
+      {baseline !== undefined && <div className="scorebar-mark" style={{ left: `${baseline}%` }} title={t("Current rotation: {n}", { n: Math.round(baseline) })} />}
     </div>
   );
 }
@@ -122,12 +128,13 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
 
 /** The framing the challenge asks for, shown wherever a recommendation appears. */
 export function SupportNotJudgment({ text }: { text?: string }) {
+  const { t } = useT();
   return (
     <aside className="support-note">
       <span aria-hidden className="support-icon">🤝</span>
       <p>
-        <strong>A second opinion, not a prescription.</strong>{" "}
-        {text ?? "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, your judgment and the advice of local agronomists, DOA and MARDI extension officers and crop advisers."}
+        <strong>{t("A second opinion, not a prescription.")}</strong>{" "}
+        {text ?? t("Kebunda surfaces patterns and possibilities from public data. It supports, and never replaces, your judgment and the advice of local agronomists, DOA and MARDI extension officers and crop advisers.")}
       </p>
     </aside>
   );

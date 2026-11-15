@@ -1,9 +1,9 @@
 {
  "openapi": "3.1.0",
  "info": {
-  "title": "FieldShift API",
+  "title": "Kebunda API",
   "summary": "Crop-rotation decision support for Malaysian farms from NASA Earth observations, global soil and crop data, and farmer priorities.",
-  "description": "Fuses NASA POWER, GPM IMERG, SMAP, SRTM, MODIS and GRACE with Copernicus Sentinel-2, ISRIC SoilGrids, FAO GAEZ and MetMalaysia rain gauges (NOAA GHCN-Daily), then simulates and compares crop rotations for one field. Every strategy explains why it was suggested, the evidence, the expected benefits, the information gaps and the risks that need local review.\n\nFieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers.",
+  "description": "Fuses NASA POWER, GPM IMERG, SMAP, SRTM, MODIS and GRACE with Copernicus Sentinel-2, ISRIC SoilGrids, FAO GAEZ and MetMalaysia rain gauges (NOAA GHCN-Daily), then simulates and compares crop rotations for one field. Every strategy explains why it was suggested, the evidence, the expected benefits, the information gaps and the risks that need local review.\n\nKebunda surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers.",
   "version": "1.0.0"
  },
  "paths": {
