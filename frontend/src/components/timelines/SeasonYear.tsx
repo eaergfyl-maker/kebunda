@@ -13,6 +13,7 @@ import { CHART } from "@/styles/theme";
 import type { FieldOverview } from "@/types/api";
 
 import { box, extent, innerW, LegendRow, linePath, MonthAxis, niceTicks, scale, Svg, YAxis } from "./chartKit";
+import { LocalAdviceNote, Takeaway } from "./Takeaway";
 
 const ET_ACTUAL_COLOR = "#8a5a9e";
 
@@ -39,6 +40,12 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
   const y = scale(0, top, b.height - b.bottom, b.top);
   const ticks = niceTicks(0, top, 4);
   const deficitMonths = rain.map((r, i) => et0[i] - r).filter((d) => d > 0).length;
+  const wettest = rain.reduce((bi, v, i) => (v > rain[bi] ? i : bi), 0);
+  const lightest = rain.reduce((bi, v, i) => (v < rain[bi] ? i : bi), 0);
+  const sentence = `Rain is heaviest in ${MONTHS[wettest]} and lightest in ${MONTHS[lightest]} (about ${units.water(rain[lightest])}). ` +
+    (deficitMonths > 0
+      ? `In ${deficitMonths} ${deficitMonths === 1 ? "month" : "months"} of the year the air can take more water than falls, so crops may need extra water then.`
+      : "Rain beats the air's thirst in every month, so rain alone rarely leaves crops short.");
 
   const b2 = box(720, 170, { right: 44 });
   const yN = scale(0, 1, b2.height - b2.bottom, b2.top);
@@ -53,6 +60,7 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
           Bars are <Term id="fused_rain">fused rainfall</Term> with its uncertainty; the line is <Term id="et0">reference evapotranspiration</Term>.
           In {deficitMonths} months of the year the air can take more water than falls.
         </p>
+        <Takeaway>{sentence}</Takeaway>
         <Svg b={b} label="Monthly rainfall, reference evapotranspiration and actual evapotranspiration">
           <YAxis b={b} ticks={ticks} y={y} format={(v) => units.waterValue(v).toFixed(units.system === "us" ? 1 : 0)} title={`${units.waterUnit} per month`} />
           {rain.map((r, m) => (
@@ -126,6 +134,7 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
         )}
       </div>
       <p className="xs faint">Monthly averages, {field.climate.years[0]}–{field.climate.years[field.climate.years.length - 1]}.</p>
+      <LocalAdviceNote />
     </div>
   );
 }
