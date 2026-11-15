@@ -12,7 +12,7 @@
  *   field (leaflet-draw or Geoman), compute its area, and pass the centroid and area to
  *   `onAnalyzePoint` so the custom-field request uses the real size.
  * TODO (Member 2): within-field vulnerability overlay. Shade the field by SRTM slope class and
- *   SSURGO map-unit polygons (Soil Data Access returns geometry) to show erosion hot spots.
+ *   SoilGrids or DOA soil-map polygons to show erosion hot spots.
  * TODO (Member 2): CoCoRaHS / USGS NWIS station markers near the field, linking each gauge
  *   or well to its record, to make the "ground truth" side of the comparison tangible.
  */
@@ -50,7 +50,7 @@ export interface OverlayDef {
 }
 
 export const OVERLAYS: OverlayDef[] = [
-  { id: "farms", label: "Benchmark farms", help: "Five real fields with pre-loaded NASA and USDA data.", defaultOn: true, Component: FarmPins },
+  { id: "farms", label: "Benchmark farms", help: "Five real Malaysian fields with pre-loaded NASA, Sentinel-2, SoilGrids and FAO GAEZ data.", defaultOn: true, Component: FarmPins },
   { id: "footprints", label: "Satellite pixel sizes", help: "How big one pixel of each dataset is next to this field.", defaultOn: true, needsField: true, Component: PixelFootprints },
   { id: "probe", label: "Click to query NASA POWER", help: "Click anywhere to pull 24 years of NASA climate data for that spot.", defaultOn: true, Component: PointProbe },
 ];

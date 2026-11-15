@@ -4,7 +4,7 @@
  * OWNER: Member 2. Driven entirely by layers/layerRegistry.ts.
  *
  * TODO (Member 2): animated seasonal scrubber. Add a play button that steps `date` through
- *   `steps` on an interval so a farmer can watch green-up and harvest sweep across the county.
+ *   `steps` on an interval so a farmer can watch green-up and harvest sweep across the district.
  * TODO (Member 2): side-by-side "swipe" compare of two dates (leaflet-side-by-side) for
  *   before/after a drought or flood.
  */

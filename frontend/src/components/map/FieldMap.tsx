@@ -30,7 +30,7 @@ export interface FieldMapProps {
   defaultLayerId?: string | null;
 }
 
-const USA: [number, number] = [39.5, -98.5];
+const MALAYSIA: [number, number] = [4.0, 109.0];
 
 /** Wheel-zoom only after the map is clicked, so scrolling the page never gets trapped in the map. */
 function ScrollZoomOnFocus() {
@@ -56,7 +56,7 @@ function ViewController({ field }: { field: FieldOverview | null }) {
   const lon = field?.farm.lon;
   useEffect(() => {
     if (lat !== undefined && lon !== undefined) map.flyTo([lat, lon], 11, { duration: 0.9 });
-    else map.flyTo(USA, 4, { duration: 0.6 });
+    else map.flyTo(MALAYSIA, 5, { duration: 0.6 });
   }, [lat, lon, map]);
   return null;
 }
@@ -83,7 +83,7 @@ export function FieldMap({ farms, selectedId = null, onSelect, field = null, onA
 
   return (
     <div className="fieldmap" style={{ height }}>
-      <MapContainer center={field ? [field.farm.lat, field.farm.lon] : USA} zoom={field ? 11 : 4} minZoom={3} maxZoom={16} scrollWheelZoom={false} worldCopyJump className="fieldmap-canvas">
+      <MapContainer center={field ? [field.farm.lat, field.farm.lon] : MALAYSIA} zoom={field ? 11 : 5} minZoom={3} maxZoom={16} scrollWheelZoom={false} worldCopyJump className="fieldmap-canvas">
         <BaseLayer layer={base} />
         {active && <NasaLayer layer={active} date={date} opacity={opacity} />}
         {overlays.filter((o) => enabled[o.id]).map((o) => (

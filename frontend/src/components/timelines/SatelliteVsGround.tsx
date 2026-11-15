@@ -24,7 +24,7 @@ import type { CalendarValidation, FieldOverview } from "@/types/api";
 import { box, innerW, LegendRow, linePath, MonthAxis, niceTicks, scale, Svg, YAxis } from "./chartKit";
 
 const SOURCE = {
-  ground: { label: "Rain gauges (Daymet, 1 km)", color: CHART.ground },
+  ground: { label: "Rain gauge (MetMalaysia via NOAA GHCN)", color: CHART.ground },
   imerg: { label: "GPM IMERG satellite (10 km)", color: CHART.imerg },
   merra2: { label: "MERRA-2 weather model (55 km)", color: "#9db8c6" },
 } as const;
