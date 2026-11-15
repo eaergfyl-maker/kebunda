@@ -18,6 +18,7 @@
  *   - CoCoRaHS rain-gauge vs. GPM IMERG comparison (see SatelliteVsGround.tsx).
  *   - GRACE-FO groundwater trend view (see ClimateRecord.tsx).
  *   - Soil-water tank animation: strategy.months[i].soil_water_frac through the rotation.
+
  */
 import type { ComponentType } from "react";
 

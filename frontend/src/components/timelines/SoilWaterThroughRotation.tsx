@@ -11,6 +11,7 @@ import { CHART, ROLE_COLOR } from "@/styles/theme";
 import type { Strategy } from "@/types/api";
 
 import { box, LegendRow, linePath, scale, Svg, YAxis } from "./chartKit";
+import { LocalAdviceNote, Takeaway } from "./Takeaway";
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -18,6 +19,22 @@ function driest(s: Strategy) {
   const cells = s.months;
   if (!cells.length) return null;
   return cells.reduce((lo, c) => (c.soil_water_frac < lo.soil_water_frac ? c : lo), cells[0]);
+}
+
+/** One plain sentence for the farmer. 90% and 5 points are display thresholds, not agronomy rules. */
+function takeaway(base: Strategy, other: Strategy | null): string {
+  const d = driest(base);
+  if (!d) return "";
+  const pct = Math.round(d.soil_water_frac * 100);
+  let s = pct >= 90
+    ? "On your current rotation the soil stays well supplied with water all year."
+    : `On your current rotation the soil is driest in ${MONTH_NAMES[d.calendar_month]}, when it holds about ${pct}% of its water.`;
+  const o = other ? driest(other) : null;
+  if (other && o) {
+    const diff = Math.round((o.soil_water_frac - d.soil_water_frac) * 100);
+    if (Math.abs(diff) >= 5) s += ` ${other.title} keeps ${Math.abs(diff)} percentage points ${diff > 0 ? "more" : "less"} water in the driest month.`;
+  }
+  return s;
 }
 
 export function SoilWaterThroughRotation({ strategies }: { strategies: Strategy[] }) {
@@ -28,7 +45,7 @@ export function SoilWaterThroughRotation({ strategies }: { strategies: Strategy[
   const shown = compare ? [baseline, compare] : [baseline];
 
   const n = Math.max(...shown.map((s) => s.months.length), 1);
-const b = box(720, 250, { top: 26 });
+  const b = box(720, 250, { top: 26 });
   const x = scale(0, Math.max(n - 1, 1), b.left + 8, b.width - b.right - 8);
   const y = scale(0, 1, b.height - b.bottom, b.top);
   const labelEvery = n > 36 ? 3 : 1;
@@ -51,8 +68,10 @@ const b = box(720, 250, { top: 26 });
         )}
       </div>
 
+      <Takeaway>{takeaway(baseline, compare)}</Takeaway>
+
       <Svg b={b} label="Soil water by month through the rotation">
-            <YAxis b={b} ticks={[0, 0.25, 0.5, 0.75, 1]} y={y} format={(v) => `${Math.round(v * 100)}%`} />
+        <YAxis b={b} ticks={[0, 0.25, 0.5, 0.75, 1]} y={y} format={(v) => `${Math.round(v * 100)}%`} />
         {baseline.months.map((c, i) => (
           <g key={i}>
             {c.calendar_month === 0 && i > 0 && (
@@ -95,6 +114,7 @@ const b = box(720, 250, { top: 26 });
         })}
       </div>
       <p className="xs faint">Simulated from fused rainfall, crop water use and irrigation for this field. It is a model output, not a probe reading.</p>
+      <LocalAdviceNote />
     </div>
   );
 }

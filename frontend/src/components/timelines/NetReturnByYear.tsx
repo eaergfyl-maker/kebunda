@@ -11,6 +11,7 @@ import { CHART, ROLE_COLOR } from "@/styles/theme";
 import type { Strategy } from "@/types/api";
 
 import { box, extent, innerW, linePath, niceTicks, scale, Svg, YAxis } from "./chartKit";
+import { LocalAdviceNote, Takeaway } from "./Takeaway";
 
 const PALETTE = ["#2c6e91", "#c9952b", "#9a5ba0", "#4f8f4a", "#c8553d"];
 
@@ -50,12 +51,24 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
   const baseline = withHistory.find((s) => s.role === "baseline") ?? withHistory[0];
   const worst = new Set(baseline.history.worst_years);
 
+  // one plain sentence: the best-earning alternative against the current rotation
+  let best: (typeof withHistory)[number] | null = null;
+  for (const s of withHistory) {
+    if (s !== baseline && (!best || s.history.mean_net_per_ha > best.history.mean_net_per_ha)) best = s;
+  }
+  const money = (v: number) => units.money(v);
+  const sentence = best
+    ? `In a typical year, ${best.title} earns about ${money(Math.abs(best.history.mean_net_per_ha - baseline.history.mean_net_per_ha))} per hectare ${best.history.mean_net_per_ha >= baseline.history.mean_net_per_ha ? "more" : "less"} than your current rotation. In a bad year it earns ${money(best.history.bad_year_net_per_ha)}, against ${money(baseline.history.bad_year_net_per_ha)} for the current one.`
+    : `In a typical year your current rotation earns ${money(baseline.history.mean_net_per_ha)} per hectare, and about ${money(baseline.history.bad_year_net_per_ha)} in a bad year.`;
+
   return (
     <div className="stack">
       <p className="small muted" style={{ maxWidth: "70ch" }}>
         What each rotation would have earned on this field in every year of the weather record, per hectare after costs.
         Lines that swing far up and down are riskier; shaded columns are the worst years for your current rotation.
       </p>
+
+      <Takeaway>{sentence}</Takeaway>
 
       <div className="row-wrap no-print">
         {withHistory.map((s) => {
@@ -113,7 +126,10 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
           </tbody>
         </table>
       </div>
-      <p className="xs faint">Simulated from 24 years of weather and the crop prices and costs the tool assumes. All values are net return per hectare.</p>
+      <p className="xs faint">
+        Simulated from 24 years of weather. Prices and costs are planning averages from DOA, FAMA and MARDI sources, excluding land rent and subsidies, so treat them as a way to compare rotations, not a budget.
+      </p>
+      <LocalAdviceNote />
     </div>
   );
 }
