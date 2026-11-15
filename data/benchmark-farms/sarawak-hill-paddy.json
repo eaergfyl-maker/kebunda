@@ -1,0 +1,95 @@
+{
+  "id": "sarawak-hill-paddy",
+  "name": "Hill paddy plot on a Sarawak slope",
+  "short_name": "Hill paddy, Sarawak",
+  "region": "Serian uplands, Kuching Division, Sarawak",
+  "state": "Sarawak",
+  "district": "Serian",
+  "lat": 1.15,
+  "lon": 110.55,
+  "area_ha": 1.5,
+  "headline": "Traditional hill rice on cleared slopes: food security for the family, but bare soil under the heaviest rains in Malaysia.",
+  "story": "A 1.5 ha hillside plot farmed by a Bidayuh family, planted to traditional hill rice once a year from about September and then left to bush fallow. Yields are under 2 t/ha, the cleared slope is bare when the northeast monsoon rains peak, and fallow periods have shrunk as land gets scarce.",
+  "challenge_tags": [
+    "Erosion on cleared slopes",
+    "Low, rain-dependent yields",
+    "Shrinking fallow periods"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "none",
+      "label": "Rainfed",
+      "allocation_mm": 0,
+      "sustainable_mm": 0,
+      "efficiency": 0,
+      "cost_per_mm_ha": 0,
+      "source": null
+    },
+    "tillage": "no_till",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "knapsack_sprayer"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 40,
+    "erosivity_method": "rusle"
+  },
+  "baseline_rotation": {
+    "name": "Hill rice, then bush fallow",
+    "years": [
+      [
+        "hill_rice"
+      ],
+      []
+    ],
+    "tillage": "no_till",
+    "note": "Sentinel-2 shows a single crop cycle in alternate years with regrowth between; hill rice is the customary crop."
+  },
+  "water_context": {
+    "aquifer": null,
+    "in_situ_trend_m_yr": null,
+    "in_situ_source": null,
+    "note": "No irrigation. Rain is abundant (over 3,500 mm) but dry spells of two to three weeks in June-August still hurt hill rice at flowering."
+  },
+  "reference_yields": {
+    "hill_rice": 1.8,
+    "sweet_potato": 10,
+    "cassava": 18,
+    "groundnut": 1.5,
+    "sweet_corn": 10,
+    "long_bean": 10,
+    "chili": 8
+  },
+  "local_market": {
+    "hill_rice": {
+      "access": 0.6,
+      "note": "Mostly eaten at home; Bario-type and heritage varieties sell at a premium in Kuching."
+    },
+    "sweet_potato": {
+      "access": 0.5,
+      "note": "Serian tamu (weekly market)."
+    },
+    "cassava": {
+      "access": 0.5,
+      "note": "Serian tamu; leaves sell too."
+    },
+    "chili": {
+      "access": 0.6,
+      "note": "Serian and Kuching markets."
+    }
+  },
+  "default_priorities": {
+    "water": 4,
+    "soil": 8,
+    "erosion": 10,
+    "pest": 5,
+    "income": 7
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, SRTM, Sentinel-2 (see observation provenance)",
+    "ISRIC SoilGrids 250 m",
+    "FAO GAEZ v4 crop suitability",
+    "Sarawak DOA hill paddy statistics (reference yields)"
+  ]
+}

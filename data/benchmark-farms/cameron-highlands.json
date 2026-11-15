@@ -1,0 +1,98 @@
+{
+  "id": "cameron-highlands",
+  "name": "Cameron Highlands vegetable terrace",
+  "short_name": "Cameron Highlands, Pahang",
+  "region": "Cameron Highlands, Titiwangsa range (1,000-1,600 m)",
+  "state": "Pahang",
+  "district": "Cameron Highlands",
+  "lat": 4.52,
+  "lon": 101.42,
+  "area_ha": 1.2,
+  "headline": "Cool nights grow Malaysia's cabbages and tomatoes, but cleared slopes send mud into the rivers every monsoon.",
+  "story": "A 1.2 ha terraced farm on a steep slope near Brinchang growing cabbage back to back with tomato under rain shelters. The cool climate is rare in Malaysia and valuable, but heavy pesticide and fertiliser use, bare beds between crops and 3,000 mm of rain a year drive soil loss and turbid rivers. Clubroot and bacterial wilt build up in soils that never rest from brassicas and nightshades.",
+  "challenge_tags": [
+    "Erosion on steep cleared slopes",
+    "Clubroot and bacterial wilt build-up",
+    "High fertiliser and spray use"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "sprinkler",
+      "label": "Stream-fed sprinklers and drip",
+      "allocation_mm": 400,
+      "sustainable_mm": 300,
+      "efficiency": 0.75,
+      "cost_per_mm_ha": 1.5,
+      "source": "Hill streams (gravity-fed hoses)"
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "hand_tractor",
+      "knapsack_sprayer",
+      "drip_fertigation",
+      "rain_shelter"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 25,
+    "erosivity_method": "rusle"
+  },
+  "baseline_rotation": {
+    "name": "Cabbage - tomato, bare beds between crops",
+    "years": [
+      [
+        "cabbage",
+        "tomato"
+      ]
+    ],
+    "tillage": "conventional",
+    "note": "Sentinel-2 sees two to three short crop cycles a year on these terraces; the crops are typical of the area."
+  },
+  "water_context": {
+    "aquifer": null,
+    "in_situ_trend_m_yr": null,
+    "in_situ_source": "JPS river turbidity and suspended sediment, Sungai Bertam",
+    "note": "Water is plentiful. The problem is what leaves the farm: sediment, nitrate and pesticide in the Bertam and Telom rivers."
+  },
+  "reference_yields": {
+    "cabbage": 35,
+    "tomato": 40,
+    "chili": 10,
+    "sweet_potato": 12,
+    "long_bean": 12,
+    "sweet_corn": 12
+  },
+  "local_market": {
+    "cabbage": {
+      "access": 1.0,
+      "note": "Collectors truck to Kuala Lumpur and Singapore wholesale markets daily."
+    },
+    "tomato": {
+      "access": 1.0,
+      "note": "Same collectors; premium for rain-shelter fruit."
+    },
+    "chili": {
+      "access": 0.7,
+      "note": "Sold, but highland chili competes with lowland supply."
+    },
+    "sweet_corn": {
+      "access": 0.6,
+      "note": "Tourist stalls along the highland road."
+    }
+  },
+  "default_priorities": {
+    "water": 3,
+    "soil": 8,
+    "erosion": 10,
+    "pest": 8,
+    "income": 8
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, SRTM, Sentinel-2 (see observation provenance)",
+    "ISRIC SoilGrids 250 m",
+    "FAO GAEZ v4 crop suitability",
+    "MARDI highland vegetable technology packages (reference yields)",
+    "DOA Pahang vegetable production statistics"
+  ]
+}

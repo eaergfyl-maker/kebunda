@@ -1,0 +1,107 @@
+{
+  "id": "kedah-mada",
+  "name": "MADA double-crop paddy lot on marine clay",
+  "short_name": "MADA paddy, Kedah",
+  "region": "Muda Agricultural Development Authority (MADA) granary, Kedah-Perlis plain",
+  "state": "Kedah",
+  "district": "Kubang Pasu",
+  "lat": 6.25,
+  "lon": 100.28,
+  "area_ha": 2.4,
+  "headline": "Malaysia's rice bowl: two paddy seasons a year on canal water that runs short when the dry monsoon fails.",
+  "story": "A 2.4 ha paddy lot inside the MADA scheme, planted twice a year (main season from about August, off-season from about February) with direct-seeded rice. The Muda and Pedu dams supply the water, but El Niño years such as 2016 and 2024 forced MADA to delay or cut the off-season. Continuous paddy carries planthopper, blast and weedy rice, the straw is usually burnt, and yields have plateaued near 4.5-5 t/ha a season.",
+  "challenge_tags": [
+    "Off-season water shortfall in El Niño years",
+    "Rice after rice: weedy rice and planthopper",
+    "Straw burning between seasons"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "canal",
+      "label": "MADA gravity canal (Muda/Pedu dams)",
+      "allocation_mm": 1600,
+      "sustainable_mm": 1300,
+      "efficiency": 0.6,
+      "cost_per_mm_ha": 0.15,
+      "source": "Muda and Pedu reservoirs via the MADA canal network"
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "hand_tractor",
+      "knapsack_sprayer",
+      "combine_hire"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 100,
+    "erosivity_method": "rusle"
+  },
+  "baseline_rotation": {
+    "name": "Paddy - paddy (two seasons a year)",
+    "years": [
+      [
+        "rice",
+        "rice"
+      ]
+    ],
+    "tillage": "conventional",
+    "note": "Sentinel-2 shows two green-up and harvest cycles every year since 2020, matching the MADA two-season calendar."
+  },
+  "water_context": {
+    "aquifer": null,
+    "in_situ_trend_m_yr": null,
+    "in_situ_source": "MADA and JPS reservoir storage reports, Muda and Pedu dams",
+    "note": "Water comes from surface reservoirs, not groundwater. When Muda and Pedu storage falls below about 40% at the end of the dry monsoon (Jan-Mar), MADA delays the off-season or rotates supply between blocks."
+  },
+  "reference_yields": {
+    "rice": 4.8,
+    "grain_maize": 5.5,
+    "sweet_corn": 14,
+    "mung_bean": 1.0,
+    "groundnut": 2.2,
+    "sweet_potato": 15,
+    "long_bean": 14,
+    "watermelon": 22
+  },
+  "local_market": {
+    "rice": {
+      "access": 1.0,
+      "note": "BERNAS-licensed mills buy at the government floor price; input and price subsidies apply."
+    },
+    "grain_maize": {
+      "access": 0.6,
+      "note": "Feed mills in Kedah and Penang take local grain corn under the national grain-corn programme, but need a dryer."
+    },
+    "sweet_corn": {
+      "access": 0.8,
+      "note": "Pasar tani and roadside sellers along the Alor Setar corridor."
+    },
+    "mung_bean": {
+      "access": 0.4,
+      "note": "Small market; a buyer or cooperative has to be arranged before planting."
+    },
+    "groundnut": {
+      "access": 0.5,
+      "note": "Local snack processors; most groundnut is imported."
+    },
+    "watermelon": {
+      "access": 0.6,
+      "note": "Middlemen collect for the northern wholesale markets."
+    }
+  },
+  "default_priorities": {
+    "water": 9,
+    "soil": 6,
+    "erosion": 3,
+    "pest": 7,
+    "income": 8
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, SMAP, Sentinel-2 (see observation provenance)",
+    "ISRIC SoilGrids 250 m",
+    "FAO GAEZ v4 crop suitability",
+    "MADA and DOA paddy statistics (reference yields)",
+    "MARDI off-season crop trials on paddy land (maize, groundnut, mung bean)"
+  ]
+}

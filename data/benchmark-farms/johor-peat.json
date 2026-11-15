@@ -1,0 +1,118 @@
+{
+  "id": "johor-peat",
+  "name": "MD2 pineapple smallholding on drained peat",
+  "short_name": "Pekan Nanas peat, Johor",
+  "region": "Pontian peatlands, southwest Johor",
+  "state": "Johor",
+  "district": "Pontian",
+  "lat": 1.52,
+  "lon": 103.48,
+  "area_ha": 4.0,
+  "headline": "Pineapple thrives on acid peat, but every drained metre of peat sinks, emits carbon and can burn.",
+  "story": "A 4 ha smallholding near Pekan Nanas growing MD2 pineapple for export on deep, drained peat, replanted every two years after a ratoon crop. Pineapple tolerates the extreme acidity, but drainage lowers the water table, so the peat subsides 2-5 cm a year, releases CO2, and becomes a fire risk in dry spells like the 2019 El Niño haze.",
+  "challenge_tags": [
+    "Peat subsidence and carbon loss",
+    "Fire risk in dry spells",
+    "Two-year pineapple lock-in"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "none",
+      "label": "Rainfed",
+      "allocation_mm": 0,
+      "sustainable_mm": 0,
+      "efficiency": 0,
+      "cost_per_mm_ha": 0,
+      "source": null
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "hand_tractor",
+      "knapsack_sprayer"
+    ],
+    "tile_drained": true,
+    "slope_length_m": 80,
+    "erosivity_method": "rusle"
+  },
+  "soil_overrides": {
+    "series": "Histosols (deep peat, Johor soil survey)",
+    "map_unit_name": "Histosols (deep peat, Johor soil survey)",
+    "taxonomic_order": "Histosols",
+    "texture_class": "peat (sapric)",
+    "organic_matter_pct": 60.0,
+    "ph": 3.8,
+    "clay_pct": 5.0,
+    "sand_pct": 10.0,
+    "silt_pct": 85.0,
+    "bulk_density_g_cm3": 0.15,
+    "awc_cm_cm": 0.35,
+    "awc_profile_mm": 450,
+    "cec_meq_100g": 120.0,
+    "kw_factor": 0.1,
+    "hydrologic_group": "D",
+    "hydrologic_group_raw": "D (high water table on drained peat)",
+    "drainage_class": "Very poorly drained (artificially drained)",
+    "note": "SoilGrids underestimates organic carbon on tropical peat at 250 m. This field is mapped as deep peat by the Johor soil survey, so the organic-soil values here replace the model estimate."
+  },
+  "baseline_rotation": {
+    "name": "MD2 pineapple (plant crop + ratoon), replanted",
+    "years": [
+      [
+        "pineapple"
+      ],
+      [
+        "pineapple"
+      ]
+    ],
+    "tillage": "conventional",
+    "note": "Sentinel-2 shows a permanent mid-level canopy; Pekan Nanas peat is a recognised pineapple area (MPIB)."
+  },
+  "water_context": {
+    "aquifer": null,
+    "in_situ_trend_m_yr": -0.03,
+    "in_situ_source": "Published subsidence rates for drained tropical peat (2-5 cm/yr)",
+    "note": "The key water number on peat is the water table. Keeping it within 40-60 cm of the surface slows subsidence and fire risk; deeper drains speed both."
+  },
+  "reference_yields": {
+    "pineapple": 30,
+    "sweet_potato": 12,
+    "cassava": 20,
+    "chili": 8,
+    "long_bean": 12,
+    "sweet_corn": 10
+  },
+  "local_market": {
+    "pineapple": {
+      "access": 1.0,
+      "note": "MPIB-registered packers export MD2 fresh to Singapore, China and the Middle East."
+    },
+    "cassava": {
+      "access": 0.5,
+      "note": "Local processors for chips and kerepek."
+    },
+    "chili": {
+      "access": 0.6,
+      "note": "Sold in Johor Bahru wholesale markets."
+    },
+    "sweet_potato": {
+      "access": 0.6,
+      "note": "Sold in Johor Bahru wholesale markets."
+    }
+  },
+  "default_priorities": {
+    "water": 6,
+    "soil": 10,
+    "erosion": 3,
+    "pest": 6,
+    "income": 9
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, SMAP, Sentinel-2 (see observation provenance)",
+    "ISRIC SoilGrids 250 m with Johor peat soil-survey overrides",
+    "FAO GAEZ v4 crop suitability",
+    "Malaysian Pineapple Industry Board (MPIB) yields and prices",
+    "MARDI peat crop research"
+  ]
+}
