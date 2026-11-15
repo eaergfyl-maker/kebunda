@@ -6,7 +6,7 @@ import pytest
 from app.services import analysis
 from app.services.fusion_engine import climate, harmonize
 from app.services.rotation_engine.context import crops_by_id, rainfall_erosivity
-from app.services.rotation_engine.schedule import build_schedule
+from app.services.rotation_engine.schedule import build_schedule, is_tropical
 from app.services.rotation_engine.simulate import expected_runoff_per_wet_day, simulate
 from app.utils import geo, stats
 
@@ -38,12 +38,13 @@ def test_precip_fusion_without_ground_reference_still_works():
     assert f["relative_sigma"][0] > 0.15  # disagreement between sources widens the band
 
 
-def test_layer_inventory_scores_resolution_gap(iowa):
-    b, _ = iowa
+def test_layer_inventory_scores_resolution_gap(kedah):
+    b, _ = kedah
     rows = {r["id"]: r for r in b["layers"]}
     assert all(0.0 <= r["confidence"] <= 1.0 for r in rows.values())
-    # a 55 km soil-moisture cell says less about one field than a 30 m soil survey polygon
-    assert rows["soil_moisture"]["representativeness"] < rows["ssurgo"]["representativeness"]
+    # a 9-36 km soil-moisture cell says less about one field than a 250 m soil grid or a 10 m Sentinel-2 pixel
+    assert rows["soil_moisture"]["representativeness"] < rows["soil"]["representativeness"]
+    assert {"gaez", "crop_cycles"} <= set(rows)
     assert rows["soil_moisture"]["pixel_to_field_ratio"] > 10
     assert rows["grace"]["representativeness"] < 0.5
     conf = b["confidence"]
@@ -111,60 +112,59 @@ def _phase(sched, crop_id):
     return next(p for p in sched.phases if p.id == crop_id)
 
 
-def test_calendar_comes_from_local_temperatures(iowa, kansas):
+def test_malaysian_farms_run_in_tropical_mode(farm_ids):
+    for fid in farm_ids:
+        assert is_tropical(analysis.context(analysis.bundle(fid)).climate), fid
+
+
+def test_two_paddy_seasons_chain_through_the_year(kedah):
+    s = build_schedule([["rice", "rice"]], crops_by_id(), kedah[1].climate)
+    first, second = [p for p in s.phases if p.id == "rice"]
+    assert s.feasible and s.tropical
+    assert second.plant == first.end + 1  # the second season follows straight on from the harvest
+    assert all(3 <= p.end - p.plant + 1 <= 5 for p in (first, second))
+
+
+def test_infeasible_rotations_are_rejected_with_a_reason(kelantan):
     crops = crops_by_id()
-    ia = build_schedule([["corn"], ["soybean"]], crops, iowa[1].climate)
-    assert ia.feasible
-    corn = _phase(ia, "corn")
-    assert corn.plant % 12 in (3, 4) and corn.end % 12 in (8, 9, 10)  # planted Apr-May, off by Sep-Nov
-    assert _phase(ia, "soybean").plant % 12 == 4 + 12 - 12  # May
-    ks_corn = _phase(build_schedule([["corn"]], crops, kansas[1].climate), "corn")
-    assert ks_corn.plant % 12 <= corn.plant % 12  # the warmer site plants no later
+    rainfed_paddy = simulate(kelantan[1], [["rice"]])
+    assert not rainfed_paddy["feasible"] and "irrigation" in " ".join(rainfed_paddy["issues"]).lower()
+    crowded = build_schedule([["cassava", "kenaf", "chili"]], crops, kelantan[1].climate)
+    assert not crowded.feasible and "months back to back" in " ".join(crowded.issues)
 
 
-def test_winter_crops_are_sown_in_autumn_and_fallow_is_empty(kansas):
-    crops = crops_by_id()
-    s = build_schedule([["winter_wheat"], []], crops, kansas[1].climate)
-    wheat = _phase(s, "winter_wheat")
-    assert s.feasible and wheat.plant < 0 and wheat.plant % 12 in (8, 9, 10) and wheat.end % 12 in (5, 6)
-    assert sum(1 for o in s.occupant if o is None) >= 12  # the fallow year really is empty
-
-
-def test_infeasible_crops_are_rejected_with_a_reason(iowa):
-    crops = crops_by_id()
-    cotton = build_schedule([["cotton"]], crops, iowa[1].climate)
-    assert not cotton.feasible and "cotton" in " ".join(cotton.issues).lower()
-    canola = build_schedule([["canola"]], crops, iowa[1].climate)
-    assert not canola.feasible and "winter" in " ".join(canola.issues).lower()
-
-
-def test_cover_crop_fills_the_gap_without_overlapping_cash_crops(iowa):
-    crops = crops_by_id()
-    s = build_schedule([["corn", "cereal_rye"], ["soybean"]], crops, iowa[1].climate)
-    rye, corn, soy = _phase(s, "cereal_rye"), _phase(s, "corn"), _phase(s, "soybean")
-    assert s.feasible and rye.kind == "cover"
-    assert corn.end < rye.plant <= rye.end < soy.plant
-    assert 0.1 < rye.biomass_frac < 0.9  # a northern winter window gives partial growth, not a full stand
+def test_cover_crop_fills_the_gap_without_overlapping_cash_crops(kelantan):
+    s = build_schedule([["kenaf", "sunn_hemp"]], crops_by_id(), kelantan[1].climate)
+    kenaf, hemp = _phase(s, "kenaf"), _phase(s, "sunn_hemp")
+    assert s.feasible and hemp.kind == "cover"
+    assert kenaf.end < hemp.plant <= hemp.end
     assert all(0.0 <= c <= 1.0 for c in s.canopy)
 
 
-def test_warming_scenario_moves_the_calendar(iowa):
-    b, _ = iowa
-    crops = crops_by_id()
-    hot = analysis.context(b, {"temp_delta_c": 4.0})
-    now = build_schedule([["winter_wheat"]], crops, iowa[1].climate)
-    later = build_schedule([["winter_wheat"]], crops, hot.climate)
-    assert _phase(later, "winter_wheat").end <= _phase(now, "winter_wheat").end
-    assert sum(hot.climate.et0) > sum(iowa[1].climate.et0)
+def test_highland_crops_suffer_in_lowland_heat(kedah, cameron):
+    lowland = simulate(kedah[1], [["cabbage"]])["economics"][0]["yield_factors"]["heat"]
+    highland = simulate(cameron[1], [["cabbage"]])["economics"][0]["yield_factors"]["heat"]
+    assert highland > 0.9 > 0.6 > lowland  # why Malaysian cabbage comes from Cameron Highlands
+
+
+def test_warming_scenario_adds_heat_stress_and_water_demand(kedah):
+    b, ctx = kedah
+    hot = analysis.context(b, {"temp_delta_c": 3.0})
+    now = simulate(ctx, [["chili"]])["economics"][0]["yield_factors"]["heat"]
+    later = simulate(hot, [["chili"]])["economics"][0]["yield_factors"]["heat"]
+    assert later < now
+    assert sum(hot.climate.et0) > sum(ctx.climate.et0)
 
 
 # ---------------------------------------------------------------------------- simulation
 
 
-@pytest.mark.parametrize("years", [[["corn"], ["soybean"]], [["winter_wheat"], []], [["corn", "cereal_rye"], ["soybean", "cover_mix"]]])
-def test_water_balance_closes(iowa, kansas, years):
-    for _, ctx in (iowa, kansas):
+@pytest.mark.parametrize("years", [[["sweet_corn", "long_bean"]], [["kenaf"], []], [["kenaf", "sunn_hemp"]], [["rice", "rice"]]])
+def test_water_balance_closes(kedah, kelantan, years):
+    for _, ctx in (kedah, kelantan):
         r = simulate(ctx, years, "conventional")
+        if not r["feasible"]:
+            continue  # paddy on the rainfed farm
         inflow = sum(m["runoff_mm"] + m["drainage_mm"] + m["transpiration_mm"] + m["soil_evap_mm"] for m in r["months"])
         supplied = r["n_years"] * (sum(ctx.climate.precip)) + sum(m["irrigation_mm"] for m in r["months"]) * ctx.irrigation_efficiency
         storage = (r["months"][-1]["soil_water_frac"] - r["months"][0]["soil_water_frac"]) * ctx.taw_profile_mm
@@ -173,54 +173,41 @@ def test_water_balance_closes(iowa, kansas, years):
         assert all(0 <= m["soil_water_frac"] <= 1 and m["transpiration_mm"] <= m["demand_mm"] + 0.1 for m in r["months"])
 
 
-def test_cover_crops_and_no_till_protect_soil(iowa):
-    _, ctx = iowa
-    bare = simulate(ctx, [["corn"], ["soybean"]], "conventional")["metrics"]
-    covered = simulate(ctx, [["corn", "cereal_rye"], ["soybean", "cereal_rye"]], "conventional")["metrics"]
-    notill = simulate(ctx, [["corn"], ["soybean"]], "no_till")["metrics"]
+def test_cover_crops_and_no_till_protect_soil(kelantan):
+    _, ctx = kelantan
+    bare = simulate(ctx, [["kenaf"]], "conventional")["metrics"]
+    covered = simulate(ctx, [["kenaf", "mucuna"]], "conventional")["metrics"]
+    notill = simulate(ctx, [["kenaf"]], "no_till")["metrics"]
     assert covered["soil_loss_t_ha_yr"] < bare["soil_loss_t_ha_yr"]
     assert covered["bare_months_per_year"] < bare["bare_months_per_year"]
     assert covered["n_leaching_kg_ha_yr"] < bare["n_leaching_kg_ha_yr"]
     assert covered["soc_change_t_ha_yr"] > bare["soc_change_t_ha_yr"]
     assert covered["runoff_mm_yr"] < bare["runoff_mm_yr"]
     assert notill["soil_loss_t_ha_yr"] < 0.5 * bare["soil_loss_t_ha_yr"]
-    assert 0.5 < bare["soil_loss_tons_ac_yr"] < 12  # plausible for tilled corn-soybean on a 2% slope
 
 
-def test_legumes_cut_purchased_nitrogen_and_diversity_breaks_pests(iowa):
-    _, ctx = iowa
-    corn = simulate(ctx, [["corn"]], "conventional")
-    cs = simulate(ctx, [["corn"], ["soybean"]], "conventional")
-    cso = simulate(ctx, [["corn"], ["soybean"], ["oats", "crimson_clover"]], "conventional")
-    assert corn["metrics"]["n_fertilizer_kg_ha_yr"] > cs["metrics"]["n_fertilizer_kg_ha_yr"]
-    assert corn["metrics"]["pest_break_score"] < cs["metrics"]["pest_break_score"] < cso["metrics"]["pest_break_score"]
+def test_legumes_cut_purchased_nitrogen_and_diversity_breaks_pests(kelantan):
+    _, ctx = kelantan
+    corn = simulate(ctx, [["sweet_corn", "sweet_corn"]], "conventional")
+    cg = simulate(ctx, [["sweet_corn", "groundnut"]], "conventional")
+    mixed = simulate(ctx, [["sweet_corn", "groundnut"], ["sweet_potato", "long_bean"]], "conventional")
+    assert corn["metrics"]["n_fertilizer_kg_ha_yr"] > cg["metrics"]["n_fertilizer_kg_ha_yr"]
+    assert corn["metrics"]["pest_break_score"] < cg["metrics"]["pest_break_score"] < mixed["metrics"]["pest_break_score"]
     assert corn["pests"]["short_breaks"] and corn["economics"][0]["yield_factors"]["rotation"] < 1.0
+    assert corn["pests"]["short_breaks"][0]["unit"] == "season"  # tropical breaks are counted in crop seasons
 
 
-def test_irrigation_respects_allocation_and_low_water_crops_use_less(kansas):
-    b, ctx = kansas
-    corn = simulate(ctx, [["corn"]], "conventional", with_history=True)
-    assert 0 < corn["metrics"]["irrigation_mm_yr"] <= ctx.allocation_mm + 1
-    assert max(corn["history"]["irrigation_mm"]) <= ctx.allocation_mm + 1
-    assert len(corn["history"]["years"]) == len(ctx.climate.years) - 1
-    assert corn["history"]["total_sd_per_acre"] >= corn["history"]["weather_sd_per_acre"] > 0
-    # with water unlimited, each crop pumps what it needs: corn most, sorghum less, wheat-fallow least
-    free = analysis.context(b, None, {"water_allocation_mm": 2000})
-    need = {name: simulate(free, years, "conventional")["metrics"] for name, years in
-            {"corn": [["corn"]], "sorghum": [["sorghum"]], "wheat_fallow": [["winter_wheat"], []]}.items()}
-    assert need["corn"]["water_stress_pct"] < 3
-    assert need["corn"]["irrigation_mm_yr"] > need["sorghum"]["irrigation_mm_yr"] > need["wheat_fallow"]["irrigation_mm_yr"]
-    assert 350 < need["corn"]["irrigation_mm_yr"] < 750  # 14-30 in gross: the published range for southwest Kansas corn
-
-
-def test_fallow_stores_water_for_the_next_crop(kansas):
-    b, _ = kansas
-    dry = analysis.context(b, None, {"irrigation_available": False})
-    annual = simulate(dry, [["winter_wheat"]], "reduced")
-    fallow = simulate(dry, [["winter_wheat"], []], "reduced")
-    y_annual = annual["economics"][0]["yield_factors"]["water"]
-    y_fallow = fallow["economics"][0]["yield_factors"]["water"]
-    assert y_fallow >= y_annual  # the agronomic reason wheat-fallow exists
+def test_paddy_needs_far_more_water_than_dryland_crops(kedah):
+    b, ctx = kedah
+    paddy = simulate(ctx, [["rice", "rice"]], "conventional", with_history=True)
+    assert 0 < paddy["metrics"]["irrigation_mm_yr"] <= ctx.allocation_mm + 1
+    assert max(paddy["history"]["irrigation_mm"]) <= ctx.allocation_mm + 1
+    assert paddy["history"]["total_sd_per_ha"] >= paddy["history"]["weather_sd_per_ha"] >= 0
+    dry = simulate(ctx, [["sweet_corn", "long_bean"]], "conventional")
+    assert paddy["metrics"]["irrigation_mm_yr"] > dry["metrics"]["irrigation_mm_yr"] + 200
+    assert paddy["metrics"]["deep_drainage_mm_yr"] > dry["metrics"]["deep_drainage_mm_yr"]  # percolation through the puddled layer
+    capped = analysis.context(b, None, {"water_allocation_mm": 100})
+    assert simulate(capped, [["rice", "rice"]])["metrics"]["irrigation_mm_yr"] <= 101
 
 
 def test_every_metric_is_finite_for_every_farm(farm_ids):
