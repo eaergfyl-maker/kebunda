@@ -5,7 +5,7 @@ Base URL: `http://localhost:8000/api/v1` · JSON in, JSON out · no authenticati
 | File | What it is |
 | --- | --- |
 | `openapi.json` | The full OpenAPI 3.1 schema, generated from the code. Interactive version at `http://localhost:8000/docs`. |
-| `examples/*.json` | Real request and response payloads for the Iowa benchmark farm. Mock against these. |
+| `examples/*.json` | Real request and response payloads for the Kedah (MADA paddy) benchmark farm. Mock against these. |
 | `frontend/src/types/api.ts` | The same shapes as TypeScript types. |
 
 Regenerate the first two after any backend change:
@@ -19,8 +19,8 @@ cd backend && python -m scripts.export_contracts
 
 ## Conventions
 
-- **Units are metric** (mm, °C, t/ha, kg N/ha) except money and yields, which are per acre in
-  US units (`$/ac`, `bu/ac`), and soil loss, which is given both ways. The frontend converts
+- **Units are metric** (mm, °C, t/ha, kg N/ha). Money is Malaysian ringgit per hectare
+  (`RM/ha`), yields are tonnes per hectare, and soil loss is given in both t/ha and tons/ac. The frontend converts
   for display in `hooks/useUnits.ts`.
 - **Months** are `0` (January) to `11`. A rotation timeline index runs `0 .. n_years*12-1`.
 - **Scores** are `0-100`, higher is better, with fixed anchors (see
@@ -34,7 +34,7 @@ cd backend && python -m scripts.export_contracts
 | 404 | `field_not_found` | Unknown `field_id` |
 | 422 | `invalid_rotation` | Unknown crop id, empty rotation, more than 6 years |
 | 422 | `invalid_request` | Body fails validation (also returns `errors[]`) |
-| 503 | `data_source_unavailable` | A live NASA/USDA service did not answer and nothing is cached |
+| 503 | `data_source_unavailable` | A live NASA or global data service did not answer and nothing is cached |
 
 ## Endpoints
 
@@ -52,7 +52,7 @@ cd backend && python -m scripts.export_contracts
 | Block | Contents |
 | --- | --- |
 | `farm` | Name, story, management (irrigation, tillage, equipment), `baseline_rotation`, `default_priorities` |
-| `soil` | SSURGO profile: texture, organic matter, AWC, pH, EC, Kw, T factor, hydrologic group, drainage |
+| `soil` | SoilGrids profile (with any surveyed corrections): texture, organic matter, AWC, pH, EC, Kw, T factor, hydrologic group, drainage |
 | `climate.monthly` | 12-value arrays: `tmax`, `tmin`, `precip`, `et0`, `wet_root`, `frost_days`, `heat_days_35`, `erosive_days`, `erosivity_share`, ... |
 | `climate.annual`, `.trends` | One value per year (2001-2024) and its Theil-Sen trend with significance |
 | `series` | Year-by-month grids: `precip`, `wet_root`, `wet_root_z`, `heat_days_35`, `tmax`, `erosivity` |
@@ -74,11 +74,11 @@ cd backend && python -m scripts.export_contracts
 
 ```jsonc
 {
-  "field_id": "ogallala-ks",
+  "field_id": "kedah-mada",
   "priorities": { "water": 9, "soil": 5, "erosion": 5, "pest": 4, "income": 7 },   // 0-10 each
   "constraints": {
     "irrigation_available": true, "water_allocation_mm": 350,
-    "equipment": ["row_planter", "combine"], "custom_hire_available": true, "livestock": false,
+    "equipment": ["hand_tractor", "combine_hire"], "custom_hire_available": true, "livestock": false,
     "risk_tolerance": "low",                    // low | medium | high
     "tillage": "reduced",                       // override the baseline tillage
     "allow_cover_crops": true, "allow_tillage_change": true, "allow_fallow": false,
@@ -138,8 +138,9 @@ Scenario dials: `temp_delta_c` (-1..5), `rain_pct` (-50..30), `storm_intensity_p
 | Method | Path | Returns |
 | --- | --- | --- |
 | GET | `/soil-crops/catalog` | Crop and cover-crop traits, equipment labels, tillage systems |
-| GET | `/soil-crops/soil?lat=&lon=` | Live SSURGO profile at a coordinate |
-| GET | `/soil-crops/history?lat=&lon=` | Cropland Data Layer crop type by year |
+| GET | `/soil-crops/soil?lat=&lon=` | Live SoilGrids profile at a coordinate |
+| GET | `/soil-crops/history?lat=&lon=` | Sentinel-2 NDVI series and crop cycles per year |
+| GET | `/soil-crops/gaez?lat=&lon=` | FAO GAEZ suitability today and in the 2050s for each catalogued crop |
 | GET | `/soil-crops/suitability/{field_id}` | Which crops fit the field and what limits each |
 | GET | `/soil-crops/market/{field_id}` | Prices, volatility and local buyer notes |
 

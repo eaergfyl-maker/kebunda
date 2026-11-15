@@ -2,8 +2,8 @@
  "openapi": "3.1.0",
  "info": {
   "title": "FieldShift API",
-  "summary": "Crop-rotation decision support from NASA Earth observations, USDA soil data and farmer priorities.",
-  "description": "Fuses NASA POWER, GPM IMERG, MODIS, SRTM and GRACE with USDA SSURGO and the Cropland Data Layer, then simulates and compares crop rotations for one field. Every strategy explains why it was suggested, the evidence, the expected benefits, the information gaps and the risks that need local review.\n\nFieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, Extension agents and crop advisers.",
+  "summary": "Crop-rotation decision support for Malaysian farms from NASA Earth observations, global soil and crop data, and farmer priorities.",
+  "description": "Fuses NASA POWER, GPM IMERG, SMAP, SRTM, MODIS and GRACE with Copernicus Sentinel-2, ISRIC SoilGrids, FAO GAEZ and MetMalaysia rain gauges (NOAA GHCN-Daily), then simulates and compares crop rotations for one field. Every strategy explains why it was suggested, the evidence, the expected benefits, the information gaps and the risks that need local review.\n\nFieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers.",
   "version": "1.0.0"
  },
  "paths": {
@@ -13,7 +13,7 @@
      "farms"
     ],
     "summary": "List the benchmark farms",
-    "description": "Five real fields with pre-harmonised NASA and USDA observations. Instant and offline.",
+    "description": "Five real Malaysian fields with pre-harmonised NASA, Sentinel-2, SoilGrids and GAEZ observations. Instant and offline.",
     "operationId": "list_farms_api_v1_farms_get",
     "responses": {
      "200": {
@@ -39,7 +39,7 @@
      "farms"
     ],
     "summary": "Build a field live from any coordinate",
-    "description": "Pulls NASA POWER, GPM IMERG, MODIS NDVI, SRTM, Daymet, SSURGO and the Cropland Data Layer\nfor the coordinate (a few seconds, cached afterwards) and returns the same overview as a\nbenchmark farm. The returned `id` works with every other endpoint.",
+    "description": "Pulls NASA POWER, GPM IMERG, SRTM, Sentinel-2 NDVI, ISRIC SoilGrids, FAO GAEZ and the nearest GHCN rain gauge\nfor the coordinate (a few seconds, cached afterwards) and returns the same overview as a\nbenchmark farm. The returned `id` works with every other endpoint.",
     "operationId": "create_custom_api_v1_farms_custom_post",
     "requestBody": {
      "content": {
@@ -660,7 +660,7 @@
     "tags": [
      "soil-crops"
     ],
-    "summary": "Live USDA SSURGO soil profile at a coordinate",
+    "summary": "Live ISRIC SoilGrids soil profile at a coordinate",
     "operationId": "soil_point_api_v1_soil_crops_soil_get",
     "parameters": [
      {
@@ -727,7 +727,7 @@
     "tags": [
      "soil-crops"
     ],
-    "summary": "Crop history at a coordinate from the Cropland Data Layer",
+    "summary": "Sentinel-2 NDVI series and crop cycles per year at a coordinate",
     "operationId": "crop_history_api_v1_soil_crops_history_get",
     "parameters": [
      {
@@ -758,9 +758,9 @@
       "required": false,
       "schema": {
        "type": "integer",
-       "maximum": 2024,
-       "minimum": 2008,
-       "default": 2019,
+       "maximum": 2025,
+       "minimum": 2017,
+       "default": 2023,
        "title": "Start"
       }
      },
@@ -770,9 +770,9 @@
       "required": false,
       "schema": {
        "type": "integer",
-       "maximum": 2024,
-       "minimum": 2008,
-       "default": 2023,
+       "maximum": 2025,
+       "minimum": 2017,
+       "default": 2024,
        "title": "End"
       }
      }
@@ -786,6 +786,93 @@
          "type": "object",
          "additionalProperties": true,
          "title": "Response Crop History Api V1 Soil Crops History Get"
+        }
+       }
+      }
+     },
+     "503": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      },
+      "description": "Service Unavailable"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/soil-crops/gaez": {
+   "get": {
+    "tags": [
+     "soil-crops"
+    ],
+    "summary": "FAO GAEZ v4 crop suitability index at a coordinate",
+    "operationId": "gaez_point_api_v1_soil_crops_gaez_get",
+    "parameters": [
+     {
+      "name": "lat",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "number",
+       "maximum": 72,
+       "minimum": -60,
+       "title": "Lat"
+      }
+     },
+     {
+      "name": "lon",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "number",
+       "maximum": 180,
+       "minimum": -180,
+       "title": "Lon"
+      }
+     },
+     {
+      "name": "irrigated",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Irrigated"
+      }
+     },
+     {
+      "name": "future",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Future"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": true,
+         "title": "Response Gaez Point Api V1 Soil Crops Gaez Get"
         }
        }
       }
@@ -1798,7 +1885,7 @@
       ],
       "title": "State"
      },
-     "county": {
+     "district": {
       "anyOf": [
        {
         "type": "string"
@@ -1807,7 +1894,7 @@
         "type": "null"
        }
       ],
-      "title": "County"
+      "title": "District"
      },
      "lat": {
       "type": "number",
@@ -1891,7 +1978,6 @@
      "short_name",
      "region",
      "state",
-     "county",
      "lat",
      "lon",
      "area_ha",
@@ -2246,12 +2332,12 @@
       "type": "array",
       "title": "Years"
      },
-     "net_per_acre": {
+     "net_per_ha": {
       "items": {
        "type": "number"
       },
       "type": "array",
-      "title": "Net Per Acre"
+      "title": "Net Per Ha"
      },
      "irrigation_mm": {
       "items": {
@@ -2267,21 +2353,21 @@
       "type": "array",
       "title": "Water Stress Pct"
      },
-     "mean_net_per_acre": {
+     "mean_net_per_ha": {
       "type": "number",
-      "title": "Mean Net Per Acre"
+      "title": "Mean Net Per Ha"
      },
-     "weather_sd_per_acre": {
+     "weather_sd_per_ha": {
       "type": "number",
-      "title": "Weather Sd Per Acre"
+      "title": "Weather Sd Per Ha"
      },
-     "total_sd_per_acre": {
+     "total_sd_per_ha": {
       "type": "number",
-      "title": "Total Sd Per Acre"
+      "title": "Total Sd Per Ha"
      },
-     "bad_year_net_per_acre": {
+     "bad_year_net_per_ha": {
       "type": "number",
-      "title": "Bad Year Net Per Acre"
+      "title": "Bad Year Net Per Ha"
      },
      "worst_years": {
       "items": {
@@ -2299,13 +2385,13 @@
     "type": "object",
     "required": [
      "years",
-     "net_per_acre",
+     "net_per_ha",
      "irrigation_mm",
      "water_stress_pct",
-     "mean_net_per_acre",
-     "weather_sd_per_acre",
-     "total_sd_per_acre",
-     "bad_year_net_per_acre",
+     "mean_net_per_ha",
+     "weather_sd_per_ha",
+     "total_sd_per_ha",
+     "bad_year_net_per_ha",
      "worst_years",
      "variability_ratio"
     ],
@@ -2541,17 +2627,17 @@
       "type": "integer",
       "title": "Distinct Cash Crops"
      },
-     "net_return_per_acre_yr": {
+     "net_return_per_ha_yr": {
       "type": "number",
-      "title": "Net Return Per Acre Yr"
+      "title": "Net Return Per Ha Yr"
      },
-     "gross_revenue_per_acre_yr": {
+     "gross_revenue_per_ha_yr": {
       "type": "number",
-      "title": "Gross Revenue Per Acre Yr"
+      "title": "Gross Revenue Per Ha Yr"
      },
-     "cost_per_acre_yr": {
+     "cost_per_ha_yr": {
       "type": "number",
-      "title": "Cost Per Acre Yr"
+      "title": "Cost Per Ha Yr"
      },
      "market_access": {
       "type": "number",
@@ -2589,9 +2675,9 @@
      "n_leaching_kg_ha_yr",
      "pest_break_score",
      "distinct_cash_crops",
-     "net_return_per_acre_yr",
-     "gross_revenue_per_acre_yr",
-     "cost_per_acre_yr",
+     "net_return_per_ha_yr",
+     "gross_revenue_per_ha_yr",
+     "cost_per_ha_yr",
      "market_access",
      "forage_value"
     ],
@@ -3849,7 +3935,7 @@
   },
   {
    "name": "soil-crops",
-   "description": "Soil survey, crop catalogue, crop history, suitability and markets."
+   "description": "Soil properties, crop catalogue, Sentinel-2 crop cycles, GAEZ suitability and markets."
   },
   {
    "name": "rotations",

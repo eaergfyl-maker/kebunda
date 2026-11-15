@@ -7,10 +7,11 @@ flowchart LR
   subgraph Sources["Live sources (no API key)"]
     POWER["NASA POWER<br/>MERRA-2 + GPM IMERG, daily"]
     ORNL["NASA ORNL DAAC<br/>MODIS NDVI / LST / ET"]
-    DAYMET["Daymet<br/>gauge-based, 1 km"]
+    GHCN["NOAA GHCN-Daily<br/>MetMalaysia gauges"]
     SRTM["SRTM 30 m"]
-    SDA["USDA SSURGO<br/>Soil Data Access"]
-    CDL["USDA CDL<br/>CropScape"]
+    SG["ISRIC SoilGrids<br/>250 m"]
+    S2["Copernicus Sentinel-2<br/>10 m NDVI, crop cycles"]
+    GAEZ["FAO GAEZ v4<br/>crop suitability"]
     GIBS["NASA GIBS WMTS<br/>map tiles"]
   end
   subgraph Curated["Shipped in data/"]
@@ -19,7 +20,7 @@ flowchart LR
     SOILS["soil-profiles/"]
   end
   subgraph Backend["backend/app (FastAPI)"]
-    CONN["nasa_connectors/<br/>usda_connectors/"]
+    CONN["nasa_connectors/<br/>global_connectors/"]
     FUSE["fusion_engine/<br/>monthly grid, fused rain,<br/>resolution-gap confidence"]
     VULN["vulnerability_analyzer/<br/>insights, hazard x exposure"]
     ROT["rotation_engine/<br/>calendar, simulation,<br/>search, scoring, 5 explanations"]
@@ -37,7 +38,7 @@ flowchart LR
   end
   CACHE[("data/cache/")]
 
-  POWER & ORNL & DAYMET & SRTM & SDA & CDL --> CONN
+  POWER & ORNL & GHCN & SRTM & SG & S2 & GAEZ --> CONN
   CONN <--> CACHE
   CONN --> FUSE
   FARMS & SOILS --> FUSE
@@ -80,14 +81,14 @@ pulls), then cached.
 | `app/api/middleware/` | Uniform JSON errors; request timing header |
 | `app/models/schemas/` | Pydantic request and response models: the API contract |
 | `app/services/nasa_connectors/` | `power`, `land_products` (MODIS/VIIRS/SMAP subsets), `terrain` (SRTM), `gibs`, `missions` (SMAP, ECOSTRESS, GRACE adapters), shared `base` (HTTP, cache, provenance) |
-| `app/services/usda_connectors/` | `ssurgo`, `cropland` (CDL, NASS, OpenET, markets), `ground_truth` (Daymet) |
+| `app/services/global_connectors/` | `soilgrids` (soil), `gaez` (FAO crop suitability), `sentinel2` (NDVI and crop cycles), `ghcn` (MetMalaysia gauges), `markets` (FAMA/DOA prices) |
 | `app/services/fusion_engine/` | `observe` (collect layers), `climate` (monthly grid), `harmonize` (fusion, downscaling, confidence) |
 | `app/services/vulnerability_analyzer/` | `insights` (facts), `calendar` (risk grid, NDVI validation) |
 | `app/services/rotation_engine/` | `context`, `schedule`, `simulate`, `generate`, `scoring`, `engine`, `explain` |
 | `app/services/scenario_simulator/` | `simulator` (limits, presets, stress test, sweep) |
 | `app/services/analysis.py`, `field_store.py` | Use-case orchestration; benchmark and custom field storage |
 | `scripts/` | `build_benchmark_data` (pull real observations into `data/`), `export_contracts` |
-| `tests/` | 66 offline tests: connectors (mocked HTTP), models, engine, scenarios, API |
+| `tests/` | 69 offline tests: connectors (mocked HTTP), models, engine, scenarios, API |
 
 ### Resilience rules
 
@@ -105,8 +106,8 @@ pulls), then cached.
 | --- | --- | --- |
 | `data/benchmark-farms/<id>.json` | Farm definition: location, management, baseline rotation, local yields and buyers, water context | Curated by hand |
 | `data/benchmark-farms/observations/<id>.json` | Harmonised observation layers for that coordinate | `python -m scripts.build_benchmark_data` |
-| `data/soil-profiles/<id>.json` | SSURGO profile under the field | same script |
-| `data/crop-catalog/crops.json` | 25 crops and cover crops with agronomic and economic traits | Curated |
+| `data/soil-profiles/<id>.json` | SoilGrids profile under the field, with any `soil_overrides` from the farm file (surveyed peat, BRIS sand) | same script |
+| `data/crop-catalog/crops.json` | 19 Malaysian crops and cover crops with agronomic and economic traits (RM/ha) | Curated |
 | `data/cache/` | Raw responses from live services | Runtime, gitignored |
 
 ## Frontend layout and ownership
@@ -128,8 +129,8 @@ components. Components never call `fetch`.
 ## Design decisions
 
 - **Real data over mock data.** Benchmark observations are actual pulls for actual
-  coordinates; three baselines were corrected after the Cropland Data Layer disagreed with
-  the first assumption.
+  coordinates; the Kedah paddy point was moved after Sentinel-2 showed the first pixel was not
+  double-cropped paddy, and two SoilGrids profiles were replaced with surveyed peat and sand.
 - **Simple, inspectable models over a black box.** Every sentence in an explanation is
   assembled from a number in the same payload.
 - **Fixed score anchors**, so scores are comparable across fields and do not jump when the

@@ -1,5 +1,5 @@
 {
- "field_id": "cornbelt-ia",
+ "field_id": "kedah-mada",
  "scenario": {
   "temp_delta_c": 2.0,
   "rain_pct": -20.0,
@@ -42,318 +42,165 @@
  },
  "climate_shift": {
   "annual_precip_mm": {
-   "today": 994.0,
-   "scenario": 795.0,
-   "delta": -199.0
+   "today": 2359.0,
+   "scenario": 1887.0,
+   "delta": -472.0
   },
   "reference_et_mm": {
-   "today": 1013.0,
-   "scenario": 1076.0,
-   "delta": 63.0
+   "today": 1170.0,
+   "scenario": 1222.0,
+   "delta": 52.0
   },
   "heat_days_35": {
-   "today": 3.0,
-   "scenario": 10.0,
-   "delta": 7.0
+   "today": 1.0,
+   "scenario": 15.0,
+   "delta": 14.0
   },
   "frost_days": {
-   "today": 132.0,
-   "scenario": 111.0,
-   "delta": -21.0
+   "today": 0.0,
+   "scenario": 0.0,
+   "delta": 0.0
   },
   "erosivity_r": {
-   "today": 3433.0,
-   "scenario": 2439.0,
-   "delta": -994.0
+   "today": 20563.0,
+   "scenario": 13948.0,
+   "delta": -6615.0
   },
   "rain_per_wet_day_mm": {
-   "today": 9.0,
-   "scenario": 8.0,
-   "delta": -1.0
+   "today": 9.7,
+   "scenario": 8.5,
+   "delta": -1.2
   },
   "irrigation_allocation_mm": {
-   "today": null,
-   "scenario": null,
-   "delta": null
+   "today": 1600.0,
+   "scenario": 1600.0,
+   "delta": 0.0
   }
  },
  "strategies": [
   {
    "id": "baseline",
    "role": "baseline",
-   "name": "Corn → Soybean",
+   "name": "Paddy rice + Paddy rice, every year",
    "years": [
     [
-     "corn"
-    ],
-    [
-     "soybean"
+     "rice",
+     "rice"
     ]
    ],
    "tillage": "conventional",
    "feasible": true,
    "fit": {
-    "today": 57.0,
-    "scenario": 56.5,
-    "delta": -0.5
+    "today": 49.5,
+    "scenario": 48.6,
+    "delta": -0.9
    },
    "scores": {
     "water": {
-     "today": 93.0,
-     "scenario": 95.2,
-     "delta": 2.2
+     "today": 80.0,
+     "scenario": 73.4,
+     "delta": -6.6
     },
     "soil": {
-     "today": 29.4,
-     "scenario": 29.2,
-     "delta": -0.2
+     "today": 19.8,
+     "scenario": 20.4,
+     "delta": 0.6
     },
     "erosion": {
-     "today": 65.6,
-     "scenario": 67.6,
-     "delta": 2.0
+     "today": 50.6,
+     "scenario": 59.8,
+     "delta": 9.2
     },
     "pest": {
-     "today": 50.0,
-     "scenario": 50.0,
+     "today": 9.0,
+     "scenario": 9.0,
      "delta": 0.0
     },
     "income": {
-     "today": 63.1,
-     "scenario": 56.9,
-     "delta": -6.2
+     "today": 72.5,
+     "scenario": 72.5,
+     "delta": 0.0
     }
    },
    "metrics": {
     "irrigation_mm_yr": {
-     "today": 0.0,
-     "scenario": 0.0,
-     "delta": 0.0
-    },
-    "water_stress_pct": {
-     "today": 0.1,
-     "scenario": 8.1,
-     "delta": 8.0
-    },
-    "soil_loss_tons_ac_yr": {
-     "today": 2.3,
-     "scenario": 1.75,
-     "delta": -0.55
-    },
-    "bare_months_per_year": {
-     "today": 4.5,
-     "scenario": 4.5,
-     "delta": 0.0
-    },
-    "runoff_mm_yr": {
-     "today": 37.0,
-     "scenario": 24.0,
-     "delta": -13.0
-    },
-    "net_return_per_acre_yr": {
-     "today": 520.0,
-     "scenario": 389.0,
-     "delta": -131.0
-    },
-    "soc_change_t_ha_yr": {
-     "today": -0.225,
-     "scenario": -0.319,
-     "delta": -0.09
-    },
-    "crop_water_use_mm_yr": {
-     "today": 810.0,
-     "scenario": 772.0,
-     "delta": -38.0
-    }
-   },
-   "yields": [
-    {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
-     "today": 223.0,
-     "scenario": 183.3,
-     "unit": "bu",
-     "change_pct": -18.0,
-     "limiting": "water"
-    },
-    {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "today": 64.0,
-     "scenario": 58.2,
-     "unit": "bu",
-     "change_pct": -9.0,
-     "limiting": "water"
-    }
-   ],
-   "flags": [],
-   "net_retained_pct": 75.0,
-   "bad_year_net_per_acre": {
-    "today": 239.0,
-    "scenario": 73.0
-   },
-   "phases": [
-    {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
-     "kind": "cash",
-     "year_index": 0,
-     "plant_month": 3,
-     "end_month": 8,
-     "plant_calendar_month": 3,
-     "end_calendar_month": 8,
-     "duration_months": 6,
-     "wraps": false,
-     "delay_months": 0,
-     "biomass_frac": null,
-     "winterkills": false,
-     "issues": []
-    },
-    {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "kind": "cash",
-     "year_index": 1,
-     "plant_month": 16,
-     "end_month": 20,
-     "plant_calendar_month": 4,
-     "end_calendar_month": 8,
-     "duration_months": 5,
-     "wraps": false,
-     "delay_months": 0,
-     "biomass_frac": null,
-     "winterkills": false,
-     "issues": []
-    }
-   ]
-  },
-  {
-   "id": "step-34623436",
-   "role": "step",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
-   "years": [
-    [
-     "corn",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
-    ]
-   ],
-   "tillage": "no_till",
-   "feasible": true,
-   "fit": {
-    "today": 76.2,
-    "scenario": 74.9,
-    "delta": -1.3
-   },
-   "scores": {
-    "water": {
-     "today": 100.0,
-     "scenario": 93.9,
-     "delta": -6.1
-    },
-    "soil": {
-     "today": 76.5,
-     "scenario": 82.0,
-     "delta": 5.5
-    },
-    "erosion": {
-     "today": 100.0,
-     "scenario": 100.0,
-     "delta": 0.0
-    },
-    "pest": {
-     "today": 55.0,
-     "scenario": 55.0,
-     "delta": 0.0
-    },
-    "income": {
-     "today": 61.7,
-     "scenario": 52.6,
-     "delta": -9.1
-    }
-   },
-   "metrics": {
-    "irrigation_mm_yr": {
-     "today": 0.0,
-     "scenario": 0.0,
-     "delta": 0.0
+     "today": 408.0,
+     "scenario": 737.0,
+     "delta": 329.0
     },
     "water_stress_pct": {
      "today": 0.0,
-     "scenario": 9.9,
-     "delta": 9.9
-    },
-    "soil_loss_tons_ac_yr": {
-     "today": 0.06,
-     "scenario": 0.04,
-     "delta": -0.02
-    },
-    "bare_months_per_year": {
-     "today": 0.0,
      "scenario": 0.0,
      "delta": 0.0
     },
-    "runoff_mm_yr": {
+    "soil_loss_tons_ac_yr": {
+     "today": 5.34,
+     "scenario": 3.67,
+     "delta": -1.67
+    },
+    "bare_months_per_year": {
      "today": 5.0,
-     "scenario": 3.0,
-     "delta": -2.0
+     "scenario": 5.0,
+     "delta": 0.0
     },
-    "net_return_per_acre_yr": {
-     "today": 488.0,
-     "scenario": 346.0,
-     "delta": -142.0
+    "runoff_mm_yr": {
+     "today": 191.0,
+     "scenario": 123.0,
+     "delta": -68.0
+    },
+    "net_return_per_ha_yr": {
+     "today": 2797.0,
+     "scenario": 2748.0,
+     "delta": -49.0
     },
     "soc_change_t_ha_yr": {
-     "today": 0.268,
-     "scenario": 0.31,
-     "delta": 0.04
+     "today": -3.243,
+     "scenario": -3.865,
+     "delta": -0.62
     },
     "crop_water_use_mm_yr": {
-     "today": 787.0,
-     "scenario": 793.0,
-     "delta": 6.0
+     "today": 939.0,
+     "scenario": 969.0,
+     "delta": 30.0
     }
    },
    "yields": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
-     "today": 223.6,
-     "scenario": 183.6,
-     "unit": "bu",
-     "change_pct": -18.0,
-     "limiting": "water"
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "today": 4.3,
+     "scenario": 4.3,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "rotation"
     },
     {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "today": 64.0,
-     "scenario": 56.3,
-     "unit": "bu",
-     "change_pct": -12.0,
-     "limiting": "water"
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "today": 4.3,
+     "scenario": 4.3,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "rotation"
     }
    ],
    "flags": [],
-   "net_retained_pct": 71.0,
-   "bad_year_net_per_acre": {
-    "today": 233.0,
-    "scenario": 68.0
+   "net_retained_pct": 98.0,
+   "bad_year_net_per_ha": {
+    "today": 2130.0,
+    "scenario": 2059.0
    },
    "phases": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
      "year_index": 0,
      "plant_month": 3,
-     "end_month": 8,
+     "end_month": 6,
      "plant_calendar_month": 3,
-     "end_calendar_month": 8,
-     "duration_months": 6,
+     "end_calendar_month": 6,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
      "biomass_frac": null,
@@ -361,62 +208,51 @@
      "issues": []
     },
     {
-     "crop_id": "cereal_rye",
-     "crop_name": "Cereal rye cover",
-     "kind": "cover",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "kind": "cash",
      "year_index": 0,
-     "plant_month": 9,
-     "end_month": 15,
-     "plant_calendar_month": 9,
-     "end_calendar_month": 3,
-     "duration_months": 7,
+     "plant_month": 7,
+     "end_month": 10,
+     "plant_calendar_month": 7,
+     "end_calendar_month": 10,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
-     "biomass_frac": 0.751,
+     "biomass_frac": null,
      "winterkills": false,
      "issues": []
     }
    ]
   },
   {
-   "id": "match-35075079",
-   "role": "match",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "id": "step-84109813",
+   "role": "step",
+   "name": "Paddy rice + Paddy rice + Sesbania, every year",
    "years": [
     [
-     "corn",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
-    ],
-    [
-     "sorghum",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
+     "rice",
+     "rice",
+     "sesbania"
     ]
    ],
    "tillage": "no_till",
    "feasible": true,
    "fit": {
-    "today": 74.6,
-    "scenario": 73.9,
+    "today": 56.4,
+    "scenario": 55.7,
     "delta": -0.7
    },
    "scores": {
     "water": {
-     "today": 100.0,
-     "scenario": 95.5,
-     "delta": -4.5
+     "today": 80.0,
+     "scenario": 77.2,
+     "delta": -2.8
     },
     "soil": {
-     "today": 81.1,
-     "scenario": 85.7,
-     "delta": 4.6
+     "today": 38.4,
+     "scenario": 38.7,
+     "delta": 0.3
     },
     "erosion": {
      "today": 100.0,
@@ -424,31 +260,31 @@
      "delta": 0.0
     },
     "pest": {
-     "today": 55.0,
-     "scenario": 55.0,
+     "today": 14.0,
+     "scenario": 14.0,
      "delta": 0.0
     },
     "income": {
-     "today": 54.2,
-     "scenario": 48.3,
-     "delta": -5.9
+     "today": 74.1,
+     "scenario": 74.1,
+     "delta": 0.0
     }
    },
    "metrics": {
     "irrigation_mm_yr": {
+     "today": 259.0,
+     "scenario": 612.0,
+     "delta": 353.0
+    },
+    "water_stress_pct": {
      "today": 0.0,
      "scenario": 0.0,
      "delta": 0.0
     },
-    "water_stress_pct": {
-     "today": 0.0,
-     "scenario": 8.6,
-     "delta": 8.6
-    },
     "soil_loss_tons_ac_yr": {
-     "today": 0.06,
-     "scenario": 0.04,
-     "delta": -0.02
+     "today": 0.34,
+     "scenario": 0.25,
+     "delta": -0.09
     },
     "bare_months_per_year": {
      "today": 0.0,
@@ -456,81 +292,63 @@
      "delta": 0.0
     },
     "runoff_mm_yr": {
-     "today": 5.0,
-     "scenario": 3.0,
-     "delta": -2.0
+     "today": 65.0,
+     "scenario": 37.0,
+     "delta": -28.0
     },
-    "net_return_per_acre_yr": {
-     "today": 407.0,
-     "scenario": 310.0,
-     "delta": -97.0
+    "net_return_per_ha_yr": {
+     "today": 2920.0,
+     "scenario": 2866.0,
+     "delta": -54.0
     },
     "soc_change_t_ha_yr": {
-     "today": 0.291,
-     "scenario": 0.33,
-     "delta": 0.04
+     "today": -1.58,
+     "scenario": -2.018,
+     "delta": -0.44
     },
     "crop_water_use_mm_yr": {
-     "today": 778.0,
-     "scenario": 793.0,
-     "delta": 15.0
+     "today": 891.0,
+     "scenario": 927.0,
+     "delta": 36.0
     }
    },
    "yields": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
-     "today": 223.6,
-     "scenario": 184.6,
-     "unit": "bu",
-     "change_pct": -17.0,
-     "limiting": "water"
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "today": 4.3,
+     "scenario": 4.3,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "rotation"
     },
     {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "today": 64.0,
-     "scenario": 56.4,
-     "unit": "bu",
-     "change_pct": -12.0,
-     "limiting": "water"
-    },
-    {
-     "crop_id": "sorghum",
-     "crop_name": "Grain sorghum (milo)",
-     "today": 114.4,
-     "scenario": 106.4,
-     "unit": "bu",
-     "change_pct": -7.0,
-     "limiting": "water"
-    },
-    {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "today": 64.0,
-     "scenario": 57.5,
-     "unit": "bu",
-     "change_pct": -10.0,
-     "limiting": "water"
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "today": 4.3,
+     "scenario": 4.3,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "rotation"
     }
    ],
    "flags": [],
-   "net_retained_pct": 76.0,
-   "bad_year_net_per_acre": {
-    "today": 223.0,
-    "scenario": 87.0
+   "net_retained_pct": 98.0,
+   "bad_year_net_per_ha": {
+    "today": 2248.0,
+    "scenario": 2178.0
    },
    "phases": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
      "year_index": 0,
      "plant_month": 3,
-     "end_month": 8,
+     "end_month": 6,
      "plant_calendar_month": 3,
-     "end_calendar_month": 8,
-     "duration_months": 6,
+     "end_calendar_month": 6,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
      "biomass_frac": null,
@@ -538,18 +356,189 @@
      "issues": []
     },
     {
-     "crop_id": "cereal_rye",
-     "crop_name": "Cereal rye cover",
-     "kind": "cover",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "kind": "cash",
      "year_index": 0,
-     "plant_month": 9,
-     "end_month": 15,
-     "plant_calendar_month": 9,
-     "end_calendar_month": 3,
-     "duration_months": 7,
+     "plant_month": 7,
+     "end_month": 10,
+     "plant_calendar_month": 7,
+     "end_calendar_month": 10,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
-     "biomass_frac": 0.751,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    }
+   ]
+  },
+  {
+   "id": "match-24873324",
+   "role": "match",
+   "name": "Sweet corn + Paddy rice + Velvet bean → Sweet corn + Sweet potato + Velvet bean",
+   "years": [
+    [
+     "sweet_corn",
+     "rice",
+     "mucuna"
+    ],
+    [
+     "sweet_corn",
+     "sweet_potato",
+     "mucuna"
+    ]
+   ],
+   "tillage": "conventional",
+   "feasible": true,
+   "fit": {
+    "today": 72.4,
+    "scenario": 73.0,
+    "delta": 0.6
+   },
+   "scores": {
+    "water": {
+     "today": 83.1,
+     "scenario": 84.7,
+     "delta": 1.6
+    },
+    "soil": {
+     "today": 45.1,
+     "scenario": 45.5,
+     "delta": 0.4
+    },
+    "erosion": {
+     "today": 99.7,
+     "scenario": 100.0,
+     "delta": 0.3
+    },
+    "pest": {
+     "today": 78.0,
+     "scenario": 78.0,
+     "delta": 0.0
+    },
+    "income": {
+     "today": 80.7,
+     "scenario": 80.7,
+     "delta": 0.0
+    }
+   },
+   "metrics": {
+    "irrigation_mm_yr": {
+     "today": 35.0,
+     "scenario": 109.0,
+     "delta": 74.0
+    },
+    "water_stress_pct": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "soil_loss_tons_ac_yr": {
+     "today": 0.8,
+     "scenario": 0.68,
+     "delta": -0.12
+    },
+    "bare_months_per_year": {
+     "today": 0.0,
+     "scenario": 0.0,
+     "delta": 0.0
+    },
+    "runoff_mm_yr": {
+     "today": 103.0,
+     "scenario": 64.0,
+     "delta": -39.0
+    },
+    "net_return_per_ha_yr": {
+     "today": 14672.0,
+     "scenario": 14614.0,
+     "delta": -58.0
+    },
+    "soc_change_t_ha_yr": {
+     "today": -2.833,
+     "scenario": -3.456,
+     "delta": -0.62
+    },
+    "crop_water_use_mm_yr": {
+     "today": 1048.0,
+     "scenario": 1019.0,
+     "delta": -29.0
+    }
+   },
+   "yields": [
+    {
+     "crop_id": "sweet_corn",
+     "crop_name": "Sweet corn",
+     "today": 14.0,
+     "scenario": 14.0,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "heat"
+    },
+    {
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "today": 4.8,
+     "scenario": 4.8,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "water"
+    },
+    {
+     "crop_id": "sweet_corn",
+     "crop_name": "Sweet corn",
+     "today": 14.0,
+     "scenario": 14.0,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "heat"
+    },
+    {
+     "crop_id": "sweet_potato",
+     "crop_name": "Sweet potato",
+     "today": 15.0,
+     "scenario": 15.0,
+     "unit": "t",
+     "change_pct": 0.0,
+     "limiting": "water"
+    }
+   ],
+   "flags": [],
+   "net_retained_pct": 100.0,
+   "bad_year_net_per_ha": {
+    "today": 9695.0,
+    "scenario": 9478.0
+   },
+   "phases": [
+    {
+     "crop_id": "sweet_corn",
+     "crop_name": "Sweet corn",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 3,
+     "end_month": 5,
+     "plant_calendar_month": 3,
+     "end_calendar_month": 5,
+     "duration_months": 3,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    },
+    {
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 6,
+     "end_month": 9,
+     "plant_calendar_month": 6,
+     "end_calendar_month": 9,
+     "duration_months": 4,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
      "winterkills": false,
      "issues": []
     }
@@ -557,17 +546,17 @@
   }
  ],
  "ranking_today": [
-  "step-34623436",
-  "match-35075079",
+  "match-24873324",
+  "step-84109813",
   "baseline"
  ],
  "ranking_scenario": [
-  "step-34623436",
-  "match-35075079",
+  "match-24873324",
+  "step-84109813",
   "baseline"
  ],
  "ranking_changed": false,
- "verdict": "Under this scenario \"Corn + Cereal rye → Soybean + Rye + vetch + radish mix\" comes out ahead (it also leads today). Net return moves least for \"Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix\".",
+ "verdict": "Under this scenario \"Sweet corn + Paddy rice + Velvet bean → Sweet corn + Sweet potato + Velvet bean\" comes out ahead (it also leads today). Net return moves least for \"Paddy rice + Paddy rice, every year\".",
  "note": "Scenarios shift the observed 2001-2024 record; they are stress tests, not forecasts.",
- "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, Extension agents and crop advisers."
+ "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers."
 }

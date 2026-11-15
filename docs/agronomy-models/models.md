@@ -56,7 +56,7 @@ A month with cover < 30 % counts as **bare** (the NRCS conservation-tillage thre
 ## 3. Water balance (FAO-56 style bucket)
 
 State: plant-available water `S` in the root zone, capacity
-`TAW = AWC (SSURGO) × root-zone depth`.
+`TAW = AWC (SoilGrids) × root-zone depth`.
 
 ```
 runoff   = wet_days · E[Q]                      (SCS curve number, see below)
@@ -115,7 +115,7 @@ A = R · K · LS · C        [t/ha/yr]
   Northwestern Wheat and Range Region is used (`Req = -48.4 + 7.78·P_in`), because most
   erosion there comes from rain and snowmelt on thawing soil.
 - Monthly distribution of R ∝ Σ(daily rain ≥ 12.7 mm)^1.81 from the 24-year daily record.
-- **K** = SSURGO Kw × 0.1317. **LS** from McCool et al. (1987/1989) using the soil survey's
+- **K** = Kw (Williams EPIC equation from SoilGrids texture and carbon) × 0.1317. **LS** from McCool et al. (1987/1989) using the soil survey's
   representative slope, blended with SRTM slope only where SRTM relief exceeds its noise.
 - **C** is computed monthly as a soil-loss ratio and weighted by that month's share of R:
   `SLR = PLU · (1 - 0.85·canopy) · exp(-3.5·residue_cover)`, with
@@ -132,7 +132,7 @@ k = 0.0075 · 2^((MAT-10)/10) · tillage · (1.1 - 0.008·clay%) · (0.55 + 0.45
 
 `h_shoot = 0.13`, `h_root = 0.30` (roots stabilise about 2.3× better than shoots; Rasse et
 al. 2005). Tillage multiplier 1.25 / 1.05 / 0.88; perennial years count as untilled.
-`SOC` (0-30 cm) comes from SSURGO organic matter and bulk density. Output is the yearly
+`SOC` (0-30 cm) comes from SoilGrids organic carbon and bulk density. Output is the yearly
 change and the projected change in organic matter after 10 years.
 
 ## 7. Nitrogen
@@ -200,5 +200,5 @@ FAO Irrigation and Drainage Papers 56 and 33/66; USDA NRCS National Engineering 
 Part 630 (curve numbers); RUSLE (USDA Agriculture Handbook 703) and RUSLE2 crop database;
 Renard & Freimund (1994); McCool et al. (1987, 1989); Richardson et al. (1983); Gregory
 (1982); Saxton & Rawls (2006); Maas & Hoffman (1977); SARE *Managing Cover Crops
-Profitably*; Rasse et al. (2005); university extension crop budgets; USDA NASS/AMS price
-series. Crop traits live in `data/crop-catalog/crops.json`.
+Profitably*; Rasse et al. (2005); MARDI crop technology packages; DOA Malaysia production-cost
+tables; FAMA farm-gate prices; LKTN and MPIB price notes. Crop traits live in `data/crop-catalog/crops.json`.

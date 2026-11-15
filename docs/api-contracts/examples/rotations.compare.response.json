@@ -1,6 +1,6 @@
 {
- "field_id": "cornbelt-ia",
- "field_name": "Corn Belt quarter on prairie loam",
+ "field_id": "kedah-mada",
+ "field_name": "MADA double-crop paddy lot on marine clay",
  "priorities": {
   "water": 4.0,
   "soil": 8.0,
@@ -26,7 +26,7 @@
   "water_cap_pct": 100.0
  },
  "scenario_active": false,
- "baseline_note": "The Cropland Data Layer shows a strict corn-soybean alternation on this field since 2018.",
+ "baseline_note": "Sentinel-2 shows two green-up and harvest cycles every year since 2020, matching the MADA two-season calendar.",
  "baseline_assumed": false,
  "strategies": [
   {
@@ -35,13 +35,11 @@
    "rank": 6,
    "title": "What you do now",
    "tagline": "Your current rotation, scored the same way as every alternative.",
-   "name": "Corn → Soybean",
+   "name": "Paddy rice + Paddy rice, every year",
    "years": [
     [
-     "corn"
-    ],
-    [
-     "soybean"
+     "rice",
+     "rice"
     ]
    ],
    "year_labels": [
@@ -49,8 +47,16 @@
      "year": 1,
      "crops": [
       {
-       "id": "corn",
-       "name": "Corn (grain)",
+       "id": "rice",
+       "name": "Paddy rice (irrigated)",
+       "role": "cash",
+       "family": "grass",
+       "functional_group": "warm_grass",
+       "legume": false
+      },
+      {
+       "id": "rice",
+       "name": "Paddy rice (irrigated)",
        "role": "cash",
        "family": "grass",
        "functional_group": "warm_grass",
@@ -58,38 +64,24 @@
       }
      ],
      "fallow": false
-    },
-    {
-     "year": 2,
-     "crops": [
-      {
-       "id": "soybean",
-       "name": "Soybean",
-       "role": "cash",
-       "family": "legume",
-       "functional_group": "warm_broadleaf",
-       "legume": true
-      }
-     ],
-     "fallow": false
     }
    ],
    "tillage": "conventional",
    "tillage_label": "Conventional tillage",
-   "n_years": 2,
+   "n_years": 1,
    "feasible": true,
    "issues": [],
    "phases": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
      "year_index": 0,
      "plant_month": 3,
-     "end_month": 9,
+     "end_month": 6,
      "plant_calendar_month": 3,
-     "end_calendar_month": 9,
-     "duration_months": 7,
+     "end_calendar_month": 6,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
      "biomass_frac": null,
@@ -97,15 +89,15 @@
      "issues": []
     },
     {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
-     "year_index": 1,
-     "plant_month": 16,
-     "end_month": 20,
-     "plant_calendar_month": 4,
-     "end_calendar_month": 8,
-     "duration_months": 5,
+     "year_index": 0,
+     "plant_month": 7,
+     "end_month": 10,
+     "plant_calendar_month": 7,
+     "end_calendar_month": 10,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
      "biomass_frac": null,
@@ -120,20 +112,20 @@
      "year_index": 0,
      "crop_id": null,
      "kind": null,
-     "cover": 0.222,
+     "cover": 0.166,
      "canopy": 0.0,
-     "residue_cover": 0.222,
+     "residue_cover": 0.166,
      "green": 0.0,
      "bare": true,
-     "runoff_mm": 0.5,
-     "drainage_mm": 9.9,
+     "runoff_mm": 11.9,
+     "drainage_mm": 20.3,
      "transpiration_mm": 0.0,
      "demand_mm": 0.0,
-     "soil_evap_mm": 4.3,
+     "soil_evap_mm": 51.3,
      "irrigation_mm": 0.0,
      "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.048,
-     "n_leach_kg_ha": 1.22
+     "erosion_t_ha": 0.906,
+     "n_leach_kg_ha": 7.96
     },
     {
      "index": 1,
@@ -141,20 +133,20 @@
      "year_index": 0,
      "crop_id": null,
      "kind": null,
-     "cover": 0.221,
+     "cover": 0.115,
      "canopy": 0.0,
-     "residue_cover": 0.221,
+     "residue_cover": 0.115,
      "green": 0.0,
      "bare": true,
-     "runoff_mm": 0.8,
-     "drainage_mm": 24.5,
+     "runoff_mm": 9.1,
+     "drainage_mm": 4.0,
      "transpiration_mm": 0.0,
      "demand_mm": 0.0,
-     "soil_evap_mm": 6.8,
+     "soil_evap_mm": 38.8,
      "irrigation_mm": 0.0,
      "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.081,
-     "n_leach_kg_ha": 2.68
+     "erosion_t_ha": 0.447,
+     "n_leach_kg_ha": 2.39
     },
     {
      "index": 2,
@@ -162,68 +154,68 @@
      "year_index": 0,
      "crop_id": null,
      "kind": null,
-     "cover": 0.215,
+     "cover": 0.077,
      "canopy": 0.0,
-     "residue_cover": 0.215,
+     "residue_cover": 0.077,
      "green": 0.0,
      "bare": true,
-     "runoff_mm": 2.7,
-     "drainage_mm": 34.9,
+     "runoff_mm": 25.8,
+     "drainage_mm": 20.3,
      "transpiration_mm": 0.0,
      "demand_mm": 0.0,
-     "soil_evap_mm": 21.4,
+     "soil_evap_mm": 84.2,
      "irrigation_mm": 0.0,
      "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.288,
-     "n_leach_kg_ha": 3.6
+     "erosion_t_ha": 2.173,
+     "n_leach_kg_ha": 14.4
     }
    ],
    "metrics": {
-    "irrigation_mm_yr": 0.0,
-    "allocation_used_pct": null,
-    "crop_water_use_mm_yr": 810.0,
-    "water_stress_pct": 0.1,
-    "infiltration_pct": 96.3,
-    "productive_water_pct": 56.3,
-    "runoff_mm_yr": 37.0,
-    "deep_drainage_mm_yr": 147.0,
-    "soil_loss_t_ha_yr": 5.16,
-    "soil_loss_tons_ac_yr": 2.3,
-    "soil_loss_vs_tolerable": 0.46,
-    "bare_months_per_year": 4.5,
-    "mean_ground_cover_pct": 48.0,
-    "storm_exposure_pct": 44.0,
-    "living_root_months_per_year": 5.0,
-    "carbon_input_t_ha_yr": 4.03,
-    "soc_change_t_ha_yr": -0.225,
-    "om_change_pct_points_10yr": -0.11,
-    "n_fertilizer_kg_ha_yr": 90.0,
-    "n_legume_credit_kg_ha_yr": 18.0,
-    "n_self_sufficiency_pct": 16.0,
-    "n_leaching_kg_ha_yr": 23.7,
-    "pest_break_score": 50.0,
-    "distinct_cash_crops": 2,
-    "net_return_per_acre_yr": 520.0,
-    "gross_revenue_per_acre_yr": 924.0,
-    "cost_per_acre_yr": 404.0,
+    "irrigation_mm_yr": 408.0,
+    "allocation_used_pct": 25.0,
+    "crop_water_use_mm_yr": 939.0,
+    "water_stress_pct": 0.0,
+    "infiltration_pct": 91.9,
+    "productive_water_pct": 20.0,
+    "runoff_mm_yr": 191.0,
+    "deep_drainage_mm_yr": 1474.0,
+    "soil_loss_t_ha_yr": 11.98,
+    "soil_loss_tons_ac_yr": 5.34,
+    "soil_loss_vs_tolerable": 1.07,
+    "bare_months_per_year": 5.0,
+    "mean_ground_cover_pct": 54.0,
+    "storm_exposure_pct": 32.0,
+    "living_root_months_per_year": 8.0,
+    "carbon_input_t_ha_yr": 5.49,
+    "soc_change_t_ha_yr": -3.243,
+    "om_change_pct_points_10yr": -1.58,
+    "n_fertilizer_kg_ha_yr": 235.0,
+    "n_legume_credit_kg_ha_yr": 0.0,
+    "n_self_sufficiency_pct": 0.0,
+    "n_leaching_kg_ha_yr": 167.9,
+    "pest_break_score": 9.0,
+    "distinct_cash_crops": 1,
+    "net_return_per_ha_yr": 2797.0,
+    "gross_revenue_per_ha_yr": 11232.0,
+    "cost_per_ha_yr": 8435.0,
     "market_access": 1.0,
-    "forage_value": 0.32,
-    "transpiration_mm_yr": 560.0,
-    "soil_evaporation_mm_yr": 250.0,
-    "legume_years": 1,
-    "price_sd_per_acre": 171.0,
-    "net_per_mm_irrigation": null
+    "forage_value": 0.3,
+    "transpiration_mm_yr": 554.0,
+    "soil_evaporation_mm_yr": 385.0,
+    "legume_years": 0,
+    "price_sd_per_ha": 778.0,
+    "net_per_mm_irrigation": 6.86
    },
    "scores": {
-    "water": 93.0,
-    "soil": 29.4,
-    "erosion": 65.6,
-    "pest": 50.0,
-    "income": 63.1
+    "water": 80.0,
+    "soil": 19.8,
+    "erosion": 50.6,
+    "pest": 9.0,
+    "income": 72.5
    },
    "fit": {
-    "fit": 57.0,
-    "weighted_score": 57.0,
+    "fit": 44.0,
+    "weighted_score": 44.0,
     "penalties": [],
     "weights": {
      "water": 0.118,
@@ -247,159 +239,162 @@
      2004,
      2005
     ],
-    "net_per_acre": [
-     469.0,
-     387.0,
-     522.0,
-     396.0
+    "net_per_ha": [
+     2730.0,
+     2760.0,
+     2772.0,
+     2739.0
     ],
     "irrigation_mm": [
+     864.0,
+     657.0,
+     578.0,
+     797.0
+    ],
+    "water_stress_pct": [
      0.0,
      0.0,
      0.0,
      0.0
     ],
-    "water_stress_pct": [
-     0.4,
-     8.8,
-     0.0,
-     5.7
-    ],
-    "mean_net_per_acre": 419.0,
-    "weather_sd_per_acre": 129.0,
-    "total_sd_per_acre": 214.0,
-    "bad_year_net_per_acre": 239.0,
+    "mean_net_per_ha": 2784.0,
+    "weather_sd_per_ha": 27.0,
+    "total_sd_per_ha": 778.0,
+    "bad_year_net_per_ha": 2130.0,
     "worst_years": [
-     2012,
-     2006,
-     2021
+     2002,
+     2005,
+     2016
     ],
-    "variability_ratio": 0.232
+    "variability_ratio": 0.069
    },
    "pests": {
-    "score": 50.25000000000001,
-    "host_break_ratio": 0.75,
+    "score": 9.0,
+    "host_break_ratio": 0.0,
     "functional_groups": [
-     "warm_broadleaf",
      "warm_grass"
     ],
     "planting_seasons": [
-     "late_spring"
+     "Jun-Aug",
+     "Mar-May"
     ],
     "short_breaks": [
      {
-      "group": "soybean",
-      "crop_id": "soybean",
-      "crop_name": "Soybean",
-      "interval_years": 2,
-      "recommended_years": 3,
+      "group": "rice",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
+      "interval_years": 1,
+      "recommended_years": 2,
+      "unit": "season",
       "named_pests": [
-       "soybean cyst nematode",
-       "sudden death syndrome",
-       "white mold"
+       "brown planthopper",
+       "rice blast",
+       "weedy rice (padi angin)"
       ]
      }
     ],
     "green_bridges": [],
-    "distinct_cash_crops": 2
+    "distinct_cash_crops": 1
    },
    "economics": [
     {
      "phase": 0,
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
-     "yield": 223.0,
-     "yield_unit": "bu",
-     "relative_yield": 1.037,
+     "yield": 4.3,
+     "yield_unit": "t",
+     "relative_yield": 0.9,
      "yield_factors": {
-      "water": 0.997,
+      "water": 1.0,
+      "flooding": 1.0,
       "heat": 1.0,
       "timing": 1.0,
-      "rotation": 1.04
+      "rotation": 0.9
      },
-     "heat_days": 2.6,
+     "heat_days": 0.0,
      "local_reference": true,
-     "revenue": 1093.0,
-     "cost": 517.0,
-     "net": 575.0,
-     "price": 4.9,
-     "price_cv": 0.22,
-     "n_applied_kg_ha": 180.0,
-     "irrigation_mm": 0.0
+     "revenue": 5616.0,
+     "cost": 4233.0,
+     "net": 1383.0,
+     "price": 1300,
+     "price_cv": 0.08,
+     "n_applied_kg_ha": 117.0,
+     "irrigation_mm": 307.0
     },
     {
      "phase": 1,
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
-     "yield": 64.0,
-     "yield_unit": "bu",
-     "relative_yield": 1.0,
+     "yield": 4.3,
+     "yield_unit": "t",
+     "relative_yield": 0.9,
      "yield_factors": {
       "water": 1.0,
+      "flooding": 1.0,
       "heat": 1.0,
       "timing": 1.0,
-      "rotation": 1.0
+      "rotation": 0.9
      },
-     "heat_days": 2.3,
+     "heat_days": 0.0,
      "local_reference": true,
-     "revenue": 755.0,
-     "cost": 290.0,
-     "net": 465.0,
-     "price": 11.8,
-     "price_cv": 0.2,
-     "n_applied_kg_ha": 0.0,
-     "irrigation_mm": 0.0
+     "revenue": 5616.0,
+     "cost": 4202.0,
+     "net": 1414.0,
+     "price": 1300,
+     "price_cv": 0.08,
+     "n_applied_kg_ha": 117.0,
+     "irrigation_mm": 101.0
     }
    ],
    "market": {
     "score": 1.0,
     "rows": [
      {
-      "crop_id": "corn",
-      "crop_name": "Corn (grain)",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
       "access": 1.0,
       "verified_locally": true,
-      "note": "Ethanol plants and feed mills within 30 miles."
+      "note": "BERNAS-licensed mills buy at the government floor price; input and price subsidies apply."
      },
      {
-      "crop_id": "soybean",
-      "crop_name": "Soybean",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
       "access": 1.0,
       "verified_locally": true,
-      "note": "Crush plants and river terminals bid strongly."
+      "note": "BERNAS-licensed mills buy at the government floor price; input and price subsidies apply."
      }
     ]
    },
    "equipment_needed": [],
    "headline_numbers": [
     {
-     "label": "Crop water stress",
-     "value": 0.1,
-     "unit": "%",
-     "baseline": 0.1,
+     "label": "Irrigation",
+     "value": 408.0,
+     "unit": "mm/yr",
+     "baseline": 408.0,
      "higher_is_better": false
     },
     {
      "label": "Bare soil",
-     "value": 4.5,
+     "value": 5.0,
      "unit": "months/yr",
-     "baseline": 4.5,
+     "baseline": 5.0,
      "higher_is_better": false
     },
     {
      "label": "Soil erosion",
-     "value": 2.3,
+     "value": 5.34,
      "unit": "tons/ac/yr",
-     "baseline": 2.3,
+     "baseline": 5.34,
      "higher_is_better": false
     },
     {
      "label": "Net return",
-     "value": 520.0,
-     "unit": "$/ac/yr",
-     "baseline": 520.0,
+     "value": 2797.0,
+     "unit": "RM/ha/yr",
+     "baseline": 2797.0,
      "higher_is_better": true
     }
    ],
@@ -413,10 +408,10 @@
       "crop_id": null,
       "crop_name": null,
       "kind": null,
-      "cover": 0.222,
+      "cover": 0.166,
       "bare": true,
       "risks": {
-       "storm": 0.03,
+       "storm": 0.15,
        "heat": 0.0,
        "frost": 0.0,
        "drought": 0.0,
@@ -424,10 +419,10 @@
       },
       "top_risk": null,
       "canopy": 0.0,
-      "residue_cover": 0.222,
+      "residue_cover": 0.166,
       "green": 0.0,
       "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.048
+      "erosion_t_ha": 0.906
      },
      {
       "index": 1,
@@ -437,21 +432,21 @@
       "crop_id": null,
       "crop_name": null,
       "kind": null,
-      "cover": 0.221,
+      "cover": 0.115,
       "bare": true,
       "risks": {
-       "storm": 0.05,
+       "storm": 0.07,
        "heat": 0.0,
        "frost": 0.0,
        "drought": 0.0,
-       "leaching": 0.26
+       "leaching": 0.03
       },
-      "top_risk": "leaching",
+      "top_risk": null,
       "canopy": 0.0,
-      "residue_cover": 0.221,
+      "residue_cover": 0.115,
       "green": 0.0,
       "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.081
+      "erosion_t_ha": 0.447
      },
      {
       "index": 2,
@@ -461,79 +456,54 @@
       "crop_id": null,
       "crop_name": null,
       "kind": null,
-      "cover": 0.215,
+      "cover": 0.077,
       "bare": true,
       "risks": {
-       "storm": 0.17,
+       "storm": 0.3,
        "heat": 0.0,
        "frost": 0.0,
        "drought": 0.0,
-       "leaching": 0.35
+       "leaching": 0.21
       },
-      "top_risk": "leaching",
+      "top_risk": "storm",
       "canopy": 0.0,
-      "residue_cover": 0.215,
+      "residue_cover": 0.077,
       "green": 0.0,
       "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.288
+      "erosion_t_ha": 2.173
      }
     ],
     "summary": {
-     "bare_months_per_year": 4.5,
+     "bare_months_per_year": 5.0,
      "bare_calendar_months": [
       0,
       1,
       2,
       3,
-      4,
-      9,
-      10,
       11
      ],
-     "bare_label": "Oct-May",
-     "erosive_rain_on_bare_soil_pct": 32.0,
+     "bare_label": "Dec-Apr",
+     "erosive_rain_on_bare_soil_pct": 23.0,
      "mean_risk": {
-      "storm": 0.233,
-      "heat": 0.014,
-      "frost": 0.038,
+      "storm": 0.167,
+      "heat": 0.0,
+      "frost": 0.0,
       "drought": 0.0,
-      "leaching": 0.194
+      "leaching": 0.204
      },
      "windows": [
       {
        "hazard": "leaching",
        "label": "Nitrogen washing below the roots",
-       "months": "Mar-May",
-       "month_count_per_year": 2.0,
+       "months": "Apr",
+       "month_count_per_year": 1.0,
        "peak": 1.0,
        "crops": [
-        "Corn (grain)",
-        "Soybean"
-       ]
-      },
-      {
-       "hazard": "frost",
-       "label": "Frost on a growing crop",
-       "months": "Apr",
-       "month_count_per_year": 0.5,
-       "peak": 0.83,
-       "crops": [
-        "Corn (grain)"
-       ]
-      },
-      {
-       "hazard": "storm",
-       "label": "Hard rain on exposed soil",
-       "months": "Apr-Jun, Oct",
-       "month_count_per_year": 3.0,
-       "peak": 0.74,
-       "crops": [
-        "Corn (grain)",
-        "Soybean"
+        "Paddy rice (irrigated)"
        ]
       }
      ],
-     "headline": "Bare or nearly bare for 4.5 months a year (Oct-May); 32% of the year's erosive rain lands on that exposed soil."
+     "headline": "Bare or nearly bare for 5.0 months a year (Dec-Apr); 23% of the year's erosive rain lands on that exposed soil."
     }
    },
    "explanation": {
@@ -545,12 +515,12 @@
      },
      {
       "driver": "strength",
-      "text": "Where it holds up: save water and ride out drought; keep soil covered and in place; income, forage and markets.",
+      "text": "Where it holds up: save water and ride out drought; income, forage and markets.",
       "dimension": null
      },
      {
       "driver": "strain",
-      "text": "Where the data shows strain: build organic matter and nitrogen.",
+      "text": "Where the data shows strain: break pest, weed and disease cycles; build organic matter and nitrogen.",
       "dimension": null
      },
      {
@@ -565,23 +535,23 @@
       "id": "rain_total",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "About 991 mm (39 in) of rain and snow a year",
-      "detail": "Year-to-year swing is 20%. The wettest months are May, Jun, Aug. Annual total is falling 49 mm per decade (not statistically clear yet).",
+      "access": "live",
+      "statement": "About 2399 mm of rain a year",
+      "detail": "Year-to-year swing is 13%. The wettest months are Sep, Oct, Nov. Annual total is rising 162 mm per decade (a clear trend).",
       "dimension": "water",
-      "value": 991.0,
+      "value": 2399.0,
       "unit": "mm/yr"
      },
      {
       "kind": "observed",
       "id": "rain_agreement",
-      "source": "ORNL DAAC Daymet v4",
-      "dataset": "Station-interpolated daily weather (ground reference)",
-      "access": "live",
-      "statement": "Satellite rain reads 5% lower than the gauges here",
-      "detail": "Gauges (Daymet) 1010 mm, GPM IMERG 964 mm, MERRA-2 838 mm a year. The fused estimate leans 82% on gauges.",
+      "source": "NOAA NCEI GHCN-Daily (MetMalaysia station)",
+      "dataset": "Daily rain gauge: Penang International (MYM00048601)",
+      "access": "cache",
+      "statement": "Satellite rain reads 5% higher than the nearest rain gauge",
+      "detail": "Penang International gauge, 106 km away: 2390 mm; GPM IMERG 2503 mm; MERRA-2 2287 mm a year. The fused estimate leans 10% on the gauge, less the farther away it is.",
       "dimension": "water",
-      "value": -5.0,
+      "value": 5.0,
       "unit": "%"
      },
      {
@@ -589,9 +559,9 @@
       "id": "storm_season",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "46% of the year's soil-moving rain falls in May, Jun, Aug",
-      "detail": "19 days a year bring more than 12.7 mm (half an inch). The biggest single day on record was 65 mm. Heaviest-day rainfall is rising 1.7 mm per decade (not statistically clear yet).",
+      "access": "live",
+      "statement": "46% of the year's soil-moving rain falls in Sep, Oct, Nov",
+      "detail": "56 days a year bring more than 12.7 mm. The biggest single day on record was 138 mm. Heaviest-day rainfall is rising 6.7 mm per decade (a clear trend).",
       "dimension": "erosion",
       "value": 46.0,
       "unit": "% of annual erosivity"
@@ -601,35 +571,35 @@
       "id": "heat_days",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "6 days a year reach 35 C (95 F)",
-      "detail": "The last eight years averaged 6 such days against 7 in the first eight. The count is flat over the record. Mean temperature is rising 0.43 C per decade (not statistically clear yet).",
+      "access": "live",
+      "statement": "2 days a year reach 35 C",
+      "detail": "The last eight years averaged 2 such days against 1 in the first eight. The count is flat over the record. Mean temperature is rising 0.28 C per decade (a clear trend).",
       "dimension": "water",
-      "value": 6.0,
+      "value": 2.0,
       "unit": "days/yr"
      },
      {
       "kind": "observed",
-      "id": "frost_window",
+      "id": "season_window",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "Frost-free season: about 174 days",
-      "detail": "Typical last spring frost Apr 22 (one year in ten as late as May 2); first fall frost Oct 16 (one year in ten as early as Oct 5).",
+      "access": "live",
+      "statement": "No frost: the monsoons, not temperature, set the planting calendar",
+      "detail": "The wettest three months are Sep-Nov (891 mm) and the driest Jan-Mar (290 mm). Rain exceeds evaporative demand in 10 months of the year, so a second or third crop depends on where the dry months fall and on irrigation.",
       "dimension": "income",
-      "value": 174.0,
-      "unit": "days"
+      "value": 10,
+      "unit": "wet months"
      },
      {
       "kind": "observed",
       "id": "aridity",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "The air can take up 1.0 times more water than falls as rain",
-      "detail": "Reference evapotranspiration is 1013 mm a year against 991 mm of precipitation. In Jun-Aug demand exceeds rain by 97 mm.",
+      "access": "live",
+      "statement": "Rain exceeds evaporative demand 2.1 times over the year",
+      "detail": "Reference evapotranspiration is 1168 mm a year against 2399 mm of rain. In Jan-Mar demand exceeds rain by 72 mm.",
       "dimension": "water",
-      "value": 0.98,
+      "value": 2.05,
       "unit": "P/ET0"
      },
      {
@@ -638,82 +608,46 @@
       "source": "NASA POWER (MERRA-2 land model)",
       "dataset": "Root-zone soil wetness GWETROOT, standing in for SMAP L4",
       "access": "proxy",
-      "statement": "1.9 notably dry root-zone months a year recently, 1.5 in the early 2000s",
-      "detail": "A dry month is one where root-zone wetness sits more than one standard deviation below normal for that month. Driest years: 2006, 2012, 2023. Warm-season root-zone wetness is falling 0.009 units (0-1 scale) per decade (not statistically clear yet).",
+      "statement": "0.8 notably dry root-zone months a year recently, 3.5 in the early 2000s",
+      "detail": "A dry month is one where root-zone wetness sits more than one standard deviation below normal for that month. Driest years: 2002, 2005, 2016. Main-season root-zone wetness is rising 0.011 units (0-1 scale) per decade (not statistically clear yet).",
       "dimension": "water",
-      "value": 1.9,
+      "value": 0.8,
       "unit": "months/yr"
      },
      {
       "kind": "observed",
-      "id": "groundwater",
-      "source": "NASA GRACE / GRACE-FO",
-      "dataset": "Regional terrestrial water storage trend (published mascon analyses)",
-      "access": "curated",
-      "statement": "Regional water storage is holding or rising: +0.6 cm of water a year",
-      "detail": "Upper Midwest / Corn Belt: wetter decades; storage is not the limiting factor. GRACE measures a ~300 km footprint, so this is the region, not your well.",
-      "dimension": "water",
-      "value": 0.6,
-      "unit": "cm/yr"
-     },
-     {
-      "kind": "observed",
       "id": "ndvi_bare",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS Terra NDVI (MOD13Q1)",
+      "source": "ESA Copernicus Sentinel-2 (Microsoft Planetary Computer)",
+      "dataset": "Sentinel-2 L2A NDVI (B08/B04), SCL cloud mask",
       "access": "live",
-      "statement": "From orbit the field looks bare or dormant in 7 months of the year",
-      "detail": "MODIS greenness (NDVI) stays under 0.30 in Oct-Apr and peaks at 0.91 in Jul (2019-2023, 115 clear composites).",
+      "statement": "From orbit the field looks bare or dormant in 4 months of the year",
+      "detail": "Sentinel-2 (10 m) greenness (NDVI) averages under 0.30 in Mar-May, Oct and peaks at 0.88 in Dec (2020-2024, 85 clear looks).",
       "dimension": "erosion",
-      "value": 7,
+      "value": 4,
       "unit": "months"
      },
      {
       "kind": "observed",
-      "id": "surface_heat",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS Terra daytime land-surface temperature (MOD11A2)",
-      "access": "live",
-      "statement": "The ground surface averages 35 C at mid-morning in Jun",
-      "detail": "That is +7 C against the average daily high air temperature. A large gap is the signature of dry or bare soil: a well-watered canopy stays close to air temperature.",
-      "dimension": "water",
-      "value": 34.717,
-      "unit": "deg C"
-     },
-     {
-      "kind": "observed",
-      "id": "satellite_et",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS evapotranspiration, gap-filled (MOD16A2GF)",
-      "access": "live",
-      "statement": "Satellites estimate 615 mm a year actually evaporates from this pixel",
-      "detail": "MODIS MOD16 actual ET is 62% of precipitation. Above 100% points to irrigation or shallow groundwater; MOD16 is known to under-read irrigated fields.",
-      "dimension": "water",
-      "value": 615.0,
-      "unit": "mm/yr"
-     },
-     {
-      "kind": "observed",
       "id": "soil_profile",
-      "source": "USDA NRCS",
-      "dataset": "SSURGO via Soil Data Access (dominant component, 0-30 cm weighted)",
-      "access": "cache",
-      "statement": "Nicollet loam, 5.3% organic matter",
-      "detail": "Nicollet loam, 1 to 3 percent slopes. The root zone can hold about 315 mm (12.4 in) of plant-available water. pH 6.2, drainage: somewhat poorly drained.",
+      "source": "ISRIC SoilGrids 2.0",
+      "dataset": "Soil properties 0-100 cm (texture, SOC, bulk density, pH, CEC, water retention)",
+      "access": "live",
+      "statement": "Acrisols (clay loam, SoilGrids 250 m), 7.8% organic matter",
+      "detail": "The root zone can hold about 202 mm of plant-available water. pH 5.6, drainage: moderately well drained.",
       "dimension": "soil",
-      "value": 5.33,
+      "value": 7.83,
       "unit": "% OM"
      },
      {
       "kind": "observed",
       "id": "soil_runoff",
-      "source": "USDA NRCS",
-      "dataset": "SSURGO via Soil Data Access (dominant component, 0-30 cm weighted)",
-      "access": "cache",
-      "statement": "Hydrologic group B: this soil takes rain in moderately well",
-      "detail": "Erodibility (Kw) is 0.28, on a scale where 0.2 is resistant and 0.5 is very erodible. The soil survey sets tolerable loss at 5 tons per acre a year.",
+      "source": "ISRIC SoilGrids 2.0",
+      "dataset": "Soil properties 0-100 cm (texture, SOC, bulk density, pH, CEC, water retention)",
+      "access": "live",
+      "statement": "Hydrologic group C: this soil takes rain in slowly",
+      "detail": "Erodibility (Kw) is 0.121, on a scale where 0.2 is resistant and 0.5 is very erodible. Tolerable loss is taken as 11 t/ha a year (a default; SoilGrids does not map soil depth to rock).",
       "dimension": "erosion",
-      "value": 0.28,
+      "value": 0.121,
       "unit": "Kw"
      },
      {
@@ -721,33 +655,45 @@
       "id": "slope",
       "source": "NASA SRTM",
       "dataset": "SRTM GL1 30 m elevation (3x3 window, Horn slope)",
-      "access": "cache",
-      "statement": "Slope about 0.6% at 337 m elevation",
-      "detail": "From SRTM 30 m elevation over a 180 m window (6 m of relief). The soil survey lists 2% as representative.",
+      "access": "live",
+      "statement": "Slope about 1.6% at 5 m elevation",
+      "detail": "From SRTM 30 m elevation over a 180 m window (4 m of relief).",
       "dimension": "erosion",
-      "value": 0.56,
+      "value": 1.58,
       "unit": "%"
      },
      {
       "kind": "observed",
       "id": "crop_history",
-      "source": "USDA NASS",
-      "dataset": "Cropland Data Layer (CropScape point query)",
-      "access": "cache",
-      "statement": "What satellites saw growing here",
-      "detail": "USDA Cropland Data Layer: 2018 soybeans, 2019 corn, 2020 soybeans, 2021 corn, 2022 soybeans, 2023 corn.",
+      "source": "ESA Copernicus Sentinel-2 (Microsoft Planetary Computer)",
+      "dataset": "Crop cycles counted from Sentinel-2 NDVI peaks",
+      "access": "live",
+      "statement": "Sentinel-2 sees about 1.8 crop cycles a year",
+      "detail": "Green peaks per year, 2020: 1, 2021: 2, 2022: 2, 2023: 3, 2024: 0. Crops usually peak in Jul, Nov. The satellite counts cycles; it does not name the crop.",
       "dimension": "pest",
-      "value": 2,
-      "unit": "distinct classes"
+      "value": 1.76,
+      "unit": "cycles/yr"
+     },
+     {
+      "kind": "observed",
+      "id": "gaez_suitability",
+      "source": "FAO GAEZ v4",
+      "dataset": "Crop suitability index, high inputs (1981-2010 and 2041-2070 RCP8.5)",
+      "access": "live",
+      "statement": "FAO GAEZ rates this area's crop suitability",
+      "detail": "Highest rated here: Hill rice (dryland padi bukit) (high, 76/100), Cassava (ubi kayu) (good, 62/100), Paddy rice (irrigated) (good, 61/100). Projected to lose most by the 2050s (RCP8.5): Sweet potato (-12 points).",
+      "dimension": "income",
+      "value": 11,
+      "unit": "crops rated"
      },
      {
       "kind": "modelled",
       "id": "cover_calendar",
       "source": "FieldShift model",
-      "dataset": "Crop calendar from NASA POWER growing degree days + RUSLE",
+      "dataset": "Crop calendar from NASA POWER heat units and the monsoon rainfall pattern + RUSLE",
       "access": "model",
-      "statement": "Bare or nearly bare for 4.5 months a year (Oct-May); 32% of the year's erosive rain lands on that exposed soil.",
-      "detail": "Mean ground cover 48%; modelled soil loss 2.3 tons/acre a year, 0.5 times the tolerable rate.",
+      "statement": "Bare or nearly bare for 5.0 months a year (Dec-Apr); 23% of the year's erosive rain lands on that exposed soil.",
+      "detail": "Mean ground cover 54%; modelled soil loss 12.0 t/ha a year, 1.1 times the tolerable rate.",
       "dimension": "erosion",
       "value": null,
       "unit": null
@@ -756,10 +702,10 @@
       "kind": "modelled",
       "id": "water_budget",
       "source": "FieldShift model",
-      "dataset": "Monthly FAO-56 soil-water balance on fused rainfall and SSURGO water-holding capacity",
+      "dataset": "Monthly FAO-56 soil-water balance on fused rainfall and SoilGrids water-holding capacity",
       "access": "model",
-      "statement": "Uses 810 mm of water a year; 56% of rain and irrigation goes through the crop",
-      "detail": "Runoff 37 mm, deep drainage 147 mm, unmet crop demand 0%.",
+      "statement": "Uses 939 mm of water a year; 20% of rain and irrigation goes through the crop",
+      "detail": "Irrigation 408 mm a year (25% of the allocation). Runoff 191 mm, deep drainage 1474 mm, unmet crop demand 0%.",
       "dimension": "water",
       "value": null,
       "unit": null
@@ -770,8 +716,8 @@
       "source": "FieldShift model",
       "dataset": "One-pool soil carbon balance driven by residue, roots, temperature and tillage",
       "access": "model",
-      "statement": "Returns 4.0 t/ha of carbon a year; soil carbon trend -0.23 t/ha a year",
-      "detail": "Living roots 5.0 months a year. Legume and cover-crop nitrogen credit 18 kg/ha a year.",
+      "statement": "Returns 5.5 t/ha of carbon a year; soil carbon trend -3.24 t/ha a year",
+      "detail": "Living roots 8.0 months a year. Legume and cover-crop nitrogen credit 0 kg/ha a year.",
       "dimension": "soil",
       "value": null,
       "unit": null
@@ -782,8 +728,8 @@
       "source": "FieldShift model",
       "dataset": "24 years of NASA POWER weather run through the rotation, every phase in every year",
       "access": "model",
-      "statement": "Replaying 2001-2024 weather: $419/acre on average, $239 in a bad year",
-      "detail": "Worst years: 2012, 2006, 2021. Weather alone moves net return by $129/acre (one standard deviation).",
+      "statement": "Replaying 2001-2024 weather: RM2,784/ha on average, RM2,130 in a bad year",
+      "detail": "Worst years: 2002, 2005, 2016. Weather alone moves net return by RM27/ha (one standard deviation).",
       "dimension": "income",
       "value": null,
       "unit": null
@@ -801,9 +747,9 @@
        "id": "scale_power_precip",
        "kind": "resolution",
        "severity": "low",
-       "topic": "Rainfall (MERRA-2, bias-corrected): one pixel is 97x the width of this field",
+       "topic": "Rainfall (MERRA-2, bias-corrected): one pixel is 355x the width of this field",
        "detail": "Native resolution 55 km. Fused with IMERG and gauges by inverse-variance weighting.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
+       "close_by": "A rain gauge or soil-moisture probe on the farm beats any pixel this size."
       },
       {
        "id": "layer_soil_moisture",
@@ -814,27 +760,35 @@
        "close_by": "Add a NASA Earthdata login to pull the native product, or check against a field sensor."
       },
       {
-       "id": "scale_lst",
-       "kind": "resolution",
-       "severity": "low",
-       "topic": "Land-surface temperature (MODIS, ECOSTRESS stand-in): one pixel is 2x the width of this field",
-       "detail": "Native resolution 1 km. 8-day daytime composites averaged to months.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
+       "id": "layer_lst",
+       "kind": "data",
+       "severity": "medium",
+       "topic": "Land-surface temperature (MODIS, ECOSTRESS stand-in): not available",
+       "detail": "This layer could not be retrieved.",
+       "close_by": "Supply a local measurement or retry when the service is back."
       },
       {
-       "id": "scale_grace",
-       "kind": "resolution",
-       "severity": "low",
-       "topic": "Water storage trend (GRACE / GRACE-FO): one pixel is 527x the width of this field",
-       "detail": "Native resolution 300 km. Regional trend used as context only; never downscaled to the field.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
+       "id": "layer_et",
+       "kind": "data",
+       "severity": "medium",
+       "topic": "Evapotranspiration (MODIS MOD16): not available",
+       "detail": "This layer could not be retrieved.",
+       "close_by": "Supply a local measurement or retry when the service is back."
+      },
+      {
+       "id": "layer_grace",
+       "kind": "data",
+       "severity": "medium",
+       "topic": "Water storage trend (GRACE / GRACE-FO): not available",
+       "detail": "No curated regional trend for this location. In Malaysia storage swings with the monsoons and ENSO; check the GRACE layer on the map and JPS river and reservoir records.",
+       "close_by": "Supply a local measurement or retry when the service is back."
       },
       {
        "id": "calendar_check",
        "kind": "validation",
-       "severity": "low",
-       "topic": "Satellite check of the assumed crop calendar: strong agreement",
-       "detail": "The crop calendar assumed for the current rotation and MODIS greenness move together (r = 0.93). The satellite record supports the assumed planting and harvest timing.",
+       "severity": "high",
+       "topic": "Satellite check of the assumed crop calendar: weak agreement",
+       "detail": "The crop calendar assumed for the current rotation and MODIS greenness move together (r = -0.19). The satellite does not see the calendar the tool assumed. The 250 m pixel may mix neighbouring fields, or the baseline rotation is wrong. Correct the baseline before trusting the comparison.",
        "close_by": "Edit the baseline rotation and planting dates to match your records."
       },
       {
@@ -842,8 +796,8 @@
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Compaction and hardpans below the surface",
-       "detail": "No satellite sees a plough pan. The model assumes roots can use the full soil-survey depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
-       "close_by": "Push a penetrometer or dig a pit in spring when the soil is moist."
+       "detail": "No satellite sees a plough pan, and puddled paddy soils always have one. The model assumes roots can use the full soil depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
+       "close_by": "Push a penetrometer or dig a pit when the soil is moist, before switching a paddy field to dry-land crops."
       },
       {
        "id": "biology",
@@ -857,95 +811,106 @@
        "id": "drainage",
        "kind": "blind_spot",
        "severity": "standing",
-       "topic": "Tile lines, drainage and irrigation hardware",
-       "detail": "Tile spacing, outlet condition, well capacity and system uniformity are not in any public dataset. One on/off setting stands in for them.",
-       "close_by": "Check tile maps, well test records and a recent irrigation uniformity test."
+       "topic": "Field drains, bunds, water gates and canals",
+       "detail": "Drain spacing, bund height, the tertiary canal schedule and pump capacity are not in any public dataset. One on/off setting stands in for them.",
+       "close_by": "Walk the drains and bunds; check the scheme's water-release schedule and raised-bed or drain options for dry-land crops."
       },
       {
        "id": "genetics",
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Varieties, hybrids and maturity groups",
-       "detail": "Each crop is a single mid-range type. Variety choice can move maturity by weeks and drought or disease tolerance by a lot.",
-       "close_by": "Match maturity and disease packages to the planting windows shown, with your seed adviser."
+       "detail": "Each crop is a single mid-range type (for paddy, a 105-115 day MARDI variety). Variety choice can move maturity by weeks and blast or drought tolerance by a lot.",
+       "close_by": "Match variety duration and disease resistance to the planting windows shown, with the DOA or MARDI."
       },
       {
        "id": "contracts",
        "kind": "blind_spot",
        "severity": "standing",
-       "topic": "Contracts, basis, leases and programme rules",
-       "detail": "Prices are multi-year averages. Forward contracts, local basis, landlord terms, crop insurance and conservation-programme payments can outweigh every number here.",
-       "close_by": "Price each crop with your buyer, lender and insurance agent before committing acres."
+       "topic": "Contracts, middlemen, rent and subsidies",
+       "detail": "Prices are multi-year farm-gate averages. Contract farming terms, middleman margins, land rent, paddy input and price subsidies and Takaful cover can outweigh every number here.",
+       "close_by": "Price each crop with your buyer, the PPK or FAMA, and check subsidy rules before committing land."
       },
       {
        "id": "within_field",
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Variation inside the field",
-       "detail": "Weather inputs are 10-55 km pixels and the soil is one dominant map-unit component. Knolls, draws, sandy streaks and saline spots are averaged away.",
-       "close_by": "Overlay yield maps or walk the field; consider zoning the rotation."
+       "detail": "Weather inputs are 10-55 km pixels and the soil is a 250 m model estimate. Low spots that flood, sandy ridges and acid-sulphate patches are averaged away.",
+       "close_by": "Walk the field after heavy rain and compare with the 10 m Sentinel-2 greenness; consider zoning the rotation."
       }
      ],
      "confidence": {
       "water": {
-       "data": 0.69,
+       "data": 0.51,
        "model": 0.8,
-       "combined": 0.75,
-       "label": "high"
+       "combined": 0.64,
+       "label": "moderate"
       },
       "soil": {
-       "data": 0.83,
+       "data": 0.58,
        "model": 0.55,
-       "combined": 0.67,
+       "combined": 0.56,
        "label": "moderate"
       },
       "erosion": {
-       "data": 0.72,
+       "data": 0.53,
        "model": 0.65,
-       "combined": 0.68,
+       "combined": 0.59,
        "label": "moderate"
       },
       "pest": {
-       "data": 0.85,
+       "data": 0.84,
        "model": 0.65,
        "combined": 0.74,
        "label": "high"
       },
       "income": {
-       "data": 0.86,
+       "data": 0.77,
        "model": 0.55,
-       "combined": 0.69,
+       "combined": 0.65,
        "label": "moderate"
       }
      },
-     "overall_confidence": 0.71,
+     "overall_confidence": 0.64,
      "score_uncertainty": {
-      "water": 6.0,
-      "soil": 7.0,
-      "erosion": 7.0,
+      "water": 8.0,
+      "soil": 10.0,
+      "erosion": 9.0,
       "pest": 6.0,
-      "income": 7.0
+      "income": 8.0
      },
-     "statement": "Scores are planning estimates from a monthly model. Treat a difference of fewer points than the uncertainty shown for that dimension as a tie, and treat every dollar figure as a ranking aid, not a budget."
+     "statement": "Scores are planning estimates from a monthly model. Treat a difference of fewer points than the uncertainty shown for that dimension as a tie, and treat every ringgit figure as a ranking aid, not a budget."
     },
     "risks": [
      {
-      "id": "resistance_soybean",
-      "category": "Pests",
-      "title": "Soybean returns every 2 year(s)",
-      "detail": "Recommended gap is 3 years. Watch for soybean cyst nematode, sudden death syndrome, white mold and for herbicide-resistant weeds selected by repeating the same programme.",
+      "id": "erosion_over_t",
+      "category": "Soil",
+      "title": "Soil loss is above the tolerable rate",
+      "detail": "Modelled loss is 1.1 times what this soil can sustain. Staying the course means continued topsoil loss and silt in the rivers downstream.",
       "who": [
-       "Certified Crop Adviser"
+       "DOA soil conservation officer",
+       "Farmer"
+      ],
+      "severity": "caution"
+     },
+     {
+      "id": "resistance_rice",
+      "category": "Pests",
+      "title": "Paddy rice (irrigated) returns every 1 season(s)",
+      "detail": "Recommended gap is 2 seasons. Watch for brown planthopper, rice blast, weedy rice (padi angin) and for herbicide-resistant weeds selected by repeating the same programme.",
+      "who": [
+       "Agronomist / crop adviser"
       ],
       "severity": "caution"
      },
      {
       "id": "bare_soil",
       "category": "Soil",
-      "title": "Soil is bare 4 months a year",
-      "detail": "Bare months coincide with part of the erosive-rain season. Residue management alone can change this without changing crops.",
+      "title": "Soil is bare 5 months a year",
+      "detail": "Bare months coincide with part of the monsoon's erosive rain. Keeping straw or residue on the surface instead of burning it changes this without changing crops.",
       "who": [
-       "NRCS field office",
+       "DOA soil conservation officer",
        "Farmer"
       ],
       "severity": "check"
@@ -967,85 +932,75 @@
      0.0,
      0.0,
      0.0,
-     0.02,
-     0.15,
-     0.53,
+     0.17,
+     0.72,
      1.0,
+     0.77,
+     0.19,
+     0.73,
      1.0,
-     0.54,
-     0.0,
-     0.0,
+     0.76,
      0.0
     ],
     "modelled_cover": [
-     0.33,
-     0.32,
-     0.32,
-     0.24,
-     0.26,
-     0.56,
+     0.17,
+     0.12,
+     0.08,
+     0.18,
+     0.65,
+     0.9,
+     0.8,
+     0.69,
+     0.85,
      0.95,
-     0.95,
-     0.75,
-     0.41,
-     0.33,
-     0.33
+     0.88,
+     0.24
     ],
     "observed_ndvi": [
-     0.092,
-     0.143,
-     0.259,
-     0.29,
-     0.351,
-     0.784,
-     0.907,
-     0.805,
-     0.384,
-     0.259,
-     0.239,
-     0.216
+     0.702,
+     0.37,
+     0.179,
+     0.14,
+     0.113,
+     0.621,
+     0.839,
+     0.661,
+     null,
+     -0.033,
+     0.467,
+     0.884
     ],
-    "correlation": 0.93,
+    "correlation": -0.19,
     "observed_low_months": [
-     0,
-     1,
      2,
      3,
-     9,
-     10,
-     11
+     4,
+     9
     ],
     "modelled_low_months": [
      0,
      1,
      2,
-     3,
-     4,
-     9,
-     10,
      11
     ],
-    "low_month_agreement": 0.88,
-    "agreement": "strong",
-    "rotation_years": 2,
-    "explanation": "The crop calendar assumed for the current rotation and MODIS greenness move together (r = 0.93). The satellite record supports the assumed planting and harvest timing."
+    "low_month_agreement": 0.14,
+    "agreement": "weak",
+    "rotation_years": 1,
+    "explanation": "The crop calendar assumed for the current rotation and MODIS greenness move together (r = -0.19). The satellite does not see the calendar the tool assumed. The 250 m pixel may mix neighbouring fields, or the baseline rotation is wrong. Correct the baseline before trusting the comparison."
    }
   },
   {
-   "id": "step-34623436",
+   "id": "step-84109813",
    "role": "step",
-   "rank": 1,
+   "rank": 3,
    "title": "Same crops, covered soil",
    "tagline": "Keep the crops you know. Change what happens between them.",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "name": "Paddy rice + Paddy rice + Sesbania, every year",
    "years": [
     [
-     "corn",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
+     "rice",
+     "rice",
+     "sesbania"
     ]
    ],
    "year_labels": [
@@ -1053,42 +1008,28 @@
      "year": 1,
      "crops": [
       {
-       "id": "corn",
-       "name": "Corn (grain)",
+       "id": "rice",
+       "name": "Paddy rice (irrigated)",
        "role": "cash",
        "family": "grass",
        "functional_group": "warm_grass",
        "legume": false
       },
       {
-       "id": "cereal_rye",
-       "name": "Cereal rye cover",
-       "role": "cover",
-       "family": "grass",
-       "functional_group": "cool_grass",
-       "legume": false
-      }
-     ],
-     "fallow": false
-    },
-    {
-     "year": 2,
-     "crops": [
-      {
-       "id": "soybean",
-       "name": "Soybean",
+       "id": "rice",
+       "name": "Paddy rice (irrigated)",
        "role": "cash",
-       "family": "legume",
-       "functional_group": "warm_broadleaf",
-       "legume": true
+       "family": "grass",
+       "functional_group": "warm_grass",
+       "legume": false
       },
       {
-       "id": "cover_mix",
-       "name": "Rye + vetch + radish mix",
+       "id": "sesbania",
+       "name": "Sesbania green manure",
        "role": "cover",
-       "family": "mix",
-       "functional_group": "cool_grass",
-       "legume": false
+       "family": "legume",
+       "functional_group": "legume",
+       "legume": true
       }
      ],
      "fallow": false
@@ -1096,20 +1037,20 @@
    ],
    "tillage": "no_till",
    "tillage_label": "No-till",
-   "n_years": 2,
+   "n_years": 1,
    "feasible": true,
    "issues": [],
    "phases": [
     {
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
      "year_index": 0,
      "plant_month": 3,
-     "end_month": 9,
+     "end_month": 6,
      "plant_calendar_month": 3,
-     "end_calendar_month": 9,
-     "duration_months": 7,
+     "end_calendar_month": 6,
+     "duration_months": 4,
      "wraps": false,
      "delay_months": 0,
      "biomass_frac": null,
@@ -1117,50 +1058,34 @@
      "issues": []
     },
     {
-     "crop_id": "cereal_rye",
-     "crop_name": "Cereal rye cover",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "kind": "cash",
+     "year_index": 0,
+     "plant_month": 7,
+     "end_month": 10,
+     "plant_calendar_month": 7,
+     "end_calendar_month": 10,
+     "duration_months": 4,
+     "wraps": false,
+     "delay_months": 0,
+     "biomass_frac": null,
+     "winterkills": false,
+     "issues": []
+    },
+    {
+     "crop_id": "sesbania",
+     "crop_name": "Sesbania green manure",
      "kind": "cover",
      "year_index": 0,
-     "plant_month": 10,
-     "end_month": 15,
-     "plant_calendar_month": 10,
-     "end_calendar_month": 3,
-     "duration_months": 6,
-     "wraps": false,
-     "delay_months": 0,
-     "biomass_frac": 0.381,
-     "winterkills": false,
-     "issues": []
-    },
-    {
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "kind": "cash",
-     "year_index": 1,
-     "plant_month": 16,
-     "end_month": 20,
-     "plant_calendar_month": 4,
-     "end_calendar_month": 8,
-     "duration_months": 5,
-     "wraps": false,
-     "delay_months": 0,
-     "biomass_frac": null,
-     "winterkills": false,
-     "issues": []
-    },
-    {
-     "crop_id": "cover_mix",
-     "crop_name": "Rye + vetch + radish mix",
-     "kind": "cover",
-     "year_index": 1,
-     "plant_month": 21,
-     "end_month": 2,
-     "plant_calendar_month": 9,
-     "end_calendar_month": 2,
-     "duration_months": 6,
+     "plant_month": 11,
+     "end_month": 0,
+     "plant_calendar_month": 11,
+     "end_calendar_month": 0,
+     "duration_months": 2,
      "wraps": true,
      "delay_months": 0,
-     "biomass_frac": 0.437,
+     "biomass_frac": 1.0,
      "winterkills": false,
      "issues": []
     }
@@ -1170,112 +1095,112 @@
      "index": 0,
      "calendar_month": 0,
      "year_index": 0,
-     "crop_id": "cover_mix",
+     "crop_id": "sesbania",
      "kind": "cover",
-     "cover": 0.999,
-     "canopy": 0.679,
-     "residue_cover": 0.996,
-     "green": 0.73,
+     "cover": 0.987,
+     "canopy": 0.855,
+     "residue_cover": 0.911,
+     "green": 0.95,
      "bare": false,
-     "runoff_mm": 0.0,
-     "drainage_mm": 4.9,
-     "transpiration_mm": 10.5,
-     "demand_mm": 10.5,
-     "soil_evap_mm": 0.8,
+     "runoff_mm": 1.4,
+     "drainage_mm": 0.0,
+     "transpiration_mm": 103.9,
+     "demand_mm": 103.9,
+     "soil_evap_mm": 4.4,
      "irrigation_mm": 0.0,
-     "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.001,
+     "soil_water_frac": 0.871,
+     "erosion_t_ha": 0.009,
      "n_leach_kg_ha": 0.0
     },
     {
      "index": 1,
      "calendar_month": 1,
      "year_index": 0,
-     "crop_id": "cover_mix",
-     "kind": "cover",
-     "cover": 0.999,
-     "canopy": 0.679,
-     "residue_cover": 0.996,
-     "green": 0.73,
+     "crop_id": null,
+     "kind": null,
+     "cover": 0.967,
+     "canopy": 0.0,
+     "residue_cover": 0.967,
+     "green": 0.0,
      "bare": false,
-     "runoff_mm": 0.0,
-     "drainage_mm": 14.2,
-     "transpiration_mm": 16.7,
-     "demand_mm": 16.7,
-     "soil_evap_mm": 1.2,
+     "runoff_mm": 1.1,
+     "drainage_mm": 3.3,
+     "transpiration_mm": 0.0,
+     "demand_mm": 0.0,
+     "soil_evap_mm": 21.2,
      "irrigation_mm": 0.0,
      "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.001,
-     "n_leach_kg_ha": 0.0
+     "erosion_t_ha": 0.014,
+     "n_leach_kg_ha": 0.79
     },
     {
      "index": 2,
      "calendar_month": 2,
      "year_index": 0,
-     "crop_id": "cover_mix",
-     "kind": "cover",
-     "cover": 0.998,
-     "canopy": 0.679,
-     "residue_cover": 0.995,
-     "green": 0.73,
+     "crop_id": null,
+     "kind": null,
+     "cover": 0.923,
+     "canopy": 0.0,
+     "residue_cover": 0.923,
+     "green": 0.0,
      "bare": false,
-     "runoff_mm": 0.1,
-     "drainage_mm": 14.0,
-     "transpiration_mm": 40.9,
-     "demand_mm": 40.9,
-     "soil_evap_mm": 3.9,
+     "runoff_mm": 3.5,
+     "drainage_mm": 79.7,
+     "transpiration_mm": 0.0,
+     "demand_mm": 0.0,
+     "soil_evap_mm": 47.1,
      "irrigation_mm": 0.0,
      "soil_water_frac": 1.0,
-     "erosion_t_ha": 0.004,
-     "n_leach_kg_ha": 0.0
+     "erosion_t_ha": 0.069,
+     "n_leach_kg_ha": 22.73
     }
    ],
    "metrics": {
-    "irrigation_mm_yr": 0.0,
-    "allocation_used_pct": null,
-    "crop_water_use_mm_yr": 787.0,
+    "irrigation_mm_yr": 259.0,
+    "allocation_used_pct": 16.0,
+    "crop_water_use_mm_yr": 891.0,
     "water_stress_pct": 0.0,
-    "infiltration_pct": 99.5,
-    "productive_water_pct": 67.5,
-    "runoff_mm_yr": 5.0,
-    "deep_drainage_mm_yr": 201.0,
-    "soil_loss_t_ha_yr": 0.14,
-    "soil_loss_tons_ac_yr": 0.06,
-    "soil_loss_vs_tolerable": 0.01,
+    "infiltration_pct": 97.3,
+    "productive_water_pct": 26.2,
+    "runoff_mm_yr": 65.0,
+    "deep_drainage_mm_yr": 1559.0,
+    "soil_loss_t_ha_yr": 0.77,
+    "soil_loss_tons_ac_yr": 0.34,
+    "soil_loss_vs_tolerable": 0.07,
     "bare_months_per_year": 0.0,
-    "mean_ground_cover_pct": 100.0,
-    "storm_exposure_pct": 0.0,
-    "living_root_months_per_year": 10.5,
-    "carbon_input_t_ha_yr": 5.27,
-    "soc_change_t_ha_yr": 0.268,
-    "om_change_pct_points_10yr": 0.13,
-    "n_fertilizer_kg_ha_yr": 81.0,
-    "n_legume_credit_kg_ha_yr": 26.0,
-    "n_self_sufficiency_pct": 24.0,
-    "n_leaching_kg_ha_yr": 6.9,
-    "pest_break_score": 55.0,
-    "distinct_cash_crops": 2,
-    "net_return_per_acre_yr": 488.0,
-    "gross_revenue_per_acre_yr": 926.0,
-    "cost_per_acre_yr": 438.0,
+    "mean_ground_cover_pct": 94.0,
+    "storm_exposure_pct": 6.0,
+    "living_root_months_per_year": 10.0,
+    "carbon_input_t_ha_yr": 8.1,
+    "soc_change_t_ha_yr": -1.58,
+    "om_change_pct_points_10yr": -0.77,
+    "n_fertilizer_kg_ha_yr": 155.0,
+    "n_legume_credit_kg_ha_yr": 80.0,
+    "n_self_sufficiency_pct": 34.0,
+    "n_leaching_kg_ha_yr": 105.3,
+    "pest_break_score": 14.0,
+    "distinct_cash_crops": 1,
+    "net_return_per_ha_yr": 2920.0,
+    "gross_revenue_per_ha_yr": 11232.0,
+    "cost_per_ha_yr": 8312.0,
     "market_access": 1.0,
-    "forage_value": 0.49,
-    "transpiration_mm_yr": 671.0,
-    "soil_evaporation_mm_yr": 116.0,
-    "legume_years": 1,
-    "price_sd_per_acre": 171.0,
-    "net_per_mm_irrigation": null
+    "forage_value": 0.37,
+    "transpiration_mm_yr": 687.0,
+    "soil_evaporation_mm_yr": 203.0,
+    "legume_years": 0,
+    "price_sd_per_ha": 778.0,
+    "net_per_mm_irrigation": 11.29
    },
    "scores": {
-    "water": 100.0,
-    "soil": 76.5,
+    "water": 80.0,
+    "soil": 38.4,
     "erosion": 100.0,
-    "pest": 55.0,
-    "income": 61.7
+    "pest": 14.0,
+    "income": 74.1
    },
    "fit": {
-    "fit": 76.2,
-    "weighted_score": 78.6,
+    "fit": 60.2,
+    "weighted_score": 62.6,
     "penalties": [
      {
       "reason": "Amount of change versus your risk tolerance",
@@ -1304,139 +1229,126 @@
      2004,
      2005
     ],
-    "net_per_acre": [
-     440.0,
-     373.0,
-     488.0,
-     382.0
+    "net_per_ha": [
+     2841.0,
+     2873.0,
+     2894.0,
+     2861.0
     ],
     "irrigation_mm": [
-     0.0,
-     0.0,
-     0.0,
-     0.0
+     788.0,
+     568.0,
+     433.0,
+     653.0
     ],
     "water_stress_pct": [
-     0.0,
-     6.2,
-     0.0,
-     3.8
+     5.2,
+     3.7,
+     1.8,
+     4.9
     ],
-    "mean_net_per_acre": 404.0,
-    "weather_sd_per_acre": 110.0,
-    "total_sd_per_acre": 203.0,
-    "bad_year_net_per_acre": 233.0,
+    "mean_net_per_ha": 2902.0,
+    "weather_sd_per_ha": 28.0,
+    "total_sd_per_ha": 779.0,
+    "bad_year_net_per_ha": 2248.0,
     "worst_years": [
-     2012,
-     2006,
-     2021
+     2002,
+     2016,
+     2005
     ],
-    "variability_ratio": 0.219
+    "variability_ratio": 0.069
    },
    "pests": {
-    "score": 54.75000000000001,
-    "host_break_ratio": 0.75,
+    "score": 13.5,
+    "host_break_ratio": 0.0,
     "functional_groups": [
-     "cool_grass",
-     "warm_broadleaf",
+     "legume",
      "warm_grass"
     ],
     "planting_seasons": [
-     "late_spring"
+     "Jun-Aug",
+     "Mar-May"
     ],
     "short_breaks": [
      {
-      "group": "soybean",
-      "crop_id": "soybean",
-      "crop_name": "Soybean",
-      "interval_years": 2,
-      "recommended_years": 3,
+      "group": "rice",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
+      "interval_years": 1,
+      "recommended_years": 2,
+      "unit": "season",
       "named_pests": [
-       "soybean cyst nematode",
-       "sudden death syndrome",
-       "white mold"
+       "brown planthopper",
+       "rice blast",
+       "weedy rice (padi angin)"
       ]
      }
     ],
     "green_bridges": [],
-    "distinct_cash_crops": 2
+    "distinct_cash_crops": 1
    },
    "economics": [
     {
      "phase": 0,
-     "crop_id": "corn",
-     "crop_name": "Corn (grain)",
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
      "kind": "cash",
-     "yield": 223.6,
-     "yield_unit": "bu",
-     "relative_yield": 1.04,
+     "yield": 4.3,
+     "yield_unit": "t",
+     "relative_yield": 0.9,
      "yield_factors": {
       "water": 1.0,
+      "flooding": 1.0,
       "heat": 1.0,
       "timing": 1.0,
-      "rotation": 1.04
+      "rotation": 0.9
      },
-     "heat_days": 2.6,
+     "heat_days": 0.0,
      "local_reference": true,
-     "revenue": 1096.0,
-     "cost": 509.0,
-     "net": 587.0,
-     "price": 4.9,
-     "price_cv": 0.22,
-     "n_applied_kg_ha": 163.0,
-     "irrigation_mm": 0.0
+     "revenue": 5616.0,
+     "cost": 3814.0,
+     "net": 1802.0,
+     "price": 1300,
+     "price_cv": 0.08,
+     "n_applied_kg_ha": 37.0,
+     "irrigation_mm": 183.0
     },
     {
      "phase": 1,
-     "crop_id": "cereal_rye",
-     "crop_name": "Cereal rye cover",
-     "kind": "cover",
-     "yield": null,
-     "yield_unit": null,
-     "relative_yield": null,
-     "revenue": 0.0,
-     "cost": 32,
-     "net": -32.0,
-     "price": null,
-     "price_cv": 0.0,
-     "n_applied_kg_ha": 0.0,
-     "irrigation_mm": 0.0
+     "crop_id": "rice",
+     "crop_name": "Paddy rice (irrigated)",
+     "kind": "cash",
+     "yield": 4.3,
+     "yield_unit": "t",
+     "relative_yield": 0.9,
+     "yield_factors": {
+      "water": 1.0,
+      "flooding": 1.0,
+      "heat": 1.0,
+      "timing": 1.0,
+      "rotation": 0.9
+     },
+     "heat_days": 0.0,
+     "local_reference": true,
+     "revenue": 5616.0,
+     "cost": 4198.0,
+     "net": 1418.0,
+     "price": 1300,
+     "price_cv": 0.08,
+     "n_applied_kg_ha": 117.0,
+     "irrigation_mm": 75.0
     },
     {
      "phase": 2,
-     "crop_id": "soybean",
-     "crop_name": "Soybean",
-     "kind": "cash",
-     "yield": 64.0,
-     "yield_unit": "bu",
-     "relative_yield": 1.0,
-     "yield_factors": {
-      "water": 1.0,
-      "heat": 1.0,
-      "timing": 1.0,
-      "rotation": 1.0
-     },
-     "heat_days": 2.3,
-     "local_reference": true,
-     "revenue": 755.0,
-     "cost": 290.0,
-     "net": 465.0,
-     "price": 11.8,
-     "price_cv": 0.2,
-     "n_applied_kg_ha": 0.0,
-     "irrigation_mm": 0.0
-    },
-    {
-     "phase": 3,
-     "crop_id": "cover_mix",
-     "crop_name": "Rye + vetch + radish mix",
+     "crop_id": "sesbania",
+     "crop_name": "Sesbania green manure",
      "kind": "cover",
      "yield": null,
      "yield_unit": null,
      "relative_yield": null,
      "revenue": 0.0,
-     "cost": 44,
-     "net": -44.0,
+     "cost": 300,
+     "net": -300.0,
      "price": null,
      "price_cv": 0.0,
      "n_applied_kg_ha": 0.0,
@@ -1447,49 +1359,49 @@
     "score": 1.0,
     "rows": [
      {
-      "crop_id": "corn",
-      "crop_name": "Corn (grain)",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
       "access": 1.0,
       "verified_locally": true,
-      "note": "Ethanol plants and feed mills within 30 miles."
+      "note": "BERNAS-licensed mills buy at the government floor price; input and price subsidies apply."
      },
      {
-      "crop_id": "soybean",
-      "crop_name": "Soybean",
+      "crop_id": "rice",
+      "crop_name": "Paddy rice (irrigated)",
       "access": 1.0,
       "verified_locally": true,
-      "note": "Crush plants and river terminals bid strongly."
+      "note": "BERNAS-licensed mills buy at the government floor price; input and price subsidies apply."
      }
     ]
    },
    "equipment_needed": [],
    "headline_numbers": [
     {
-     "label": "Crop water stress",
-     "value": 0.0,
-     "unit": "%",
-     "baseline": 0.1,
+     "label": "Irrigation",
+     "value": 259.0,
+     "unit": "mm/yr",
+     "baseline": 408.0,
      "higher_is_better": false
     },
     {
      "label": "Bare soil",
      "value": 0.0,
      "unit": "months/yr",
-     "baseline": 4.5,
+     "baseline": 5.0,
      "higher_is_better": false
     },
     {
      "label": "Soil erosion",
-     "value": 0.06,
+     "value": 0.34,
      "unit": "tons/ac/yr",
-     "baseline": 2.3,
+     "baseline": 5.34,
      "higher_is_better": false
     },
     {
      "label": "Net return",
-     "value": 488.0,
-     "unit": "$/ac/yr",
-     "baseline": 520.0,
+     "value": 2920.0,
+     "unit": "RM/ha/yr",
+     "baseline": 2797.0,
      "higher_is_better": true
     }
    ],
@@ -1500,10 +1412,10 @@
       "year_index": 0,
       "calendar_month": 0,
       "label": "Jan",
-      "crop_id": "cover_mix",
-      "crop_name": "Rye + vetch + radish mix",
+      "crop_id": "sesbania",
+      "crop_name": "Sesbania green manure",
       "kind": "cover",
-      "cover": 0.999,
+      "cover": 0.987,
       "bare": false,
       "risks": {
        "storm": 0.0,
@@ -1513,59 +1425,59 @@
        "leaching": 0.0
       },
       "top_risk": null,
-      "canopy": 0.679,
-      "residue_cover": 0.996,
-      "green": 0.73,
-      "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.001
+      "canopy": 0.855,
+      "residue_cover": 0.911,
+      "green": 0.95,
+      "soil_water_frac": 0.871,
+      "erosion_t_ha": 0.009
      },
      {
       "index": 1,
       "year_index": 0,
       "calendar_month": 1,
       "label": "Feb",
-      "crop_id": "cover_mix",
-      "crop_name": "Rye + vetch + radish mix",
-      "kind": "cover",
-      "cover": 0.999,
+      "crop_id": null,
+      "crop_name": null,
+      "kind": null,
+      "cover": 0.967,
       "bare": false,
       "risks": {
        "storm": 0.0,
        "heat": 0.0,
        "frost": 0.0,
        "drought": 0.0,
-       "leaching": 0.0
+       "leaching": 0.02
       },
       "top_risk": null,
-      "canopy": 0.679,
-      "residue_cover": 0.996,
-      "green": 0.73,
+      "canopy": 0.0,
+      "residue_cover": 0.967,
+      "green": 0.0,
       "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.001
+      "erosion_t_ha": 0.014
      },
      {
       "index": 2,
       "year_index": 0,
       "calendar_month": 2,
       "label": "Mar",
-      "crop_id": "cover_mix",
-      "crop_name": "Rye + vetch + radish mix",
-      "kind": "cover",
-      "cover": 0.998,
+      "crop_id": null,
+      "crop_name": null,
+      "kind": null,
+      "cover": 0.923,
       "bare": false,
       "risks": {
-       "storm": 0.0,
+       "storm": 0.03,
        "heat": 0.0,
        "frost": 0.0,
        "drought": 0.0,
-       "leaching": 0.0
+       "leaching": 0.64
       },
-      "top_risk": null,
-      "canopy": 0.679,
-      "residue_cover": 0.995,
-      "green": 0.73,
+      "top_risk": "leaching",
+      "canopy": 0.0,
+      "residue_cover": 0.923,
+      "green": 0.0,
       "soil_water_frac": 1.0,
-      "erosion_t_ha": 0.004
+      "erosion_t_ha": 0.069
      }
     ],
     "summary": {
@@ -1574,21 +1486,22 @@
      "bare_label": "no months",
      "erosive_rain_on_bare_soil_pct": 0.0,
      "mean_risk": {
-      "storm": 0.001,
-      "heat": 0.014,
-      "frost": 0.038,
+      "storm": 0.029,
+      "heat": 0.0,
+      "frost": 0.0,
       "drought": 0.0,
-      "leaching": 0.071
+      "leaching": 0.247
      },
      "windows": [
       {
-       "hazard": "frost",
-       "label": "Frost on a growing crop",
-       "months": "Apr",
-       "month_count_per_year": 0.5,
-       "peak": 0.83,
+       "hazard": "leaching",
+       "label": "Nitrogen washing below the roots",
+       "months": "Mar-Apr, Aug, Dec",
+       "month_count_per_year": 4.0,
+       "peak": 1.0,
        "crops": [
-        "Corn (grain)"
+        "Paddy rice (irrigated)",
+        "Sesbania green manure"
        ]
       }
      ],
@@ -1599,22 +1512,27 @@
     "why": [
      {
       "driver": "priority",
-      "text": "You ranked \"keep soil covered and in place\" highly, and this rotation scores +34 points on it against today (Rain that soaks in up from 96% to 100%).",
+      "text": "You ranked \"keep soil covered and in place\" highly, and this rotation scores +49 points on it against today (Rain that soaks in up from 92% to 97%).",
       "dimension": "erosion"
      },
      {
       "driver": "priority",
-      "text": "You ranked \"build organic matter and nitrogen\" highly, and this rotation scores +47 points on it against today (Organic matter after 10 years up from -0.11 % points to 0.13 % points).",
+      "text": "You ranked \"build organic matter and nitrogen\" highly, and this rotation scores +19 points on it against today (Organic matter after 10 years up from -1.6 % points to -0.77 % points).",
       "dimension": "soil"
      },
      {
       "driver": "soil",
-      "text": "The field is bare 4.5 months a year now, and 46% of erosive rain falls in May-Jun, Aug. Cover crops (Cereal rye cover, Rye + vetch + radish mix) cut bare time to 0.0 months.",
+      "text": "The field is bare 5.0 months a year now, and 46% of erosive rain falls in Sep-Nov. Cover crops (Sesbania green manure) cut bare time to 0.0 months.",
       "dimension": null
      },
      {
       "driver": "soil",
-      "text": "No-till leaves residue on the surface: soil loss changes from 2.3 to 0.1 tons/acre a year.",
+      "text": "Sesbania green manure fix nitrogen from the air: purchased nitrogen drops from 235 to 155 kg/ha a year.",
+      "dimension": null
+     },
+     {
+      "driver": "soil",
+      "text": "No-till leaves residue on the surface: soil loss changes from 12.0 to 0.8 t/ha a year.",
       "dimension": null
      }
     ],
@@ -1624,143 +1542,59 @@
       "id": "rain_total",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "About 991 mm (39 in) of rain and snow a year",
-      "detail": "Year-to-year swing is 20%. The wettest months are May, Jun, Aug. Annual total is falling 49 mm per decade (not statistically clear yet).",
-      "dimension": "water",
-      "value": 991.0,
-      "unit": "mm/yr"
-     },
-     {
-      "kind": "observed",
-      "id": "rain_agreement",
-      "source": "ORNL DAAC Daymet v4",
-      "dataset": "Station-interpolated daily weather (ground reference)",
       "access": "live",
-      "statement": "Satellite rain reads 5% lower than the gauges here",
-      "detail": "Gauges (Daymet) 1010 mm, GPM IMERG 964 mm, MERRA-2 838 mm a year. The fused estimate leans 82% on gauges.",
+      "statement": "About 2399 mm of rain a year",
+      "detail": "Year-to-year swing is 13%. The wettest months are Sep, Oct, Nov. Annual total is rising 162 mm per decade (a clear trend).",
       "dimension": "water",
-      "value": -5.0,
-      "unit": "%"
+      "value": 2399.0,
+      "unit": "mm/yr"
      },
      {
       "kind": "observed",
       "id": "storm_season",
       "source": "NASA POWER",
       "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "46% of the year's soil-moving rain falls in May, Jun, Aug",
-      "detail": "19 days a year bring more than 12.7 mm (half an inch). The biggest single day on record was 65 mm. Heaviest-day rainfall is rising 1.7 mm per decade (not statistically clear yet).",
+      "access": "live",
+      "statement": "46% of the year's soil-moving rain falls in Sep, Oct, Nov",
+      "detail": "56 days a year bring more than 12.7 mm. The biggest single day on record was 138 mm. Heaviest-day rainfall is rising 6.7 mm per decade (a clear trend).",
       "dimension": "erosion",
       "value": 46.0,
       "unit": "% of annual erosivity"
      },
      {
       "kind": "observed",
-      "id": "heat_days",
-      "source": "NASA POWER",
-      "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "6 days a year reach 35 C (95 F)",
-      "detail": "The last eight years averaged 6 such days against 7 in the first eight. The count is flat over the record. Mean temperature is rising 0.43 C per decade (not statistically clear yet).",
-      "dimension": "water",
-      "value": 6.0,
-      "unit": "days/yr"
-     },
-     {
-      "kind": "observed",
-      "id": "aridity",
-      "source": "NASA POWER",
-      "dataset": "MERRA-2 meteorology + GPM IMERG precipitation (daily, point)",
-      "access": "cache",
-      "statement": "The air can take up 1.0 times more water than falls as rain",
-      "detail": "Reference evapotranspiration is 1013 mm a year against 991 mm of precipitation. In Jun-Aug demand exceeds rain by 97 mm.",
-      "dimension": "water",
-      "value": 0.98,
-      "unit": "P/ET0"
-     },
-     {
-      "kind": "observed",
-      "id": "drought_months",
-      "source": "NASA POWER (MERRA-2 land model)",
-      "dataset": "Root-zone soil wetness GWETROOT, standing in for SMAP L4",
-      "access": "proxy",
-      "statement": "1.9 notably dry root-zone months a year recently, 1.5 in the early 2000s",
-      "detail": "A dry month is one where root-zone wetness sits more than one standard deviation below normal for that month. Driest years: 2006, 2012, 2023. Warm-season root-zone wetness is falling 0.009 units (0-1 scale) per decade (not statistically clear yet).",
-      "dimension": "water",
-      "value": 1.9,
-      "unit": "months/yr"
-     },
-     {
-      "kind": "observed",
-      "id": "groundwater",
-      "source": "NASA GRACE / GRACE-FO",
-      "dataset": "Regional terrestrial water storage trend (published mascon analyses)",
-      "access": "curated",
-      "statement": "Regional water storage is holding or rising: +0.6 cm of water a year",
-      "detail": "Upper Midwest / Corn Belt: wetter decades; storage is not the limiting factor. GRACE measures a ~300 km footprint, so this is the region, not your well.",
-      "dimension": "water",
-      "value": 0.6,
-      "unit": "cm/yr"
-     },
-     {
-      "kind": "observed",
       "id": "ndvi_bare",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS Terra NDVI (MOD13Q1)",
+      "source": "ESA Copernicus Sentinel-2 (Microsoft Planetary Computer)",
+      "dataset": "Sentinel-2 L2A NDVI (B08/B04), SCL cloud mask",
       "access": "live",
-      "statement": "From orbit the field looks bare or dormant in 7 months of the year",
-      "detail": "MODIS greenness (NDVI) stays under 0.30 in Oct-Apr and peaks at 0.91 in Jul (2019-2023, 115 clear composites).",
+      "statement": "From orbit the field looks bare or dormant in 4 months of the year",
+      "detail": "Sentinel-2 (10 m) greenness (NDVI) averages under 0.30 in Mar-May, Oct and peaks at 0.88 in Dec (2020-2024, 85 clear looks).",
       "dimension": "erosion",
-      "value": 7,
+      "value": 4,
       "unit": "months"
      },
      {
       "kind": "observed",
-      "id": "surface_heat",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS Terra daytime land-surface temperature (MOD11A2)",
-      "access": "live",
-      "statement": "The ground surface averages 35 C at mid-morning in Jun",
-      "detail": "That is +7 C against the average daily high air temperature. A large gap is the signature of dry or bare soil: a well-watered canopy stays close to air temperature.",
-      "dimension": "water",
-      "value": 34.717,
-      "unit": "deg C"
-     },
-     {
-      "kind": "observed",
-      "id": "satellite_et",
-      "source": "NASA ORNL DAAC",
-      "dataset": "MODIS evapotranspiration, gap-filled (MOD16A2GF)",
-      "access": "live",
-      "statement": "Satellites estimate 615 mm a year actually evaporates from this pixel",
-      "detail": "MODIS MOD16 actual ET is 62% of precipitation. Above 100% points to irrigation or shallow groundwater; MOD16 is known to under-read irrigated fields.",
-      "dimension": "water",
-      "value": 615.0,
-      "unit": "mm/yr"
-     },
-     {
-      "kind": "observed",
       "id": "soil_profile",
-      "source": "USDA NRCS",
-      "dataset": "SSURGO via Soil Data Access (dominant component, 0-30 cm weighted)",
-      "access": "cache",
-      "statement": "Nicollet loam, 5.3% organic matter",
-      "detail": "Nicollet loam, 1 to 3 percent slopes. The root zone can hold about 315 mm (12.4 in) of plant-available water. pH 6.2, drainage: somewhat poorly drained.",
+      "source": "ISRIC SoilGrids 2.0",
+      "dataset": "Soil properties 0-100 cm (texture, SOC, bulk density, pH, CEC, water retention)",
+      "access": "live",
+      "statement": "Acrisols (clay loam, SoilGrids 250 m), 7.8% organic matter",
+      "detail": "The root zone can hold about 202 mm of plant-available water. pH 5.6, drainage: moderately well drained.",
       "dimension": "soil",
-      "value": 5.33,
+      "value": 7.83,
       "unit": "% OM"
      },
      {
       "kind": "observed",
       "id": "soil_runoff",
-      "source": "USDA NRCS",
-      "dataset": "SSURGO via Soil Data Access (dominant component, 0-30 cm weighted)",
-      "access": "cache",
-      "statement": "Hydrologic group B: this soil takes rain in moderately well",
-      "detail": "Erodibility (Kw) is 0.28, on a scale where 0.2 is resistant and 0.5 is very erodible. The soil survey sets tolerable loss at 5 tons per acre a year.",
+      "source": "ISRIC SoilGrids 2.0",
+      "dataset": "Soil properties 0-100 cm (texture, SOC, bulk density, pH, CEC, water retention)",
+      "access": "live",
+      "statement": "Hydrologic group C: this soil takes rain in slowly",
+      "detail": "Erodibility (Kw) is 0.121, on a scale where 0.2 is resistant and 0.5 is very erodible. Tolerable loss is taken as 11 t/ha a year (a default; SoilGrids does not map soil depth to rock).",
       "dimension": "erosion",
-      "value": 0.28,
+      "value": 0.121,
       "unit": "Kw"
      },
      {
@@ -1768,46 +1602,34 @@
       "id": "slope",
       "source": "NASA SRTM",
       "dataset": "SRTM GL1 30 m elevation (3x3 window, Horn slope)",
-      "access": "cache",
-      "statement": "Slope about 0.6% at 337 m elevation",
-      "detail": "From SRTM 30 m elevation over a 180 m window (6 m of relief). The soil survey lists 2% as representative.",
+      "access": "live",
+      "statement": "Slope about 1.6% at 5 m elevation",
+      "detail": "From SRTM 30 m elevation over a 180 m window (4 m of relief).",
       "dimension": "erosion",
-      "value": 0.56,
+      "value": 1.58,
       "unit": "%"
      },
      {
       "kind": "observed",
       "id": "crop_history",
-      "source": "USDA NASS",
-      "dataset": "Cropland Data Layer (CropScape point query)",
-      "access": "cache",
-      "statement": "What satellites saw growing here",
-      "detail": "USDA Cropland Data Layer: 2018 soybeans, 2019 corn, 2020 soybeans, 2021 corn, 2022 soybeans, 2023 corn.",
+      "source": "ESA Copernicus Sentinel-2 (Microsoft Planetary Computer)",
+      "dataset": "Crop cycles counted from Sentinel-2 NDVI peaks",
+      "access": "live",
+      "statement": "Sentinel-2 sees about 1.8 crop cycles a year",
+      "detail": "Green peaks per year, 2020: 1, 2021: 2, 2022: 2, 2023: 3, 2024: 0. Crops usually peak in Jul, Nov. The satellite counts cycles; it does not name the crop.",
       "dimension": "pest",
-      "value": 2,
-      "unit": "distinct classes"
+      "value": 1.76,
+      "unit": "cycles/yr"
      },
      {
       "kind": "modelled",
       "id": "cover_calendar",
       "source": "FieldShift model",
-      "dataset": "Crop calendar from NASA POWER growing degree days + RUSLE",
+      "dataset": "Crop calendar from NASA POWER heat units and the monsoon rainfall pattern + RUSLE",
       "access": "model",
       "statement": "The soil is covered in every month of the rotation.",
-      "detail": "Mean ground cover 100%; modelled soil loss 0.1 tons/acre a year, 0.0 times the tolerable rate.",
+      "detail": "Mean ground cover 94%; modelled soil loss 0.8 t/ha a year, 0.1 times the tolerable rate.",
       "dimension": "erosion",
-      "value": null,
-      "unit": null
-     },
-     {
-      "kind": "modelled",
-      "id": "water_budget",
-      "source": "FieldShift model",
-      "dataset": "Monthly FAO-56 soil-water balance on fused rainfall and SSURGO water-holding capacity",
-      "access": "model",
-      "statement": "Uses 787 mm of water a year; 68% of rain and irrigation goes through the crop",
-      "detail": "Runoff 5 mm, deep drainage 201 mm, unmet crop demand 0%.",
-      "dimension": "water",
       "value": null,
       "unit": null
      },
@@ -1817,8 +1639,8 @@
       "source": "FieldShift model",
       "dataset": "One-pool soil carbon balance driven by residue, roots, temperature and tillage",
       "access": "model",
-      "statement": "Returns 5.3 t/ha of carbon a year; soil carbon trend +0.27 t/ha a year",
-      "detail": "Living roots 10.5 months a year. Legume and cover-crop nitrogen credit 26 kg/ha a year.",
+      "statement": "Returns 8.1 t/ha of carbon a year; soil carbon trend -1.58 t/ha a year",
+      "detail": "Living roots 10.0 months a year. Legume and cover-crop nitrogen credit 80 kg/ha a year.",
       "dimension": "soil",
       "value": null,
       "unit": null
@@ -1827,18 +1649,38 @@
     "benefits": {
      "items": [
       {
+       "metric": "irrigation_mm_yr",
+       "label": "Irrigation pumped",
+       "unit": "mm/yr",
+       "dimension": "water",
+       "meaning": "Water applied per year, averaged over the rotation.",
+       "baseline": 408.0,
+       "value": 259.0,
+       "delta": -149.0,
+       "delta_pct": -37.0,
+       "direction": "better",
+       "confidence": "moderate",
+       "range": [
+        -100.72,
+        -197.28
+       ]
+      },
+      {
        "metric": "crop_water_use_mm_yr",
        "label": "Total crop water use",
        "unit": "mm/yr",
        "dimension": "water",
        "meaning": "Evaporation plus transpiration from the field.",
-       "baseline": 810.0,
-       "value": 787.0,
-       "delta": -23.0,
-       "delta_pct": -3.0,
-       "direction": "same",
-       "confidence": "high",
-       "range": null
+       "baseline": 939.0,
+       "value": 891.0,
+       "delta": -48.0,
+       "delta_pct": -5.0,
+       "direction": "better",
+       "confidence": "moderate",
+       "range": [
+        -32.45,
+        -63.55
+       ]
       },
       {
        "metric": "water_stress_pct",
@@ -1846,12 +1688,12 @@
        "unit": "%",
        "dimension": "water",
        "meaning": "Share of crop water demand the soil and irrigation could not meet.",
-       "baseline": 0.1,
+       "baseline": 0.0,
        "value": 0.0,
-       "delta": -0.1,
-       "delta_pct": -100.0,
+       "delta": 0.0,
+       "delta_pct": null,
        "direction": "same",
-       "confidence": "high",
+       "confidence": "moderate",
        "range": null
       },
       {
@@ -1860,15 +1702,15 @@
        "unit": "% points",
        "dimension": "soil",
        "meaning": "Projected change in topsoil organic matter.",
-       "baseline": -0.11,
-       "value": 0.13,
-       "delta": 0.24,
-       "delta_pct": 218.0,
+       "baseline": -1.58,
+       "value": -0.77,
+       "delta": 0.81,
+       "delta_pct": 51.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        0.17,
-        0.31
+        0.49,
+        1.13
        ]
       },
       {
@@ -1877,15 +1719,15 @@
        "unit": "kg N/ha/yr",
        "dimension": "soil",
        "meaning": "Fertiliser nitrogen needed after legume and cover-crop credits.",
-       "baseline": 90.0,
-       "value": 81.0,
-       "delta": -9.0,
-       "delta_pct": -10.0,
+       "baseline": 235.0,
+       "value": 155.0,
+       "delta": -80.0,
+       "delta_pct": -34.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        -6.33,
-        -11.67
+        -48.32,
+        -111.68
        ]
       },
       {
@@ -1894,15 +1736,15 @@
        "unit": "kg N/ha/yr",
        "dimension": "soil",
        "meaning": "Residual nitrate carried down by drainage.",
-       "baseline": 23.7,
-       "value": 6.9,
-       "delta": -16.8,
-       "delta_pct": -71.0,
+       "baseline": 167.9,
+       "value": 105.3,
+       "delta": -62.6,
+       "delta_pct": -37.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        -11.81,
-        -21.79
+        -37.81,
+        -87.39
        ]
       },
       {
@@ -1911,15 +1753,15 @@
        "unit": "%",
        "dimension": "erosion",
        "meaning": "Share of rainfall that enters the soil instead of running off.",
-       "baseline": 96.3,
-       "value": 99.5,
-       "delta": 3.2,
-       "delta_pct": 3.0,
+       "baseline": 91.9,
+       "value": 97.3,
+       "delta": 5.4,
+       "delta_pct": 6.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        2.28,
-        4.12
+        3.41,
+        7.39
        ]
       },
       {
@@ -1928,15 +1770,15 @@
        "unit": "tons/ac/yr",
        "dimension": "erosion",
        "meaning": "RUSLE sheet-and-rill soil loss.",
-       "baseline": 2.3,
-       "value": 0.06,
-       "delta": -2.24,
-       "delta_pct": -97.0,
+       "baseline": 5.34,
+       "value": 0.34,
+       "delta": -5.0,
+       "delta_pct": -94.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        -1.59,
-        -2.89
+        -3.16,
+        -6.84
        ]
       },
       {
@@ -1945,15 +1787,15 @@
        "unit": "months/yr",
        "dimension": "erosion",
        "meaning": "Months with under 30% ground cover.",
-       "baseline": 4.5,
+       "baseline": 5.0,
        "value": 0.0,
-       "delta": -4.5,
+       "delta": -5.0,
        "delta_pct": -100.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        -3.2,
-        -5.8
+        -3.16,
+        -6.84
        ]
       },
       {
@@ -1962,15 +1804,15 @@
        "unit": "months/yr",
        "dimension": "soil",
        "meaning": "Months something is growing and feeding soil life.",
-       "baseline": 5.0,
-       "value": 10.5,
-       "delta": 5.5,
-       "delta_pct": 110.0,
+       "baseline": 8.0,
+       "value": 10.0,
+       "delta": 2.0,
+       "delta_pct": 25.0,
        "direction": "better",
        "confidence": "moderate",
        "range": [
-        3.87,
-        7.13
+        1.21,
+        2.79
        ]
       },
       {
@@ -1979,10 +1821,10 @@
        "unit": "/100",
        "dimension": "pest",
        "meaning": "Years between host crops, plant-family and planting-season diversity.",
-       "baseline": 50.0,
-       "value": 55.0,
+       "baseline": 9.0,
+       "value": 14.0,
        "delta": 5.0,
-       "delta_pct": 10.0,
+       "delta_pct": 56.0,
        "direction": "better",
        "confidence": "high",
        "range": [
@@ -1991,33 +1833,33 @@
        ]
       },
       {
-       "metric": "net_return_per_acre_yr",
+       "metric": "net_return_per_ha_yr",
        "label": "Net return",
-       "unit": "$/ac/yr",
+       "unit": "RM/ha/yr",
        "dimension": "income",
-       "meaning": "Revenue minus operating, nitrogen, irrigation and cover-crop costs. Land cost excluded.",
-       "baseline": 520.0,
-       "value": 488.0,
-       "delta": -32.0,
-       "delta_pct": -6.0,
-       "direction": "worse",
+       "meaning": "Revenue minus operating, labour, nitrogen, irrigation and cover-crop costs. Land rent and subsidies excluded.",
+       "baseline": 2797.0,
+       "value": 2920.0,
+       "delta": 123.0,
+       "delta_pct": 4.0,
+       "direction": "better",
        "confidence": "moderate",
        "range": [
-        -23.07,
-        -40.93
+        84.26,
+        161.75
        ]
       },
       {
-       "metric": "bad_year_net_per_acre",
+       "metric": "bad_year_net_per_ha",
        "label": "Net return in a bad year (1 in 5)",
-       "unit": "$/ac/yr",
+       "unit": "RM/ha/yr",
        "dimension": "income",
        "meaning": "Mean minus the swing from 2001-2024 weather replayed through the rotation and from price volatility.",
-       "baseline": 239.0,
-       "value": 233.0,
-       "delta": -6.0,
+       "baseline": 2130.0,
+       "value": 2248.0,
+       "delta": 118.0,
        "delta_pct": null,
-       "direction": "same",
+       "direction": "better",
        "confidence": "moderate",
        "range": null
       },
@@ -2027,18 +1869,18 @@
        "unit": "%",
        "dimension": "income",
        "meaning": "Year-to-year standard deviation of net return divided by gross revenue. Lower is steadier.",
-       "baseline": 23.0,
-       "value": 22.0,
-       "delta": -1.0,
+       "baseline": 7.0,
+       "value": 7.0,
+       "delta": 0.0,
        "delta_pct": null,
-       "direction": "better",
+       "direction": "same",
        "confidence": "moderate",
        "range": null
       }
      ],
-     "improves": 9,
-     "trade_offs": 1,
-     "summary": "Improves: Organic matter after 10 years up from -0.11 % points to 0.13 % points; Purchased nitrogen down from 90 kg N/ha/yr to 81 kg N/ha/yr; Nitrogen lost below roots down from 23.7 kg N/ha/yr to 6.9 kg N/ha/yr. Costs: Net return down from $520/ac/yr to $488/ac/yr."
+     "improves": 12,
+     "trade_offs": 0,
+     "summary": "Improves: Irrigation pumped down from 408 mm/yr to 259 mm/yr; Total crop water use down from 939 mm/yr to 891 mm/yr; Organic matter after 10 years up from -1.6 % points to -0.77 % points."
     },
     "gaps": {
      "items": [
@@ -2046,9 +1888,9 @@
        "id": "scale_power_precip",
        "kind": "resolution",
        "severity": "low",
-       "topic": "Rainfall (MERRA-2, bias-corrected): one pixel is 97x the width of this field",
+       "topic": "Rainfall (MERRA-2, bias-corrected): one pixel is 355x the width of this field",
        "detail": "Native resolution 55 km. Fused with IMERG and gauges by inverse-variance weighting.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
+       "close_by": "A rain gauge or soil-moisture probe on the farm beats any pixel this size."
       },
       {
        "id": "layer_soil_moisture",
@@ -2059,36 +1901,36 @@
        "close_by": "Add a NASA Earthdata login to pull the native product, or check against a field sensor."
       },
       {
-       "id": "scale_lst",
-       "kind": "resolution",
-       "severity": "low",
-       "topic": "Land-surface temperature (MODIS, ECOSTRESS stand-in): one pixel is 2x the width of this field",
-       "detail": "Native resolution 1 km. 8-day daytime composites averaged to months.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
-      },
-      {
-       "id": "scale_grace",
-       "kind": "resolution",
-       "severity": "low",
-       "topic": "Water storage trend (GRACE / GRACE-FO): one pixel is 527x the width of this field",
-       "detail": "Native resolution 300 km. Regional trend used as context only; never downscaled to the field.",
-       "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."
-      },
-      {
-       "id": "cover_establishment",
-       "kind": "model",
+       "id": "layer_lst",
+       "kind": "data",
        "severity": "medium",
-       "topic": "Cover-crop growth is uncertain: Cereal rye cover, Rye + vetch + radish mix",
-       "detail": "The window between crops gives it under half of its potential growth in a normal year; a dry or cold autumn gives less.",
-       "close_by": "Try a strip first, seed earlier (interseed or fly on), or pick a faster species."
+       "topic": "Land-surface temperature (MODIS, ECOSTRESS stand-in): not available",
+       "detail": "This layer could not be retrieved.",
+       "close_by": "Supply a local measurement or retry when the service is back."
+      },
+      {
+       "id": "layer_et",
+       "kind": "data",
+       "severity": "medium",
+       "topic": "Evapotranspiration (MODIS MOD16): not available",
+       "detail": "This layer could not be retrieved.",
+       "close_by": "Supply a local measurement or retry when the service is back."
+      },
+      {
+       "id": "layer_grace",
+       "kind": "data",
+       "severity": "medium",
+       "topic": "Water storage trend (GRACE / GRACE-FO): not available",
+       "detail": "No curated regional trend for this location. In Malaysia storage swings with the monsoons and ENSO; check the GRACE layer on the map and JPS river and reservoir records.",
+       "close_by": "Supply a local measurement or retry when the service is back."
       },
       {
        "id": "compaction",
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Compaction and hardpans below the surface",
-       "detail": "No satellite sees a plough pan. The model assumes roots can use the full soil-survey depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
-       "close_by": "Push a penetrometer or dig a pit in spring when the soil is moist."
+       "detail": "No satellite sees a plough pan, and puddled paddy soils always have one. The model assumes roots can use the full soil depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
+       "close_by": "Push a penetrometer or dig a pit when the soil is moist, before switching a paddy field to dry-land crops."
       },
       {
        "id": "biology",
@@ -2102,118 +1944,107 @@
        "id": "drainage",
        "kind": "blind_spot",
        "severity": "standing",
-       "topic": "Tile lines, drainage and irrigation hardware",
-       "detail": "Tile spacing, outlet condition, well capacity and system uniformity are not in any public dataset. One on/off setting stands in for them.",
-       "close_by": "Check tile maps, well test records and a recent irrigation uniformity test."
+       "topic": "Field drains, bunds, water gates and canals",
+       "detail": "Drain spacing, bund height, the tertiary canal schedule and pump capacity are not in any public dataset. One on/off setting stands in for them.",
+       "close_by": "Walk the drains and bunds; check the scheme's water-release schedule and raised-bed or drain options for dry-land crops."
       },
       {
        "id": "genetics",
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Varieties, hybrids and maturity groups",
-       "detail": "Each crop is a single mid-range type. Variety choice can move maturity by weeks and drought or disease tolerance by a lot.",
-       "close_by": "Match maturity and disease packages to the planting windows shown, with your seed adviser."
+       "detail": "Each crop is a single mid-range type (for paddy, a 105-115 day MARDI variety). Variety choice can move maturity by weeks and blast or drought tolerance by a lot.",
+       "close_by": "Match variety duration and disease resistance to the planting windows shown, with the DOA or MARDI."
       },
       {
        "id": "contracts",
        "kind": "blind_spot",
        "severity": "standing",
-       "topic": "Contracts, basis, leases and programme rules",
-       "detail": "Prices are multi-year averages. Forward contracts, local basis, landlord terms, crop insurance and conservation-programme payments can outweigh every number here.",
-       "close_by": "Price each crop with your buyer, lender and insurance agent before committing acres."
+       "topic": "Contracts, middlemen, rent and subsidies",
+       "detail": "Prices are multi-year farm-gate averages. Contract farming terms, middleman margins, land rent, paddy input and price subsidies and Takaful cover can outweigh every number here.",
+       "close_by": "Price each crop with your buyer, the PPK or FAMA, and check subsidy rules before committing land."
       },
       {
        "id": "within_field",
        "kind": "blind_spot",
        "severity": "standing",
        "topic": "Variation inside the field",
-       "detail": "Weather inputs are 10-55 km pixels and the soil is one dominant map-unit component. Knolls, draws, sandy streaks and saline spots are averaged away.",
-       "close_by": "Overlay yield maps or walk the field; consider zoning the rotation."
+       "detail": "Weather inputs are 10-55 km pixels and the soil is a 250 m model estimate. Low spots that flood, sandy ridges and acid-sulphate patches are averaged away.",
+       "close_by": "Walk the field after heavy rain and compare with the 10 m Sentinel-2 greenness; consider zoning the rotation."
       }
      ],
      "confidence": {
       "water": {
-       "data": 0.69,
+       "data": 0.51,
        "model": 0.8,
-       "combined": 0.75,
-       "label": "high"
+       "combined": 0.64,
+       "label": "moderate"
       },
       "soil": {
-       "data": 0.83,
+       "data": 0.58,
        "model": 0.55,
-       "combined": 0.67,
+       "combined": 0.56,
        "label": "moderate"
       },
       "erosion": {
-       "data": 0.72,
+       "data": 0.53,
        "model": 0.65,
-       "combined": 0.68,
+       "combined": 0.59,
        "label": "moderate"
       },
       "pest": {
-       "data": 0.85,
+       "data": 0.84,
        "model": 0.65,
        "combined": 0.74,
        "label": "high"
       },
       "income": {
-       "data": 0.86,
+       "data": 0.77,
        "model": 0.55,
-       "combined": 0.69,
+       "combined": 0.65,
        "label": "moderate"
       }
      },
-     "overall_confidence": 0.71,
+     "overall_confidence": 0.64,
      "score_uncertainty": {
-      "water": 6.0,
-      "soil": 7.0,
-      "erosion": 7.0,
+      "water": 8.0,
+      "soil": 10.0,
+      "erosion": 9.0,
       "pest": 6.0,
-      "income": 7.0
+      "income": 8.0
      },
-     "statement": "Scores are planning estimates from a monthly model. Treat a difference of fewer points than the uncertainty shown for that dimension as a tie, and treat every dollar figure as a ranking aid, not a budget."
+     "statement": "Scores are planning estimates from a monthly model. Treat a difference of fewer points than the uncertainty shown for that dimension as a tie, and treat every ringgit figure as a ranking aid, not a budget."
     },
     "risks": [
-     {
-      "id": "carryover_cover_mix",
-      "category": "Herbicides",
-      "title": "Herbicide carryover into rye + vetch + radish mix",
-      "detail": "Residual herbicides used in soybean (atrazine, HPPD inhibitors, sulfonylureas, imidazolinones) can injure rye + vetch + radish mix for 10-36 months, longer in dry or high-pH soil. Check every label's rotation interval against your spray records.",
-      "who": [
-       "Certified Crop Adviser",
-       "Farmer"
-      ],
-      "severity": "critical"
-     },
      {
       "id": "cover_termination",
       "category": "Cover crops",
       "title": "Cover-crop termination timing",
-      "detail": "A cover crop terminated late can tie up nitrogen and slow soil warming. Agree a termination date and method (herbicide, roller, tillage, winter-kill) and confirm it meets crop-insurance cover-crop rules for your county.",
+      "detail": "A woody cover terminated late can tie up nitrogen and harbour pests. Agree a termination date and method (slash and mulch, roll, or incorporate two to three weeks before planting).",
       "who": [
-       "County Extension",
-       "Crop insurance agent",
+       "DOA / MARDI extension officer",
+       "AgroTakaful or subsidy desk (PPK / LPP)",
        "Farmer"
       ],
       "severity": "check"
      },
      {
-      "id": "rye_before_corn",
+      "id": "sesbania_paddy",
       "category": "Cover crops",
-      "title": "Cereal rye ahead of corn",
-      "detail": "Rye can host seedling diseases and tie up nitrogen for corn. Terminate 10-14 days before planting and consider starter nitrogen.",
+      "title": "Sesbania green manure ahead of paddy",
+      "detail": "Incorporate it 2-3 weeks before transplanting or broadcasting so it decomposes before the crop needs nitrogen.",
       "who": [
-       "Certified Crop Adviser"
+       "DOA / MARDI extension officer"
       ],
       "severity": "check"
      },
      {
-      "id": "short_break_soybean",
+      "id": "short_break_rice",
       "category": "Pests",
-      "title": "Soybean still returns sooner than recommended",
-      "detail": "Every 2 year(s) against a recommended 3. Scout for soybean cyst nematode, sudden death syndrome, white mold.",
+      "title": "Paddy rice (irrigated) still returns sooner than recommended",
+      "detail": "Every 1 season(s) against a recommended 2. Scout for brown planthopper, rice blast, weedy rice (padi angin).",
       "who": [
-       "Certified Crop Adviser"
+       "Agronomist / crop adviser"
       ],
       "severity": "check"
      },
@@ -2221,10 +2052,20 @@
       "id": "tillage_transition",
       "category": "Soil",
       "title": "Moving to no-till",
-      "detail": "This soil is poorly drained, so residue will keep it colder and wetter in spring; strip-till may fit better. Expect a 3-5 year transition: planter set-up for residue, nutrient stratification, and different weed pressure.",
+      "detail": "Expect a 2-4 season transition: planting into residue, slug and rat pressure, and a different weed spectrum.",
       "who": [
-       "NRCS field office",
-       "County Extension"
+       "DOA soil conservation officer",
+       "DOA / MARDI extension officer"
+      ],
+      "severity": "check"
+     },
+     {
+      "id": "n_credit",
+      "category": "Nutrients",
+      "title": "Verify nitrogen credits before cutting fertiliser",
+      "detail": "Legume credits vary with stand, weather and termination date. Use a leaf-colour chart or in-season test the first seasons.",
+      "who": [
+       "Agronomist / crop adviser"
       ],
       "severity": "check"
      },
@@ -2235,7 +2076,7 @@
       "detail": "A strip trial for two seasons tests the planting windows, equipment and markets with little at stake.",
       "who": [
        "Farmer",
-       "County Extension"
+       "DOA / MARDI extension officer"
       ],
       "severity": "check"
      }
@@ -2245,66 +2086,64 @@
   }
  ],
  "ranking": [
-  "step-34623436",
-  "match-35075079",
-  "resilient-91340500",
-  "income-90127929",
+  "match-24873324",
+  "resilient-40033632",
+  "step-84109813",
+  "income-38971464",
   "custom-1",
   "baseline"
  ],
  "summary": {
-  "top_id": "step-34623436",
-  "statement": "\"Corn + Cereal rye → Soybean + Rye + vetch + radish mix\" fits your priorities best (76/100). It is effectively tied with 1 other option(s): the difference is inside the model's uncertainty.",
-  "tied_ids": [
-   "match-35075079"
-  ],
-  "baseline_fit": 57.0
+  "top_id": "match-24873324",
+  "statement": "\"Sweet corn + Paddy rice + Velvet bean → Sweet corn + Sweet potato + Velvet bean\" fits your priorities best (74/100).",
+  "tied_ids": [],
+  "baseline_fit": 44.0
  },
  "search": {
   "crops_considered": [
-   "corn",
-   "soybean",
-   "alfalfa",
-   "sorghum",
-   "winter_wheat",
-   "spring_wheat",
-   "oats"
+   "rice",
+   "watermelon",
+   "pineapple",
+   "sweet_corn",
+   "long_bean",
+   "sweet_potato",
+   "cassava"
   ],
-  "rotations_screened": 214,
-  "rotations_simulated": 387
+  "rotations_screened": 295,
+  "rotations_simulated": 459
  },
  "confidence": {
   "water": {
-   "data": 0.69,
+   "data": 0.51,
    "model": 0.8,
-   "combined": 0.75,
-   "label": "high"
+   "combined": 0.64,
+   "label": "moderate"
   },
   "soil": {
-   "data": 0.83,
+   "data": 0.58,
    "model": 0.55,
-   "combined": 0.67,
+   "combined": 0.56,
    "label": "moderate"
   },
   "erosion": {
-   "data": 0.72,
+   "data": 0.53,
    "model": 0.65,
-   "combined": 0.68,
+   "combined": 0.59,
    "label": "moderate"
   },
   "pest": {
-   "data": 0.85,
+   "data": 0.84,
    "model": 0.65,
    "combined": 0.74,
    "label": "high"
   },
   "income": {
-   "data": 0.86,
+   "data": 0.77,
    "model": 0.55,
-   "combined": 0.69,
+   "combined": 0.65,
    "label": "moderate"
   },
-  "overall": 0.71
+  "overall": 0.64
  },
- "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, Extension agents and crop advisers."
+ "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers."
 }

@@ -1,59 +1,48 @@
 {
- "field_id": "cornbelt-ia",
+ "field_id": "kedah-mada",
  "strategies": [
   {
    "id": "baseline",
    "role": "baseline",
-   "name": "Corn → Soybean",
+   "name": "Paddy rice + Paddy rice, every year",
    "years": [
     [
-     "corn"
-    ],
-    [
-     "soybean"
+     "rice",
+     "rice"
     ]
    ],
    "tillage": "conventional"
   },
   {
-   "id": "step-34623436",
+   "id": "step-84109813",
    "role": "step",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "name": "Paddy rice + Paddy rice + Sesbania, every year",
    "years": [
     [
-     "corn",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
+     "rice",
+     "rice",
+     "sesbania"
     ]
    ],
    "tillage": "no_till"
   },
   {
-   "id": "match-35075079",
+   "id": "match-24873324",
    "role": "match",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "name": "Sweet corn + Paddy rice + Velvet bean → Sweet corn + Sweet potato + Velvet bean",
    "years": [
     [
-     "corn",
-     "cereal_rye"
+     "sweet_corn",
+     "rice",
+     "mucuna"
     ],
     [
-     "soybean",
-     "cover_mix"
-    ],
-    [
-     "sorghum",
-     "cereal_rye"
-    ],
-    [
-     "soybean",
-     "cover_mix"
+     "sweet_corn",
+     "sweet_potato",
+     "mucuna"
     ]
    ],
-   "tillage": "no_till"
+   "tillage": "conventional"
   }
  ],
  "scenario": {

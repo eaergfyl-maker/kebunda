@@ -13,14 +13,17 @@ across:
 | MERRA-2 meteorology and soil wetness (NASA POWER) | ~55 km | daily |
 | GPM IMERG rainfall | ~10 km | 30 min (daily used) |
 | SMAP soil moisture | 9-36 km | 2-3 days |
-| Daymet station-interpolated weather | 1 km | daily |
+| FAO GAEZ v4 crop suitability | ~9 km | 30-year periods |
+| NOAA GHCN-Daily rain gauge (MetMalaysia) | point, 10-150 km away | daily |
 | MODIS land-surface temperature | 1 km | 8-day |
 | MODIS evapotranspiration | 500 m | 8-day |
 | MODIS NDVI | 250 m | 16-day |
-| SSURGO soil survey, SRTM elevation, Cropland Data Layer | ~30 m | static / annual |
+| ISRIC SoilGrids soil | 250 m | static model |
+| SRTM elevation | ~30 m | static |
+| Copernicus Sentinel-2 NDVI and crop cycles | 10 m | 5-day (cloud permitting) |
 
-**Target grid:** calendar months, referenced to the field (the 30 m scale of Landsat and
-SSURGO).
+**Target grid:** calendar months, referenced to the field (the 10-30 m scale of Sentinel-2,
+Landsat and SRTM).
 
 **Principle:** nothing invents sub-pixel detail. Where a coarse pixel cannot resolve the
 field, the output is a *wider uncertainty*, shown to the user.
@@ -55,8 +58,10 @@ P_fused = Σ w_k · P_k / Σ w_k,      w_k = 1 / σ_k²
 ```
 
 `σ_k` for MERRA-2 and IMERG is **measured at the site**: the RMSE of that product's monthly
-totals against Daymet over the overlapping record, divided by the mean monthly total
-(clamped to 0.08-0.9). Daymet itself is assigned 0.10 (gauge undercatch and interpolation).
+totals against the nearest MetMalaysia gauge (NOAA GHCN-Daily) over the overlapping record,
+divided by the mean monthly total (clamped to 0.08-0.9). Gauge months with less than 70 % of
+days reported are dropped. The gauge itself is assigned 0.10 plus 0.004 per km of distance from
+the field, because tropical convective storms are only a few kilometres wide.
 Without a ground record, defaults of 0.25 / 0.22 are used.
 
 The reported relative uncertainty combines the formal error with half the spread between
@@ -68,7 +73,7 @@ monthly series that drives the water balance and the weather replay.
 ## Downscaling: soil moisture
 
 A coarse cell reports relative saturation for a generic soil. The field conversion uses the
-field's own SSURGO sand, clay and organic matter through the Saxton & Rawls (2006)
+field's own SoilGrids sand, clay and organic matter through the Saxton & Rawls (2006)
 pedotransfer functions for wilting point, field capacity and saturation:
 
 ```
@@ -129,7 +134,8 @@ It is used three ways:
 | SMAP L4 root-zone moisture | MERRA-2 root-zone wetness via NASA POWER | SMAP L4 needs an Earthdata login; both are model-assimilated estimates |
 | ECOSTRESS 70 m LST / ET | MODIS LST 1 km and MOD16 ET 500 m | ECOSTRESS needs AppEEARS auth; within-field hotspots are averaged out |
 | GRACE-FO monthly mascons | Curated regional trends from published analyses | 300 km footprint; context only, never downscaled |
-| PRISM, CoCoRaHS | Daymet | Same class of gauge-based product with a keyless point API |
+| MetMalaysia station network | NOAA GHCN-Daily copies of 16 MetMalaysia stations | The national archive has no keyless API; GHCN carries the synoptic stations |
+| DOA detailed soil survey | ISRIC SoilGrids 250 m, with surveyed corrections for peat and BRIS sand on two benchmarks | No public point API for the Malaysian soil survey |
 
 Every proxy is labelled `access: "proxy"` in the payload and appears under "What we cannot
 see" in the UI.
@@ -139,6 +145,7 @@ see" in the UI.
 - **Rainfall:** correlation, bias and RMSE of each satellite/model product against gauges
   are computed per field and shown.
 - **Crop calendar:** the baseline rotation's modelled green cover is correlated with the
-  observed MODIS NDVI seasonal curve. Weak agreement is raised as a high-severity gap.
-- **Crop history:** the baseline rotation is checked against six years of the Cropland
-  Data Layer at the point.
+  observed Sentinel-2 NDVI seasonal curve (MODIS where Sentinel-2 is unavailable). Weak agreement is raised as a high-severity gap.
+- **Crop history:** the baseline rotation is checked against the number of green-up and
+  harvest cycles a year that Sentinel-2 counts at the point (2020-2024). For a custom field
+  this count proposes the baseline: two cycles on flat, heavy land is read as double-cropped paddy.

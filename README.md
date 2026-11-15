@@ -28,10 +28,10 @@ npm run dev
 ```
 
 Open http://localhost:5173, pick one of the five benchmark fields, or click anywhere on the
-map to build a field live from NASA and USDA services.
+map of Malaysia to build a field live from NASA and global services.
 
 ```bash
-cd backend  && python -m pytest       # 66 tests, fully offline
+cd backend  && python -m pytest       # 69 tests, fully offline
 cd frontend && npm run build          # type-check and production build
 ```
 
@@ -41,16 +41,18 @@ Working in a team? Read **[docs/TEAM_CONTRIBUTING.md](docs/TEAM_CONTRIBUTING.md)
 
 ## What It Does
 
-1. **Reads the field.** 24 years of daily NASA POWER weather and GPM IMERG rainfall, MODIS
-   greenness, surface temperature and evapotranspiration, SRTM terrain, the USDA SSURGO soil
-   survey unit under the field and six years of Cropland Data Layer crop history are fused
+1. **Reads the field.** 24 years of daily NASA POWER weather and GPM IMERG rainfall, MetMalaysia
+   rain gauges (via NOAA GHCN), five years of Copernicus Sentinel-2 10 m greenness and the crop
+   cycles it reveals, SRTM terrain, ISRIC SoilGrids soil, FAO GAEZ crop suitability (today and
+   the 2050s) and, where available, MODIS surface temperature and evapotranspiration are fused
    onto one monthly grid. Each layer shows its pixel size next to the field and how it was
    obtained (live, curated, or a stand-in product).
 2. **Asks what matters.** Five priorities in plain language (water, soil health, soil
    cover, pest break, income) and what the farm can do (irrigation, equipment, livestock,
    appetite for change, crops that are off the table).
 3. **Compares rotations.** Hundreds of rotations are simulated month by month: crop
-   calendar from local temperatures, soil cover, water balance, erosion, soil carbon,
+   calendar from the monsoons (crops are planted into the wettest window and chained two or
+   three a year, as Malaysian paddy and vegetable growers do), soil cover, paddy flooding, water balance, erosion, soil carbon,
    nitrogen, pest break and economics. At least three strategies, always including the
    current rotation, are shown side by side, each with:
    1. **Why it was suggested**
@@ -68,25 +70,25 @@ field, a satellite check of the assumed crop calendar, a build-your-own rotation
 
 ### Benchmark fields
 
-Five real coordinates with observations pulled from NASA and USDA services. Baselines were
-checked against the Cropland Data Layer.
+Five real Malaysian coordinates with observations pulled from NASA and global services.
+Baselines were checked against the crop cycles Sentinel-2 sees at each point. Money is in
+ringgit (RM) per hectare.
 
 | Field | Current rotation | The problem |
 | --- | --- | --- |
-| Ogallala, Kansas | Continuous irrigated corn | A declining aquifer |
-| Corn Belt, Iowa | Corn - soybean, fall tillage | Bare soil in spring storms, nitrate loss |
-| Central Valley, California | Processing tomato - idle year | Unreliable water, regulated groundwater |
-| Palouse, Washington | Winter wheat - summer fallow | Erosion on steep loess hills |
-| Mississippi Delta | Continuous soybean | Winter rain on bare beds, low organic matter |
+| MADA paddy, Kedah | Paddy - paddy, two seasons a year | Off-season canal water in El Niño years, rice-after-rice pests |
+| Cameron Highlands, Pahang | Cabbage - tomato on steep terraces | Erosion and sediment, clubroot and bacterial wilt |
+| BRIS sands, Kelantan | Kenaf, then fallow | Sand that holds little water, nematodes, thin margins |
+| Pekan Nanas peat, Johor | MD2 pineapple, replanted | Peat subsidence, carbon loss and fire risk |
+| Hill paddy, Sarawak | Hill rice - bush fallow | Bare slopes under the heaviest rain in Malaysia |
 
 ### What is real and what is curated
 
 | | |
 | --- | --- |
-| **Pulled live, no key** | NASA POWER (MERRA-2 meteorology), GPM IMERG rainfall, MODIS NDVI / LST / ET, Daymet, SRTM, USDA SSURGO, USDA Cropland Data Layer, NASA GIBS map tiles |
+| **Pulled live, no key** | NASA POWER (MERRA-2 meteorology), GPM IMERG rainfall, SRTM, Copernicus Sentinel-2 L2A (Microsoft Planetary Computer), ISRIC SoilGrids 2.0, FAO GAEZ v4, NOAA GHCN-Daily (MetMalaysia stations), MODIS NDVI / LST / ET (ORNL), NASA GIBS map tiles |
 | **Stand-in products, labelled as such** | MERRA-2 root-zone wetness for SMAP L4; MODIS LST and ET for ECOSTRESS |
-| **Curated from published sources** | GRACE regional water-storage trends, local well context, reference yields, prices, local buyer notes, crop traits |
-| **Optional with a free key** | USDA NASS QuickStats, OpenET |
+| **Curated from published sources** | Reference yields and costs (DOA, MARDI, MADA, LKTN, MPIB), FAMA farm-gate prices, local buyer notes, crop traits, surveyed soil corrections for peat and BRIS sand |
 
 The full list of the challenge's datasets and how each is used is in the app under
 **Data and methods** and at `GET /api/v1/nasa/sources`.
@@ -125,19 +127,19 @@ The full list of the challenge's datasets and how each is used is in the app und
 │   │   │   └── schemas/                # Request/response models: the API contract
 │   │   ├── services/
 │   │   │   ├── fusion_engine/          # Monthly grid, rainfall fusion, resolution-gap confidence
+│   │   │   ├── global_connectors/      # SoilGrids, FAO GAEZ, Sentinel-2, GHCN gauges, FAMA/DOA markets
 │   │   │   ├── nasa_connectors/        # POWER, MODIS/VIIRS subsets, SRTM, GIBS, SMAP/ECOSTRESS/GRACE adapters
 │   │   │   ├── rotation_engine/        # Calendar, simulation, search, scoring, 5 explanations
 │   │   │   ├── scenario_simulator/     # Climate & water stress tests
-│   │   │   ├── usda_connectors/        # SSURGO, CDL, NASS, OpenET, markets, Daymet
 │   │   │   └── vulnerability_analyzer/ # Field insights, hazard x exposure calendar
 │   │   └── utils/                      # Cache, geospatial and statistics helpers
 │   ├── scripts/                        # Benchmark data builder, contract exporter
 │   └── tests/                          # Offline unit & integration tests
 ├── data/
-│   ├── benchmark-farms/                # Farm definitions + observations/ pulled from NASA & USDA
+│   ├── benchmark-farms/                # Farm definitions + observations/ pulled from NASA & global services
 │   ├── cache/                          # Local runtime response cache (gitignored)
 │   ├── crop-catalog/                   # Crop and cover-crop traits
-│   └── soil-profiles/                  # SSURGO profiles for the benchmark fields
+│   └── soil-profiles/                  # SoilGrids profiles (with survey corrections) for the benchmark fields
 ├── docs/
 │   ├── agronomy-models/                # Formulas, fusion, uncertainty, scoring
 │   ├── api-contracts/                  # API.md, openapi.json, example payloads

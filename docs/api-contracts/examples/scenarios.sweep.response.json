@@ -1,5 +1,5 @@
 {
- "field_id": "cornbelt-ia",
+ "field_id": "kedah-mada",
  "parameter": "rain_pct",
  "label": "More or less rain",
  "unit": "%",
@@ -13,20 +13,20 @@
  "series": [
   {
    "id": "baseline",
-   "name": "Corn → Soybean",
+   "name": "Paddy rice + Paddy rice, every year",
    "fit": [
-    49.7,
-    56.1,
-    58.8,
-    55.4,
-    52.5
+    42.2,
+    47.8,
+    49.9,
+    48.8,
+    46.8
    ],
    "net": [
-    -55.0,
-    282.0,
-    498.0,
-    522.0,
-    522.0
+    2237.0,
+    2721.0,
+    2776.0,
+    2818.0,
+    2816.0
    ],
    "feasible": [
     true,
@@ -37,21 +37,21 @@
    ]
   },
   {
-   "id": "step-34623436",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "id": "step-84109813",
+   "name": "Paddy rice + Paddy rice + Sesbania, every year",
    "fit": [
-    70.5,
-    74.4,
-    76.7,
-    75.8,
-    74.8
+    48.2,
+    53.6,
+    56.5,
+    56.4,
+    56.3
    ],
    "net": [
-    28.0,
-    310.0,
-    481.0,
-    488.0,
-    488.0
+    2539.0,
+    2770.0,
+    2896.0,
+    2943.0,
+    2935.0
    ],
    "feasible": [
     true,
@@ -62,21 +62,21 @@
    ]
   },
   {
-   "id": "match-35075079",
-   "name": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
+   "id": "match-24873324",
+   "name": "Sweet corn + Paddy rice + Velvet bean → Sweet corn + Sweet potato + Velvet bean",
    "fit": [
-    71.8,
-    73.3,
-    75.1,
     74.1,
-    73.2
+    73.9,
+    73.0,
+    71.9,
+    71.1
    ],
    "net": [
-    57.0,
-    273.0,
-    404.0,
-    407.0,
-    407.0
+    14626.0,
+    14653.0,
+    14668.0,
+    14674.0,
+    14676.0
    ],
    "feasible": [
     true,
@@ -87,14 +87,5 @@
    ]
   }
  ],
- "crossings": [
-  {
-   "between": [
-    -50.0,
-    -30.0
-   ],
-   "from": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix → Grain sorghum + Cereal rye → Soybean + Rye + vetch + radish mix",
-   "to": "Corn + Cereal rye → Soybean + Rye + vetch + radish mix"
-  }
- ]
+ "crossings": []
 }
