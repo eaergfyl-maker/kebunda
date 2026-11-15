@@ -4,7 +4,8 @@
  *
  * OWNER: Member 2.
  * Actual ET (MOD16, field.evapotranspiration) is drawn as a dashed purple line, with the gap
- * above rainfall shaded as "water drawn from soil or irrigation".
+ * above rainfall shaded as "water drawn from soil or irrigation". When that product was not
+ * retrieved for a field, a short note says so instead of the chart silently looking unchanged.
  */
 import { Term } from "@/components/common/glossary/Term";
 import { MONTHS, useUnits } from "@/hooks/useUnits";
@@ -21,6 +22,8 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
   const sigma = field.fusion.precip.relative_sigma;
   const et0 = field.climate.monthly.et0;
   const ndvi = field.vegetation?.monthly ?? null;
+  // Cloud or water can push a monthly NDVI slightly below zero; draw those as zero.
+  const ndviDraw = ndvi ? ndvi.map((v) => (v === null ? null : Math.max(0, v))) : null;
   const lst = field.surface_temperature?.monthly ?? null;
   const tmax = field.climate.monthly.tmax;
   const etAct = field.evapotranspiration?.monthly ?? null;
@@ -79,6 +82,11 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
             { color: ET_ACTUAL_COLOR, label: "Gap: water taken from soil or irrigation", swatch: "box" as const },
           ] : []),
         ]} />
+        {!etAct && (
+          <p className="xs faint" style={{ marginTop: 4 }}>
+            Actual evapotranspiration (MODIS ET) was not retrieved for this field, so only the air-demand line is shown.
+          </p>
+        )}
       </div>
 
       <div>
@@ -96,8 +104,12 @@ export function SeasonYear({ field }: { field: FieldOverview }) {
               <text x={b2.left + 6} y={yN(0.3) + 12} fontSize={9.5} fill="#8a6a45">looks bare or dormant from orbit</text>
               <path d={linePath(tmax, x, yT)} fill="none" stroke={CHART.temp} strokeWidth={1.5} strokeDasharray="4 3" opacity={0.7} />
               {lst && <path d={linePath(lst, x, yT)} fill="none" stroke={CHART.temp} strokeWidth={2.2} />}
-              {ndvi && <path d={linePath(ndvi, x, yN)} fill="none" stroke={CHART.ndvi} strokeWidth={2.8} strokeLinejoin="round" />}
-              {ndvi?.map((v, m) => v !== null && <circle key={m} cx={x(m)} cy={yN(v)} r={3.2} fill={CHART.ndvi}><title>{`${MONTHS[m]}: NDVI ${v.toFixed(2)}`}</title></circle>)}
+              {ndviDraw && <path d={linePath(ndviDraw, x, yN)} fill="none" stroke={CHART.ndvi} strokeWidth={2.8} strokeLinejoin="round" />}
+              {ndviDraw?.map((v, m) => v !== null && (
+                <circle key={m} cx={x(m)} cy={yN(v)} r={3.2} fill={CHART.ndvi}>
+                  <title>{`${MONTHS[m]}: NDVI ${(ndvi?.[m] ?? v).toFixed(2)}`}</title>
+                </circle>
+              ))}
               <MonthAxis b={b2} x={x} />
             </Svg>
             <LegendRow items={[
