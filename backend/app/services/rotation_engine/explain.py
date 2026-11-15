@@ -14,17 +14,23 @@ from app.services.rotation_engine.context import FieldContext, crops_by_id, load
 from app.services.rotation_engine.engine import month_range
 from app.services.rotation_engine.scoring import DIMENSION_LABELS, DIMENSIONS
 
-WHO_FARMER, WHO_EXT, WHO_CCA = "Farmer", "County Extension", "Certified Crop Adviser"
-WHO_BUYER, WHO_INSURER, WHO_NRCS, WHO_WATER = "Buyer / elevator", "Crop insurance agent", "NRCS field office", "Water district / well driller"
+WHO_FARMER, WHO_EXT, WHO_CCA = "Farmer", "DOA / MARDI extension officer", "Agronomist / crop adviser"
+WHO_BUYER, WHO_INSURER, WHO_NRCS, WHO_WATER = ("Buyer / FAMA / collector", "AgroTakaful or subsidy desk (PPK / LPP)",
+                                               "DOA soil conservation officer", "Irrigation authority (MADA / KADA / JPS)")
 
-RESIDUAL_HERBICIDE_CROPS = {"corn", "sorghum", "winter_wheat", "spring_wheat", "barley", "soybean", "cotton"}
-SENSITIVE_FOLLOWERS = {"canola", "sunflower", "dry_pea", "chickpea", "lentil", "alfalfa", "tomato", "safflower", "oats",
-                       "radish", "crimson_clover", "hairy_vetch", "winter_pea", "cover_mix"}
+# crops whose usual herbicide programme leaves soil residues, and the crops those residues injure:
+# atrazine in maize, imidazolinones in Clearfield paddy (used against weedy rice), bromacil / diuron /
+# ametryn in pineapple
+RESIDUAL_HERBICIDE_CROPS = {"grain_maize", "sweet_corn", "rice", "pineapple"}
+SENSITIVE_FOLLOWERS = {"groundnut", "mung_bean", "long_bean", "soybean", "chili", "tomato", "cabbage", "watermelon",
+                       "sweet_potato", "kenaf", "sunn_hemp", "mucuna", "cowpea_cover"}
 
 
 def _fmt(v: float, unit: str) -> str:
-    if unit.startswith("$"):
-        return f"${v:,.0f}{unit[1:]}"
+    if unit.startswith("RM"):
+        return f"{'-' if v < 0 else ''}RM{abs(v):,.0f}{unit[2:]}"
+    if unit == "tons/ac/yr":
+        return f"{v * 2.2417:,.1f} t/ha/yr"
     if unit == "%":
         return f"{v:,.1f}%" if abs(v) < 10 and not float(v).is_integer() else f"{v:,.0f}%"
     if abs(v) >= 100 or float(v).is_integer():
@@ -45,7 +51,7 @@ BENEFIT_SPECS = [
     ("bare_months_per_year", "Months with bare soil", "months/yr", False, "erosion", "Months with under 30% ground cover."),
     ("living_root_months_per_year", "Months with living roots", "months/yr", True, "soil", "Months something is growing and feeding soil life."),
     ("pest_break_score", "Pest and disease break", "/100", True, "pest", "Years between host crops, plant-family and planting-season diversity."),
-    ("net_return_per_acre_yr", "Net return", "$/ac/yr", True, "income", "Revenue minus operating, nitrogen, irrigation and cover-crop costs. Land cost excluded."),
+    ("net_return_per_ha_yr", "Net return", "RM/ha/yr", True, "income", "Revenue minus operating, labour, nitrogen, irrigation and cover-crop costs. Land rent and subsidies excluded."),
 ]
 
 
@@ -78,12 +84,12 @@ def benefits(strategy: dict, baseline: dict, confidence: dict) -> list[dict]:
         })
     h, bh = strategy.get("history"), baseline.get("history")
     if h and bh:
-        delta = h["bad_year_net_per_acre"] - bh["bad_year_net_per_acre"]
+        delta = h["bad_year_net_per_ha"] - bh["bad_year_net_per_ha"]
         out.append({
-            "metric": "bad_year_net_per_acre", "label": "Net return in a bad year (1 in 5)", "unit": "$/ac/yr", "dimension": "income",
+            "metric": "bad_year_net_per_ha", "label": "Net return in a bad year (1 in 5)", "unit": "RM/ha/yr", "dimension": "income",
             "meaning": "Mean minus the swing from 2001-2024 weather replayed through the rotation and from price volatility.",
-            "baseline": bh["bad_year_net_per_acre"], "value": h["bad_year_net_per_acre"], "delta": round(delta, 0),
-            "delta_pct": None, "direction": _direction(delta, True, 10), "confidence": confidence["income"]["label"], "range": None,
+            "baseline": bh["bad_year_net_per_ha"], "value": h["bad_year_net_per_ha"], "delta": round(delta, 0),
+            "delta_pct": None, "direction": _direction(delta, True, 100), "confidence": confidence["income"]["label"], "range": None,
         })
         dv = (h["variability_ratio"] - bh["variability_ratio"]) * 100
         out.append({
@@ -132,10 +138,13 @@ def why_suggested(ctx: FieldContext, strategy: dict, baseline: dict, priorities:
     phases = strategy["phases"]
     names = {p["crop_id"] for p in phases}
     new = [c for c in strategy["fit"]["change"]["new_crops"]]
+    saved = baseline["metrics"]["irrigation_mm_yr"] - strategy["metrics"]["irrigation_mm_yr"]
+    if ctx.irrigated and saved > 150 and (sig.get("groundwater_trend_cm_yr") is None or sig["groundwater_trend_cm_yr"] >= -0.3):
+        reasons.append({"driver": "climate", "text": f"It needs {saved:.0f} mm less irrigation water a year, which matters in the dry-season months "
+                        "when the scheme's reservoir is lowest and off-season planting is sometimes cut back."})
     if ctx.irrigated and sig.get("groundwater_trend_cm_yr") is not None and sig["groundwater_trend_cm_yr"] < -0.3:
-        saved = baseline["metrics"]["irrigation_mm_yr"] - strategy["metrics"]["irrigation_mm_yr"]
         if saved > 15:
-            reasons.append({"driver": "climate", "text": f"GRACE satellites show regional water storage falling {abs(sig['groundwater_trend_cm_yr']):.1f} cm a year. This rotation pumps {saved:.0f} mm ({saved / 25.4:.1f} in) less each year."})
+            reasons.append({"driver": "climate", "text": f"GRACE satellites show regional water storage falling {abs(sig['groundwater_trend_cm_yr']):.1f} cm a year. This rotation uses {saved:.0f} mm less irrigation water each year."})
     if sig["heat_days_35"] >= 12 and any(crops[c]["heat_tmax_c"] >= 37 for c in new):
         tough = [crops[c]["name"] for c in new if crops[c]["heat_tmax_c"] >= 37]
         reasons.append({"driver": "climate", "text": f"NASA POWER counts {sig['heat_days_35']:.0f} days a year above 35 C here"
@@ -153,16 +162,16 @@ def why_suggested(ctx: FieldContext, strategy: dict, baseline: dict, priorities:
         reasons.append({"driver": "soil", "text": f"{', '.join(legumes)} fix nitrogen from the air: purchased nitrogen drops from {baseline['metrics']['n_fertilizer_kg_ha_yr']:.0f} to {strategy['metrics']['n_fertilizer_kg_ha_yr']:.0f} kg/ha a year."})
     om = float(ctx.soil.get("organic_matter_pct") or 0)
     if om and om < 2.0 and strategy["metrics"]["soc_change_t_ha_yr"] > baseline["metrics"]["soc_change_t_ha_yr"] + 0.05:
-        reasons.append({"driver": "soil", "text": f"The soil survey puts organic matter at {om:.1f}%, which is low. This rotation returns {strategy['metrics']['carbon_input_t_ha_yr']:.1f} t/ha of carbon a year against {baseline['metrics']['carbon_input_t_ha_yr']:.1f} now."})
+        reasons.append({"driver": "soil", "text": f"SoilGrids puts organic matter at {om:.1f}%, which is low. This rotation returns {strategy['metrics']['carbon_input_t_ha_yr']:.1f} t/ha of carbon a year against {baseline['metrics']['carbon_input_t_ha_yr']:.1f} now."})
     deep = [crops[c]["name"] for c in new if crops[c]["deep_rooted"]]
     if deep:
         reasons.append({"driver": "soil", "text": f"{', '.join(deep)} root below 1.6 m, reaching water and nitrogen that shallower crops leave behind and opening channels for infiltration."})
     if strategy["pests"]["distinct_cash_crops"] > baseline["pests"]["distinct_cash_crops"]:
         short = baseline["pests"]["short_breaks"]
-        pest = f" The current rotation returns {short[0]['crop_name'].lower()} every {short[0]['interval_years']} year(s), which favours {', '.join(short[0]['named_pests'][:2]) or 'its specialist pests'}." if short else ""
+        pest = f" The current rotation returns {short[0]['crop_name'].lower()} every {short[0]['interval_years']} {short[0].get('unit', 'year')}(s), which favours {', '.join(short[0]['named_pests'][:2]) or 'its specialist pests'}." if short else ""
         reasons.append({"driver": "pest", "text": f"It grows {strategy['pests']['distinct_cash_crops']} different cash crops instead of {baseline['pests']['distinct_cash_crops']}.{pest}"})
     if strategy["tillage"] != baseline["tillage"]:
-        reasons.append({"driver": "soil", "text": f"{strategy['tillage_label']} leaves residue on the surface: soil loss changes from {baseline['metrics']['soil_loss_tons_ac_yr']:.1f} to {strategy['metrics']['soil_loss_tons_ac_yr']:.1f} tons/acre a year."})
+        reasons.append({"driver": "soil", "text": f"{strategy['tillage_label']} leaves residue on the surface: soil loss changes from {baseline['metrics']['soil_loss_tons_ac_yr'] * 2.24:.1f} to {strategy['metrics']['soil_loss_tons_ac_yr'] * 2.24:.1f} t/ha a year."})
     verified = [r for r in strategy["market"]["rows"] if r["verified_locally"] and r["access"] >= 0.8 and r["crop_id"] in new]
     if verified:
         reasons.append({"driver": "market", "text": "Local outlets exist for the new crops: " + " ".join(f"{r['crop_name']}: {r['note']}" for r in verified[:2])})
@@ -183,21 +192,21 @@ def evidence(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict, 
     m = strategy["metrics"]
     summ = calendar["summary"]
     model = [
-        ("cover_calendar", "erosion", summ["headline"], f"Mean ground cover {m['mean_ground_cover_pct']:.0f}%; modelled soil loss {m['soil_loss_tons_ac_yr']:.1f} tons/acre a year, "
-         f"{m['soil_loss_vs_tolerable']:.1f} times the tolerable rate.", "Crop calendar from NASA POWER growing degree days + RUSLE"),
+        ("cover_calendar", "erosion", summ["headline"], f"Mean ground cover {m['mean_ground_cover_pct']:.0f}%; modelled soil loss {m['soil_loss_tons_ac_yr'] * 2.24:.1f} t/ha a year, "
+         f"{m['soil_loss_vs_tolerable']:.1f} times the tolerable rate.", "Crop calendar from NASA POWER heat units and the monsoon rainfall pattern + RUSLE"),
         ("water_budget", "water",
          f"Uses {m['crop_water_use_mm_yr']:.0f} mm of water a year; {m['productive_water_pct']:.0f}% of rain and irrigation goes through the crop",
          (f"Irrigation {m['irrigation_mm_yr']:.0f} mm a year ({m['allocation_used_pct']:.0f}% of the allocation). " if m["allocation_used_pct"] is not None else "")
          + f"Runoff {m['runoff_mm_yr']:.0f} mm, deep drainage {m['deep_drainage_mm_yr']:.0f} mm, unmet crop demand {m['water_stress_pct']:.0f}%.",
-         "Monthly FAO-56 soil-water balance on fused rainfall and SSURGO water-holding capacity"),
+         "Monthly FAO-56 soil-water balance on fused rainfall and SoilGrids water-holding capacity"),
         ("carbon", "soil", f"Returns {m['carbon_input_t_ha_yr']:.1f} t/ha of carbon a year; soil carbon trend {m['soc_change_t_ha_yr']:+.2f} t/ha a year",
          f"Living roots {m['living_root_months_per_year']:.1f} months a year. Legume and cover-crop nitrogen credit {m['n_legume_credit_kg_ha_yr']:.0f} kg/ha a year.",
          "One-pool soil carbon balance driven by residue, roots, temperature and tillage"),
     ]
     h = strategy.get("history")
     if h:
-        model.append(("history", "income", f"Replaying 2001-2024 weather: ${h['mean_net_per_acre']:,.0f}/acre on average, ${h['bad_year_net_per_acre']:,.0f} in a bad year",
-                      f"Worst years: {', '.join(map(str, h['worst_years']))}. Weather alone moves net return by ${h['weather_sd_per_acre']:,.0f}/acre (one standard deviation).",
+        model.append(("history", "income", f"Replaying 2001-2024 weather: {_fmt(h['mean_net_per_ha'], 'RM')}/ha on average, {_fmt(h['bad_year_net_per_ha'], 'RM')} in a bad year",
+                      f"Worst years: {', '.join(map(str, h['worst_years']))}. Weather alone moves net return by {_fmt(h['weather_sd_per_ha'], 'RM')}/ha (one standard deviation).",
                       "24 years of NASA POWER weather run through the rotation, every phase in every year"))
     for mid, dim, statement, detail, method in model:
         if dim in wanted or strategy["role"] == "baseline":
@@ -208,23 +217,23 @@ def evidence(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict, 
 
 STANDING_GAPS = [
     ("compaction", "Compaction and hardpans below the surface",
-     "No satellite sees a plough pan. The model assumes roots can use the full soil-survey depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
-     "Push a penetrometer or dig a pit in spring when the soil is moist."),
+     "No satellite sees a plough pan, and puddled paddy soils always have one. The model assumes roots can use the full soil depth; a compacted layer would cut water storage and the benefit of deep-rooted crops.",
+     "Push a penetrometer or dig a pit when the soil is moist, before switching a paddy field to dry-land crops."),
     ("biology", "Soil life, nematodes and disease inoculum",
      "Nematode counts, disease carry-over and microbial activity are invisible from orbit. Pest scores use rotation rules of thumb, not what is in this soil.",
      "Pull nematode and soil-health samples; review the field's disease history."),
-    ("drainage", "Tile lines, drainage and irrigation hardware",
-     "Tile spacing, outlet condition, well capacity and system uniformity are not in any public dataset. One on/off setting stands in for them.",
-     "Check tile maps, well test records and a recent irrigation uniformity test."),
+    ("drainage", "Field drains, bunds, water gates and canals",
+     "Drain spacing, bund height, the tertiary canal schedule and pump capacity are not in any public dataset. One on/off setting stands in for them.",
+     "Walk the drains and bunds; check the scheme's water-release schedule and raised-bed or drain options for dry-land crops."),
     ("genetics", "Varieties, hybrids and maturity groups",
-     "Each crop is a single mid-range type. Variety choice can move maturity by weeks and drought or disease tolerance by a lot.",
-     "Match maturity and disease packages to the planting windows shown, with your seed adviser."),
-    ("contracts", "Contracts, basis, leases and programme rules",
-     "Prices are multi-year averages. Forward contracts, local basis, landlord terms, crop insurance and conservation-programme payments can outweigh every number here.",
-     "Price each crop with your buyer, lender and insurance agent before committing acres."),
+     "Each crop is a single mid-range type (for paddy, a 105-115 day MARDI variety). Variety choice can move maturity by weeks and blast or drought tolerance by a lot.",
+     "Match variety duration and disease resistance to the planting windows shown, with the DOA or MARDI."),
+    ("contracts", "Contracts, middlemen, rent and subsidies",
+     "Prices are multi-year farm-gate averages. Contract farming terms, middleman margins, land rent, paddy input and price subsidies and Takaful cover can outweigh every number here.",
+     "Price each crop with your buyer, the PPK or FAMA, and check subsidy rules before committing land."),
     ("within_field", "Variation inside the field",
-     "Weather inputs are 10-55 km pixels and the soil is one dominant map-unit component. Knolls, draws, sandy streaks and saline spots are averaged away.",
-     "Overlay yield maps or walk the field; consider zoning the rotation."),
+     "Weather inputs are 10-55 km pixels and the soil is a 250 m model estimate. Low spots that flood, sandy ridges and acid-sulphate patches are averaged away.",
+     "Walk the field after heavy rain and compare with the 10 m Sentinel-2 greenness; consider zoning the rotation."),
 ]
 
 
@@ -244,33 +253,34 @@ def gaps(ctx: FieldContext, strategy: dict, layers: list[dict], confidence: dict
             items.append({"id": f"scale_{row['id']}", "kind": "resolution", "severity": "low",
                           "topic": f"{row['label']}: one pixel is {ratio:.0f}x the width of this field" if ratio else f"{row['label']}: coarse",
                           "detail": f"Native resolution {row['native_resolution_m'] / 1000:.0f} km. {row['harmonisation']}",
-                          "close_by": "A rain gauge, soil-moisture probe or well record on the farm beats any pixel this size."})
+                          "close_by": "A rain gauge or soil-moisture probe on the farm beats any pixel this size."})
     if ctx.soil.get("generic"):
-        items.append({"id": "soil_generic", "kind": "data", "severity": "high", "topic": "No soil survey data for this field",
-                      "detail": ("The USDA soil survey did not answer in time or does not cover this location, so a generic loam was assumed. "
+        items.append({"id": "soil_generic", "kind": "data", "severity": "high", "topic": "No soil data for this field",
+                      "detail": ("SoilGrids did not answer in time or masks this pixel, so a generic loam was assumed. "
                                  "Water-holding capacity, erodibility and organic matter drive most results."),
-                      "close_by": "Reload the field in a minute (U.S. locations), or use a soil test or national soil-map values."})
+                      "close_by": "Reload the field in a minute, or enter values from a soil test or the DOA soil series map."})
     no_yield = sorted({p["crop_name"] for p in strategy["economics"] if p["kind"] != "cover" and not p.get("local_reference", True)})
     if no_yield:
         items.append({"id": "yield_reference", "kind": "data", "severity": "medium", "topic": "No local yield history for " + ", ".join(no_yield),
-                      "detail": "National typical yields were used, then adjusted for this field's water, heat and soil.", "close_by": "Ask Extension for variety-trial yields in your county."})
+                      "detail": "Malaysian average yields were used, then adjusted for this field's water, heat and soil.", "close_by": "Ask the DOA district office or MARDI for local trial yields."})
     unverified = [r["crop_name"] for r in strategy["market"]["rows"] if not r["verified_locally"]]
     if unverified:
         items.append({"id": "market_unverified", "kind": "data", "severity": "medium", "topic": "Local buyers not confirmed for " + ", ".join(sorted(set(unverified))),
-                      "detail": "A default market-access score was used.", "close_by": "Call the nearest elevators, processors or feed users."})
+                      "detail": "A default market-access score was used.", "close_by": "Ask FAMA, the area farmers' organisation (PPK) or local collectors."})
     weak_covers = [p for p in strategy["phases"] if p["kind"] in ("cover", "forage") and p["biomass_frac"] is not None and p["biomass_frac"] < 0.45]
     if weak_covers:
         items.append({"id": "cover_establishment", "kind": "model", "severity": "medium",
                       "topic": "Cover-crop growth is uncertain: " + ", ".join(sorted({p['crop_name'] for p in weak_covers})),
-                      "detail": "The window between crops gives it under half of its potential growth in a normal year; a dry or cold autumn gives less.",
-                      "close_by": "Try a strip first, seed earlier (interseed or fly on), or pick a faster species."})
+                      "detail": "The window between crops gives it under half of its potential growth in a normal year; a dry spell after sowing gives less.",
+                      "close_by": "Try a strip first, sow into the standing crop before harvest, or pick a faster species."})
     if ndvi_check and strategy["role"] == "baseline":
         sev = {"strong": "low", "fair": "low", "weak": "high"}[ndvi_check["agreement"]]
         items.append({"id": "calendar_check", "kind": "validation", "severity": sev, "topic": f"Satellite check of the assumed crop calendar: {ndvi_check['agreement']} agreement",
                       "detail": ndvi_check["explanation"], "close_by": "Edit the baseline rotation and planting dates to match your records."})
     if any(crops[p["crop_id"]]["cycle"] == "perennial" for p in strategy["phases"]):
-        items.append({"id": "perennial_model", "kind": "model", "severity": "medium", "topic": "Hay yields by cutting are not modelled",
-                      "detail": "Alfalfa is treated as one seasonal total; stand decline, cutting schedule and hay quality are not represented.", "close_by": "Use local hay budgets."})
+        items.append({"id": "perennial_model", "kind": "model", "severity": "medium", "topic": "Multi-year crops are simplified",
+                      "detail": "Pineapple is treated as an even yield per year; flowering induction, the ratoon crop's decline and fruit grade are not represented.",
+                      "close_by": "Use the MPIB or DOA budget for the plant and ratoon crops."})
     for gid, topic, detail, close in STANDING_GAPS:
         items.append({"id": gid, "kind": "blind_spot", "severity": "standing", "topic": topic, "detail": detail, "close_by": close})
 
@@ -281,7 +291,7 @@ def gaps(ctx: FieldContext, strategy: dict, layers: list[dict], confidence: dict
         "overall_confidence": confidence["overall"],
         "score_uncertainty": spread,
         "statement": ("Scores are planning estimates from a monthly model. Treat a difference of fewer points than the uncertainty shown for "
-                      "that dimension as a tie, and treat every dollar figure as a ranking aid, not a budget."),
+                      "that dimension as a tie, and treat every ringgit figure as a ranking aid, not a budget."),
     }
 
 
@@ -303,16 +313,16 @@ def risks(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict) -> 
     if strategy["role"] == "baseline":
         if m["soil_loss_vs_tolerable"] > 1.0:
             add("erosion_over_t", "Soil", "Soil loss is above the tolerable rate",
-                f"Modelled loss is {m['soil_loss_vs_tolerable']:.1f} times what the soil survey says this soil can sustain. Staying the course means continued topsoil loss.", [WHO_NRCS, WHO_FARMER], "caution")
+                f"Modelled loss is {m['soil_loss_vs_tolerable']:.1f} times what this soil can sustain. Staying the course means continued topsoil loss and silt in the rivers downstream.", [WHO_NRCS, WHO_FARMER], "caution")
         for s in strategy["pests"]["short_breaks"][:2]:
-            add(f"resistance_{s['crop_id']}", "Pests", f"{s['crop_name']} returns every {s['interval_years']} year(s)",
-                f"Recommended gap is {s['recommended_years']} years. Watch for {', '.join(s['named_pests']) or 'specialist pests'} and for herbicide-resistant weeds selected by repeating the same programme.", [WHO_CCA], "caution")
+            add(f"resistance_{s['crop_id']}", "Pests", f"{s['crop_name']} returns every {s['interval_years']} {s.get('unit', 'year')}(s)",
+                f"Recommended gap is {s['recommended_years']} {s.get('unit', 'year')}s. Watch for {', '.join(s['named_pests']) or 'specialist pests'} and for herbicide-resistant weeds selected by repeating the same programme.", [WHO_CCA], "caution")
         if ctx.irrigated and sig.get("groundwater_trend_cm_yr") is not None and sig["groundwater_trend_cm_yr"] < -0.3:
             add("water_supply", "Water", "The water supply this rotation depends on is declining",
-                f"The rotation uses {m['allocation_used_pct']:.0f}% of the allocation in a normal year. Ask how well yield and allocation are expected to change over the next ten years.", [WHO_WATER, WHO_FARMER], "caution")
+                f"The rotation uses {m['allocation_used_pct']:.0f}% of the allocation in a normal year. Ask how supply is expected to change over the next ten years.", [WHO_WATER, WHO_FARMER], "caution")
         if m["bare_months_per_year"] >= 4:
             add("bare_soil", "Soil", f"Soil is bare {m['bare_months_per_year']:.0f} months a year",
-                "Bare months coincide with part of the erosive-rain season. Residue management alone can change this without changing crops.", [WHO_NRCS, WHO_FARMER])
+                "Bare months coincide with part of the monsoon's erosive rain. Keeping straw or residue on the surface instead of burning it changes this without changing crops.", [WHO_NRCS, WHO_FARMER])
         add("status_quo", "Business", "Known risks are still risks", "The current rotation's familiarity hides its exposure to one or two markets and one or two pest complexes.", [WHO_FARMER])
         return out
 
@@ -321,26 +331,26 @@ def risks(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict) -> 
         prev = order[i - 1]
         if ph["crop_id"] in SENSITIVE_FOLLOWERS and prev["crop_id"] in RESIDUAL_HERBICIDE_CROPS and ph["crop_id"] != prev["crop_id"]:
             add(f"carryover_{ph['crop_id']}", "Herbicides", f"Herbicide carryover into {ph['crop_name'].lower()}",
-                f"Residual herbicides used in {prev['crop_name'].lower()} (atrazine, HPPD inhibitors, sulfonylureas, imidazolinones) can injure {ph['crop_name'].lower()} for 10-36 months, longer in dry or high-pH soil"
+                f"Residual herbicides used in {prev['crop_name'].lower()} (atrazine in maize, imidazolinones in Clearfield paddy, bromacil, diuron and ametryn in pineapple) can injure {ph['crop_name'].lower()} for months, longer in dry or high-pH soil"
                 + (f" (this soil is pH {ctx.soil['ph']})" if float(ctx.soil.get('ph') or 7) >= 7.5 else "") + ". Check every label's rotation interval against your spray records.", [WHO_CCA, WHO_FARMER], "critical")
             break
     covers = [p for p in order if p["kind"] == "cover"]
     if covers:
         dry = sig["aridity_index"] < 0.6 and not ctx.irrigated
         add("cover_termination", "Cover crops", "Cover-crop termination timing",
-            ("In a dry region a cover crop left too long uses the moisture the next crop needs. " if dry else "A cover crop terminated late can tie up nitrogen and slow soil warming. ")
-            + "Agree a termination date and method (herbicide, roller, tillage, winter-kill) and confirm it meets crop-insurance cover-crop rules for your county.",
+            ("A cover crop left too long in the dry season uses the moisture the next crop needs. " if dry else "A woody cover terminated late can tie up nitrogen and harbour pests. ")
+            + "Agree a termination date and method (slash and mulch, roll, or incorporate two to three weeks before planting).",
             [WHO_EXT, WHO_INSURER, WHO_FARMER], "caution" if dry else "check")
-        if any(p["crop_id"] in ("cereal_rye", "cover_mix") for p in covers) and any(o["crop_id"] == "corn" for o in order):
-            add("rye_before_corn", "Cover crops", "Cereal rye ahead of corn", "Rye can host seedling diseases and tie up nitrogen for corn. Terminate 10-14 days before planting and consider starter nitrogen.", [WHO_CCA])
-        if any(p["winterkills"] for p in covers):
-            add("winterkill_timing", "Cover crops", "Winter-killed covers must be seeded early", "Radish and oats need 6-8 weeks of growth before a hard freeze to be worth the seed.", [WHO_FARMER])
+        if any(p["crop_id"] == "mucuna" for p in covers):
+            add("mucuna_climbing", "Cover crops", "Velvet bean climbs and smothers", "Slash mucuna before it climbs field edges and trees, and keep it out of the next crop's rows.", [WHO_FARMER])
+        if any(p["crop_id"] == "sesbania" for p in covers) and any(o["crop_id"] == "rice" for o in order):
+            add("sesbania_paddy", "Cover crops", "Sesbania green manure ahead of paddy", "Incorporate it 2-3 weeks before transplanting or broadcasting so it decomposes before the crop needs nitrogen.", [WHO_EXT])
     for b in strategy["pests"]["green_bridges"]:
         add(f"bridge_{b['group']}", "Pests", f"{b['cover']} can carry disease into {b['next_crop'].lower()}",
             "The cover crop and the crop after it host some of the same diseases or insects (a 'green bridge'). Leave a host-free gap or choose a different cover.", [WHO_CCA], "caution")
     for s in strategy["pests"]["short_breaks"][:2]:
         add(f"short_break_{s['crop_id']}", "Pests", f"{s['crop_name']} still returns sooner than recommended",
-            f"Every {s['interval_years']} year(s) against a recommended {s['recommended_years']}. Scout for {', '.join(s['named_pests']) or 'host-specific pests'}.", [WHO_CCA])
+            f"Every {s['interval_years']} {s.get('unit', 'year')}(s) against a recommended {s['recommended_years']}. Scout for {', '.join(s['named_pests']) or 'host-specific pests'}.", [WHO_CCA])
     labels = load_catalog()["equipment_labels"]
     if strategy["equipment_needed"]:
         add("equipment", "Equipment", "Equipment you do not have listed",
@@ -351,31 +361,37 @@ def risks(ctx: FieldContext, strategy: dict, baseline: dict, insights: dict) -> 
         if row["crop_id"] in strategy["fit"]["change"]["new_crops"] and (row["access"] < 0.75 or not row["verified_locally"]):
             add(f"buyer_{row['crop_id']}", "Markets", f"Confirm a buyer for {row['crop_name'].lower()}", row["note"] + " Get a price, delivery window and quality specs in writing before buying seed.", [WHO_BUYER, WHO_FARMER], "caution")
     new = strategy["fit"]["change"]["new_crops"]
+    rice_now = sum(1 for y in baseline["years"] for c in y if c == "rice") / max(1, len(baseline["years"]))
+    rice_then = sum(1 for y in strategy["years"] for c in y if c == "rice") / max(1, len(strategy["years"]))
+    if rice_now > 0 and rice_then < rice_now:
+        add("paddy_subsidy", "Business", "Paddy subsidies and scheme rules",
+            "Fertiliser, input and price subsidies are paid per paddy season, and the scheme releases water block by block. Growing a dry-land crop "
+            "in a paddy block can forfeit those payments and needs agreement with neighbours and the irrigation authority.", [WHO_INSURER, WHO_WATER, WHO_FARMER], "caution")
     if new:
-        add("insurance", "Business", "Crop insurance and programme eligibility for new crops",
-            f"Check whether {', '.join(crops[c]['name'].lower() for c in new)} are insurable in your county, how a new crop affects your yield history, and any landlord or conservation-contract terms.", [WHO_INSURER, WHO_FARMER])
+        add("insurance", "Business", "Takaful cover and programme eligibility for new crops",
+            f"Check whether {', '.join(crops[c]['name'].lower() for c in new)} can be covered by an AgroTakaful plan, whether any government incentive applies, and any land-rent terms.", [WHO_INSURER, WHO_FARMER])
     if any(len(y) == 0 for y in baseline["years"]) and not any(len(y) == 0 for y in strategy["years"]):
         add("fallow_replacement", "Water", "Replacing fallow uses stored soil water",
-            f"The model shows the following crop under {m['water_stress_pct']:.0f}% water stress in a normal year. In a dry autumn the next winter crop may be seeded into dry soil; decide in advance when you would revert to fallow.", [WHO_EXT, WHO_FARMER], "caution")
+            f"The model shows the crops under {m['water_stress_pct']:.0f}% water stress in a normal year. If the monsoon is late the next crop may be sown into dry soil; decide in advance when you would revert to fallow.", [WHO_EXT, WHO_FARMER], "caution")
     if strategy["tillage"] != baseline["tillage"]:
         wet = "poor" in str(ctx.soil.get("drainage_class", "")).lower()
         add("tillage_transition", "Soil", f"Moving to {strategy['tillage_label'].lower()}",
-            ("This soil is poorly drained, so residue will keep it colder and wetter in spring; strip-till may fit better. " if wet else "")
-            + "Expect a 3-5 year transition: planter set-up for residue, nutrient stratification, and different weed pressure.", [WHO_NRCS, WHO_EXT])
+            ("This soil is poorly drained, so surface residue keeps it wetter; raised beds or strip tillage may fit better. " if wet else "")
+            + "Expect a 2-4 season transition: planting into residue, slug and rat pressure, and a different weed spectrum.", [WHO_NRCS, WHO_EXT])
     if m["n_legume_credit_kg_ha_yr"] > baseline["metrics"]["n_legume_credit_kg_ha_yr"] + 10:
         add("n_credit", "Nutrients", "Verify nitrogen credits before cutting fertiliser",
-            "Legume credits vary with stand, weather and termination date. Use a pre-sidedress or in-season nitrate test the first years.", [WHO_CCA])
+            "Legume credits vary with stand, weather and termination date. Use a leaf-colour chart or in-season test the first seasons.", [WHO_CCA])
     late = [p for p in order if p["delay_months"]]
     if late:
-        add("tight_window", "Timing", "Tight planting windows", "; ".join(f"{p['crop_name']} goes in about {p['delay_months']} month(s) later than ideal" for p in late) + ". A wet harvest or early frost breaks the sequence; have a fallback crop.", [WHO_FARMER])
+        add("tight_window", "Timing", "Tight planting windows", "; ".join(f"{p['crop_name']} goes in about {p['delay_months']} month(s) later than ideal" for p in late) + ". A late monsoon, a flood or a delayed water release breaks the sequence; have a fallback crop.", [WHO_FARMER])
     if ctx.irrigated and m["allocation_used_pct"] and m["allocation_used_pct"] > 95:
-        add("allocation_limit", "Water", "The rotation uses the full water allocation", "Any cut in allocation or well yield becomes crop stress. Check peak-month demand against system capacity.", [WHO_WATER], "caution")
+        add("allocation_limit", "Water", "The rotation uses the full water allocation", "Any cut in the scheme's release becomes crop stress. Check dry-season demand against what the canal can deliver.", [WHO_WATER], "caution")
     if float(ctx.soil.get("ec_ds_m") or 0) >= 2.0:
         add("salinity", "Soil", "Salinity", f"Soil EC is {ctx.soil['ec_ds_m']} dS/m. Reduced irrigation can concentrate salts; plan a leaching fraction and test water quality.", [WHO_CCA, WHO_WATER])
     if any(crops[p["crop_id"]]["cycle"] == "perennial" for p in order):
-        add("perennial", "Business", "A multi-year stand is a multi-year commitment", "Establishment cost, stand life and hay marketing need their own budget. Do not reseed alfalfa into old alfalfa (autotoxicity).", [WHO_EXT, WHO_FARMER])
+        add("perennial", "Business", "A multi-year crop is a multi-year commitment", "Planting material, establishment cost and the ratoon crop need their own budget. Replant pineapple from clean suckers to keep heart rot and mealybug wilt out.", [WHO_EXT, WHO_FARMER])
     if ctx.livestock and covers:
-        add("grazing", "Livestock", "Grazing cover crops", "Check herbicide grazing restrictions, nitrate and prussic-acid risk, fencing and water.", [WHO_EXT])
+        add("grazing", "Livestock", "Grazing cover crops", "Check herbicide withholding periods, nitrate risk, fencing and water before cattle or goats go in.", [WHO_EXT])
     add("try_small", "Process", "Try it on part of the field first", "A strip trial for two seasons tests the planting windows, equipment and markets with little at stake.", [WHO_FARMER, WHO_EXT])
     return out
 

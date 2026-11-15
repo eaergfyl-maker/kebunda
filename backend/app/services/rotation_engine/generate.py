@@ -3,7 +3,7 @@
 Two stages keep it fast enough to feel interactive:
   1. screen every crop for this field (does it mature? does it survive winter? how does it
      yield with this soil, water and heat?), then enumerate 2-4 year cash-crop sequences
-     from the crops that fit;
+     from the crops that fit (in the tropics: one to three crop seasons a year, chained);
   2. take the sequences that do best on any one decision dimension and expand them with
      cover-crop and tillage variants.
 
@@ -15,18 +15,20 @@ from __future__ import annotations
 from itertools import product
 
 from app.services.rotation_engine.context import FieldContext, crops_by_id
-from app.services.rotation_engine.schedule import build_schedule
+from app.services.rotation_engine.schedule import build_schedule, is_tropical
 from app.services.rotation_engine.simulate import simulate
 from app.utils.stats import mean
 
 MAX_POOL = 7
 LEGUME_COVERS = ["hairy_vetch", "crimson_clover", "winter_pea"]
+SHORT_SEASON_MONTHS = 5  # a tropical crop this short (incl. dry-down) can share a year with another
 SUITABILITY_CLASSES = [(0.80, "Very suitable"), (0.62, "Suitable"), (0.45, "Moderately suitable"), (0.0, "Marginal")]
 
 
 def suitability_screen(ctx: FieldContext, tillage: str) -> list[dict]:
     """GAEZ-style agro-climatic and soil fit for every harvestable crop on this field."""
     rows = []
+    gaez = ctx.gaez or {}
     for crop in crops_by_id().values():
         if crop["role"] == "cover":
             continue
@@ -51,7 +53,7 @@ def suitability_screen(ctx: FieldContext, tillage: str) -> list[dict]:
             "limiting_factors": limiting,
             "reasons": sim["issues"][:2],
             "relative_yield_factors": factors,
-            "net_return_per_acre": sim["metrics"]["net_return_per_acre_yr"] if sim["feasible"] else None,
+            "net_return_per_ha": sim["metrics"]["net_return_per_ha_yr"] if sim["feasible"] else None,
             "irrigation_mm": sim["metrics"]["irrigation_mm_yr"],
             "water_use_mm": sim["metrics"]["crop_water_use_mm_yr"],
             "plant_month": sim["phases"][0]["plant_calendar_month"] if sim["phases"] else None,
@@ -61,6 +63,8 @@ def suitability_screen(ctx: FieldContext, tillage: str) -> list[dict]:
             "has_local_yield": crop["id"] in ctx.reference_yields,
             "equipment_missing": missing,
             "drought_tolerance": crop["drought_tolerance"], "legume": crop["legume"], "deep_rooted": crop["deep_rooted"],
+            "season_months": sim["phases"][0]["duration_months"] if sim["phases"] else None,
+            "gaez": gaez.get(crop["id"]),
         })
     rows.sort(key=lambda r: (-int(r["feasible"]), -r["suitability"]))
     return rows
@@ -92,8 +96,11 @@ def pick_pool(ctx: FieldContext, screen: list[dict], baseline_years: list[list[s
         market = row["market_access"] * (1.0 if row["market_verified"] else 0.7)
         if cid not in base and (row["suitability"] < 0.45 or market < 0.33):
             continue
-        # blend agronomic fit, the money and whether anyone will buy it
-        value = row["suitability"] * 0.45 + market * 0.30 + min(1.0, max(0.0, (row["net_return_per_acre"] or 0) / 400.0)) * 0.25
+        # blend agronomic fit, the money, whether anyone will buy it, and FAO GAEZ's regional rating
+        g = (row.get("gaez") or {}).get("si")
+        regional = g / 10000.0 if g is not None else 0.5
+        value = (row["suitability"] * 0.40 + market * 0.30 + min(1.0, max(0.0, (row["net_return_per_ha"] or 0) / 8000.0)) * 0.20
+                 + regional * 0.10)
         scored.append((cid in base, value, cid))
     scored.sort(reverse=True)
     pool = [cid for _b, _v, cid in scored][:MAX_POOL]
@@ -101,6 +108,54 @@ def pick_pool(ctx: FieldContext, screen: list[dict], baseline_years: list[list[s
         if cid in crops_by_id() and cid not in pool and cid not in exclude:
             pool.append(cid)
     return pool
+
+
+def tropical_sequences(pool: list[str], season_months: dict[str, int], allow_fallow: bool, max_years: int) -> list[list[list[str]]]:
+    """Year-round sequences for frost-free fields: each year holds one long crop, or two
+    (occasionally three) short ones chained through the monsoons."""
+    crops = crops_by_id()
+    short = [c for c in pool if crops[c]["cycle"] != "perennial" and season_months.get(c, 12) <= SHORT_SEASON_MONTHS][:5]
+    single = [c for c in pool if crops[c]["cycle"] != "perennial"]
+    years_options: list[list[str]] = [[c] for c in single]
+    years_options += [[a, b] for a in short for b in short if a != b and season_months[a] + season_months[b] <= 11]
+    years_options += [[a, b, c] for a in short for b in short for c in short
+                      if len({a, b, c}) == 3 and season_months[a] + season_months[b] + season_months[c] <= 12]
+    seen, out = set(), []
+
+    def add(seq: list[list[str]]) -> None:
+        flat = tuple(c for y in seq for c in y)
+        if not flat or flat[0] == flat[-1] and len(flat) > 1:
+            return  # the last crop would run straight into the same crop again
+        if any(flat[i] == flat[i + 1] for i in range(len(flat) - 1)):
+            return
+        key = tuple(tuple(y) for y in seq)
+        rots = [key[i:] + key[:i] for i in range(len(key))]
+        canon = min(rots)
+        if canon in seen:
+            return
+        seen.add(canon)
+        out.append([list(y) for y in canon])
+
+    for y in years_options:
+        if len(y) >= 2:
+            add([y])  # the same two or three crops every year
+    two_year = [y for y in years_options if len(y) <= 2]  # three-crop years only repeat yearly, to keep the search small
+    for a in two_year:
+        for b in two_year:
+            if a != b and max_years >= 2:
+                add([a, b])
+    if allow_fallow:
+        for a in years_options[: len(single)]:
+            add([a, []])
+    for cid in pool:
+        if crops[cid]["cycle"] == "perennial":
+            others = [c for c in single if c != cid][:3]
+            for a in others:
+                add([[cid], [cid], [a]])
+                for b in short:
+                    if b != a and season_months.get(a, 12) + season_months[b] <= 11:
+                        add([[cid], [cid], [a, b]])
+    return out
 
 
 def base_sequences(pool: list[str], baseline_years: list[list[str]], allow_fallow: bool, max_years: int) -> list[list[list[str]]]:
@@ -136,8 +191,26 @@ def base_sequences(pool: list[str], baseline_years: list[list[str]], allow_fallo
 
 
 def _winter_hardy(ctx: FieldContext, cid: str) -> bool:
-    hardy = crops_by_id()[cid].get("min_winter_tmin_c")
+    crop = crops_by_id().get(cid)
+    if crop is None:
+        return False
+    hardy = crop.get("min_winter_tmin_c")
     return hardy is None or min(ctx.climate.tmin) >= hardy
+
+
+def _tropical_cover(ctx: FieldContext, nxt: dict, gap: int, wet_window: bool) -> str | None:
+    """Pick a tropical cover for a gap: sesbania ahead of paddy (it stands flooding), sunn hemp
+    for short gaps, velvet bean for long ones, a grass when the next crop is a legume."""
+    crops = crops_by_id()
+    if nxt["id"] == "rice" or nxt.get("ponding_mm_day"):
+        choice = "sesbania"
+    elif nxt["legume"]:
+        choice = "sorghum_sudan"
+    elif gap >= 5 and wet_window:
+        choice = "mucuna"
+    else:
+        choice = "sunn_hemp"
+    return choice if choice in crops else None
 
 
 def add_covers(ctx: FieldContext, years: list[list[str]], style: str) -> list[list[str]] | None:
@@ -154,14 +227,25 @@ def add_covers(ctx: FieldContext, years: list[list[str]], style: str) -> list[li
     if not mains:
         return None
     legume_cover = next((c for c in LEGUME_COVERS if _winter_hardy(ctx, c)), None)
+    tropical = sched.tropical
     out = [list(y) for y in years]
     changed = False
     for i, ph in enumerate(mains):
         nxt = mains[(i + 1) % len(mains)]
         gap = (nxt.plant - ph.end - 1) % nm if len(mains) > 1 else nm - (ph.end - ph.plant + 1)
-        if gap < 3 or ph.kind == "perennial":
+        if gap < (2 if tropical else 3) or ph.kind == "perennial":
             continue
         end_cal = ph.end % 12
+        if tropical:
+            if style == "forage":
+                continue  # no forage cover crop is catalogued for the tropics
+            wet = sum(cl.precip[(end_cal + k) % 12] for k in (1, 2, 3)) > 1.0 * sum(cl.et0[(end_cal + k) % 12] for k in (1, 2, 3))
+            choice = _tropical_cover(ctx, nxt.crop, gap, wet)
+            if choice and choice not in out[ph.year_index % len(out)]:
+                year = (ph.year_index + ph.stand_years - 1) % len(out)
+                out[year] = out[year] + [choice]
+                changed = True
+            continue
         summer_gap = cl.tmean[(end_cal + 1) % 12] > 20 and cl.tmean[(end_cal + 2) % 12] > 18 and gap >= 4
         if style == "forage":
             choice = "triticale" if _winter_hardy(ctx, "triticale") else None
@@ -198,7 +282,8 @@ def variants(ctx: FieldContext, years: list[list[str]], base_tillage: str, const
         covered = add_covers(ctx, years, "cover")
         if covered:
             out += [(covered, t) for t in tills]
-        forage = add_covers(ctx, years, "forage") if (ctx.livestock or ctx.local_market.get("triticale", {}).get("access", 0) >= 0.8) else None
+        forage = (add_covers(ctx, years, "forage")
+                  if "triticale" in crops_by_id() and (ctx.livestock or ctx.local_market.get("triticale", {}).get("access", 0) >= 0.8) else None)
         if forage and "hay_equipment" in (ctx.equipment | ({"hay_equipment"} if ctx.custom_hire else set())):
             out += [(forage, t) for t in tills[:2]]
     return out
