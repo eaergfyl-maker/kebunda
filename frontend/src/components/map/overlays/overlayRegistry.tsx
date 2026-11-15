@@ -23,6 +23,7 @@ import type { FarmSummary, FieldOverview } from "@/types/api";
 import { FarmPins } from "./FarmPins";
 import { PixelFootprints } from "./PixelFootprints";
 import { PointProbe } from "./PointProbe";
+import { RainfallBubbles } from "./RainfallBubbles";
 
 export interface OverlayProps {
   farms: FarmSummary[];
@@ -53,4 +54,5 @@ export const OVERLAYS: OverlayDef[] = [
   { id: "farms", label: "Benchmark farms", help: "Five real Malaysian fields with pre-loaded NASA, Sentinel-2, SoilGrids and FAO GAEZ data.", defaultOn: true, Component: FarmPins },
   { id: "footprints", label: "Satellite pixel sizes", help: "How big one pixel of each dataset is next to this field.", defaultOn: true, needsField: true, Component: PixelFootprints },
   { id: "probe", label: "Click to query NASA POWER", help: "Click anywhere to pull 24 years of NASA climate data for that spot.", defaultOn: true, Component: PointProbe },
+  { id: "rainfall", label: "Rainfall by farm", help: "Bigger, darker circles mean more rain per year at that farm.", defaultOn: false, Component: RainfallBubbles },
 ];
