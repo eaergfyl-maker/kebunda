@@ -22,6 +22,7 @@ import { CHART } from "@/styles/theme";
 import type { CalendarValidation, FieldOverview } from "@/types/api";
 
 import { box, innerW, LegendRow, linePath, MonthAxis, niceTicks, scale, Svg, YAxis } from "./chartKit";
+import { LocalAdviceNote, Takeaway } from "./Takeaway";
 
 const SOURCE = {
   ground: { label: "Rain gauge (MetMalaysia via NOAA GHCN)", color: CHART.ground },
@@ -47,6 +48,12 @@ export function SatelliteVsGround({ field, validation }: { field: FieldOverview;
   const fieldW = field.fusion.field_width_m;
   const logMax = Math.log10(400_000);
   const logMin = Math.log10(20);
+  const imergBias = cmp.vs_ground?.["imerg"]?.bias_pct;
+  const sentence = !fused.has_ground
+    ? "No rain gauge record was available here, so the rainfall figures are an average of satellite and model estimates. Treat them as a rough guide."
+    : imergBias !== undefined && imergBias !== null
+      ? `Against rain gauges, the satellite rain estimate runs about ${Math.abs(Math.round(imergBias))}% ${imergBias > 0 ? "higher" : "lower"} at this field, so the tool blends gauge, satellite and model data instead of trusting any one of them.`
+      : "The tool blends rain gauge, satellite and model data instead of trusting any one of them.";
   const pos = (m: number) => ((Math.log10(Math.max(20, m)) - logMin) / (logMax - logMin)) * 100;
 
   return (
@@ -58,6 +65,7 @@ export function SatelliteVsGround({ field, validation }: { field: FieldOverview;
           miles across. They never agree exactly, so FieldShift blends them into <Term id="fused_rain">fused rainfall</Term>,
           trusting each source by how closely it tracked the gauges at this field.
         </p>
+        <Takeaway>{sentence}</Takeaway>
         <Svg b={b} label="Monthly rainfall from gauges, satellite and weather model">
           <YAxis b={b} ticks={niceTicks(0, top, 4)} y={y} format={(v) => units.waterValue(v).toFixed(units.system === "us" ? 1 : 0)} title={`${units.waterUnit} per month`} />
           {ids.map((id, k) => (cmp.monthly_normals[id] ?? []).map((v, m) => v !== null && (
@@ -132,6 +140,7 @@ export function SatelliteVsGround({ field, validation }: { field: FieldOverview;
           <CalendarCheck v={validation} />
         </div>
       )}
+      <LocalAdviceNote />
     </div>
   );
 }
