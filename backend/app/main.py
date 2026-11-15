@@ -37,9 +37,10 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FieldShift API",
     version=VERSION,
-    summary="Crop-rotation decision support from NASA Earth observations, USDA soil data and farmer priorities.",
+    summary="Crop-rotation decision support for Malaysian farms from NASA Earth observations, global soil and crop data, and farmer priorities.",
     description=(
-        "Fuses NASA POWER, GPM IMERG, MODIS, SRTM and GRACE with USDA SSURGO and the Cropland Data Layer, then simulates "
+        "Fuses NASA POWER, GPM IMERG, SMAP, SRTM, MODIS and GRACE with Copernicus Sentinel-2, ISRIC SoilGrids, FAO GAEZ and "
+        "MetMalaysia rain gauges (NOAA GHCN-Daily), then simulates "
         "and compares crop rotations for one field. Every strategy explains why it was suggested, the evidence, the expected "
         "benefits, the information gaps and the risks that need local review.\n\n" + analysis.DISCLAIMER
     ),
@@ -47,7 +48,7 @@ app = FastAPI(
     openapi_tags=[
         {"name": "farms", "description": "Benchmark farms and custom fields built live from a coordinate."},
         {"name": "nasa", "description": "Live NASA POWER queries, GIBS map layers and mission notes."},
-        {"name": "soil-crops", "description": "Soil survey, crop catalogue, crop history, suitability and markets."},
+        {"name": "soil-crops", "description": "Soil properties, crop catalogue, Sentinel-2 crop cycles, GAEZ suitability and markets."},
         {"name": "rotations", "description": "Generate, score and explain rotation strategies."},
         {"name": "scenarios", "description": "What-if climate and water stress tests."},
     ],

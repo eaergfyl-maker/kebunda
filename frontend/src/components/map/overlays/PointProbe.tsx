@@ -7,7 +7,7 @@ import type { OverlayProps } from "./overlayRegistry";
 
 /**
  * Click anywhere: a live, keyless NASA POWER query for that coordinate, with the option to
- * build a full custom field there (POWER + IMERG + MODIS + SRTM + SSURGO + CDL).
+ * build a full custom field there (POWER + IMERG + Sentinel-2 + SRTM + SoilGrids + FAO GAEZ).
  */
 export function PointProbe({ probe, setProbe, onAnalyzePoint, analyzing }: OverlayProps) {
   const units = useUnits();
@@ -33,7 +33,7 @@ export function PointProbe({ probe, setProbe, onAnalyzePoint, analyzing }: Overl
                 <div><dt>Rain and snow</dt><dd className="num">{units.water(data.annual_precip_mm)}/yr</dd></div>
                 <div><dt>Air's thirst (ET0)</dt><dd className="num">{units.water(data.annual_et0_mm)}/yr</dd></div>
                 <div><dt>Average temp</dt><dd className="num">{units.temp(data.mean_annual_temp_c)}</dd></div>
-                <div><dt>Frost-free</dt><dd className="num">{Math.round(data.frost.frost_free_days_median)} days</dd></div>
+                
                 <div><dt>Days ≥ {units.temp(35)}</dt><dd className="num">{Math.round(data.monthly.heat_days_35.reduce((a, b) => a + b, 0))}/yr</dd></div>
                 <div><dt>Warming</dt><dd className="num">{units.tempDelta(data.trends.tmean_c?.per_decade ?? 0)}/decade</dd></div>
               </dl>

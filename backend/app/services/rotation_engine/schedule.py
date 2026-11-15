@@ -4,9 +4,16 @@ Planting and harvest dates are not looked up from a regional table. They are der
 the field's own NASA POWER temperatures with growing degree days (GDD), so the calendar
 moves with latitude, with elevation, and with a warming scenario.
 
+In the frost-free tropics temperature never closes the season, so a different rule applies
+("tropical mode"): the first crop of the year goes in at the start of the wettest window
+for its season length (from the fused monthly rainfall against crop demand), and every
+further crop that year follows straight on as the previous one is harvested. That is how
+Malaysian paddy schemes run two seasons a year and how vegetable growers chain crops.
+
 A rotation is `years: list[list[crop_id]]`, one inner list per rotation year:
     position 0   the main crop harvested that year (fall-sown crops were planted the autumn before)
-    position 1+  what follows it the same year: a double crop, a cover crop, or a relay forage
+    position 1+  what follows it the same year: a double crop (a second paddy season), a cover
+                 crop, or a relay forage
     []           a fallow year
 """
 from __future__ import annotations
@@ -49,6 +56,7 @@ class Schedule:
     occupant: list[int | None] = field(default_factory=list)  # index into phases
     canopy: list[float] = field(default_factory=list)  # ground shaded by living or standing crop, 0-1
     green: list[float] = field(default_factory=list)  # transpiring fraction relative to full canopy, 0-1
+    tropical: bool = False
 
     @property
     def n_months(self) -> int:
@@ -63,6 +71,24 @@ def month_gdd(cl: Climate, m: int, t_base: float, cap: float = 30.0) -> float:
 def _season_start(cl: Climate) -> int:
     """Calendar month that opens the growing year (January north of the equator, July south)."""
     return 0 if cl.lat >= 0 else 6
+
+
+def is_tropical(cl: Climate) -> bool:
+    """Frost-free with little seasonal temperature swing: lowland and highland Malaysia alike."""
+    return min(cl.tmin) >= 10.0 and max(cl.tmean) - min(cl.tmean) <= 6.0
+
+
+def monsoon_plant_month(cl: Climate, crop: dict) -> int:
+    """Calendar month that opens the wettest window as long as the crop's season.
+
+    Supply is rain against crop demand (Kc x ET0), capped at 1 per month so a flood month
+    cannot make up for a dry one. Ties go to the earliest month."""
+    length = max(3, int(crop.get("min_season_months") or 3))
+
+    def supply(k: int) -> float:
+        return sum(min(1.0, cl.precip[(k + j) % 12] / max(1.0, crop["kc_mid"] * cl.et0[(k + j) % 12])) for j in range(length))
+
+    return max(range(12), key=lambda k: (round(supply(k), 2), -k))
 
 
 def spring_plant_month(cl: Climate, crop: dict) -> int | None:
@@ -101,16 +127,69 @@ def _grow(cl: Climate, crop: dict, plant: int, target: float, limit: int) -> tup
     return None, total
 
 
+def _tropical_mains(years: list[list[str]], crops: dict[str, dict], cl: Climate, issues: list[str]) -> tuple[list[Phase], bool]:
+    """Pass A for the tropics: crops follow each other through the year, the first planted
+    when the rains suit it."""
+    n = len(years)
+    mains: list[Phase] = []
+    feasible = True
+    prev_end: int | None = None
+    y = 0
+    while y < n:
+        base = y * 12
+        for pos, cid in enumerate(years[y]):
+            crop = crops[cid]
+            if crop["role"] == "cover":
+                continue  # placed in pass B
+            preferred = base + monsoon_plant_month(cl, crop) if (pos == 0 or prev_end is None) else prev_end + 1
+            plant = preferred if prev_end is None else max(preferred, prev_end + 1)
+            if crop["cycle"] == "perennial":
+                span = 1
+                while y + span < n and years[y + span][:1] == [cid]:
+                    span += 1
+                if span == n:
+                    mains.append(Phase(crop, y, "perennial", 0, n * 12 - 1, n * 12 - 1, stand_years=n))
+                    prev_end = n * 12 - 1
+                else:
+                    end = plant + span * 12 - 2
+                    mains.append(Phase(crop, y, "perennial", plant, end, end, stand_years=span))
+                    prev_end = end
+                y += span - 1
+                break
+            maturity, _ = _grow(cl, crop, plant, crop["gdd_to_maturity"], MAX_SPRING_SEASON_MONTHS)
+            if maturity is None:
+                feasible = False
+                issues.append(f"{crop['name']} does not build up enough heat to mature here.")
+                maturity = plant + max(3, int(crop.get("min_season_months") or 3)) - 1
+            ph = Phase(crop, y, "forage" if crop["role"] == "forage" else "cash", plant, maturity + crop["dry_down_months"], maturity)
+            mains.append(ph)
+            prev_end = ph.end
+        y += 1
+    if mains and len(mains) > 1:
+        first = mains[0]
+        if first.kind != "perennial" or first.stand_years < n:
+            overflow = mains[-1].end - (first.plant + n * 12) + 1
+            if overflow > 0:
+                feasible = False
+                need = mains[-1].end - first.plant + 1
+                issues.append(f"{', '.join(p.crop['name'] for p in mains)} need about {need} months back to back, "
+                              f"more than the {n * 12} months in the rotation.")
+    return mains, feasible
+
+
 def build_schedule(years: list[list[str]], crops: dict[str, dict], cl: Climate) -> Schedule:
     n = len(years)
     issues: list[str] = []
     feasible = True
     start = _season_start(cl)
     coldest_tmin = min(cl.tmin)
+    tropical = is_tropical(cl)
 
     # ---- pass A: main and double crops (anything harvested for sale) --------------------
     mains: list[Phase] = []
-    y = 0
+    y = n if tropical else 0
+    if tropical:
+        mains, feasible = _tropical_mains(years, crops, cl, issues)
     while y < n:
         entries = years[y]
         for pos, cid in enumerate(entries):
@@ -157,7 +236,8 @@ def build_schedule(years: list[list[str]], crops: dict[str, dict], cl: Climate) 
 
     mains.sort(key=lambda p: p.plant)
     # resolve overlaps in time order; two sweeps so the wrap-around (last crop -> first crop) settles
-    for sweep in range(2):
+    # (tropical mode already chained the crops end to start, so it skips this)
+    for sweep in range(0 if tropical else 2):
         for i, ph in enumerate(mains):
             if ph.kind == "perennial" and ph.stand_years == n:
                 continue
@@ -237,7 +317,7 @@ def build_schedule(years: list[list[str]], crops: dict[str, dict], cl: Climate) 
             covers.append(ph)
 
     phases = sorted(mains + covers, key=lambda p: p.plant)
-    sched = Schedule(n_years=n, phases=phases, feasible=feasible, issues=issues)
+    sched = Schedule(n_years=n, phases=phases, feasible=feasible, issues=issues, tropical=tropical)
     _paint(sched, cl)
     return sched
 

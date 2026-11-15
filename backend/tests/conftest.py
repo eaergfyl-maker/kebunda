@@ -27,16 +27,23 @@ def farm_ids() -> list[str]:
 
 
 @pytest.fixture(scope="session")
-def iowa():
-    """Rainfed corn-soybean field: (bundle, neutral context)."""
-    b = analysis.bundle("cornbelt-ia")
+def kedah():
+    """Irrigated double-crop paddy in the MADA scheme: (bundle, neutral context)."""
+    b = analysis.bundle("kedah-mada")
     return b, analysis.context(b)
 
 
 @pytest.fixture(scope="session")
-def kansas():
-    """Irrigated continuous-corn pivot: (bundle, neutral context)."""
-    b = analysis.bundle("ogallala-ks")
+def kelantan():
+    """Rainfed kenaf on BRIS coastal sand: (bundle, neutral context)."""
+    b = analysis.bundle("kelantan-bris")
+    return b, analysis.context(b)
+
+
+@pytest.fixture(scope="session")
+def cameron():
+    """Steep highland vegetable terrace: (bundle, neutral context)."""
+    b = analysis.bundle("cameron-highlands")
     return b, analysis.context(b)
 
 

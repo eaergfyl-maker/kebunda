@@ -17,7 +17,7 @@ from app.services.vulnerability_analyzer import insights as insight_mod
 from app.utils.stats import mean
 
 DISCLAIMER = ("FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, "
-              "the judgment of the farmer and of local agronomists, Extension agents and crop advisers.")
+              "the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers.")
 
 _bundles: OrderedDict[str, dict] = OrderedDict()
 _lock = threading.Lock()
@@ -91,12 +91,14 @@ def overview(field_id: str) -> dict:
                    "tmax": c["by_year"]["tmax"], "erosivity": c["by_year"]["erosivity"]},
         "vegetation": obs.get("ndvi"), "surface_temperature": obs.get("lst"), "evapotranspiration": obs.get("et"),
         "groundwater": {**(obs.get("grace") or {}), "local": farm.get("water_context")},
-        "crop_history": obs.get("cdl"),
+        "crop_history": obs.get("crop_cycles"),
+        "ndvi_series": obs.get("ndvi_series"),
+        "gaez": obs.get("gaez"),
         "fusion": {
             "precip": b["fused_precip"], "precip_comparison": obs["precip_comparison"], "soil_moisture": sm,
             "soil_moisture_source": obs.get("soil_moisture"), "layers": b["layers"], "confidence": b["confidence"],
             "field_width_m": round((farm["area_ha"] * 10_000) ** 0.5, 0),
-            "target_grid": "Calendar months at field scale (30 m reference grid of Landsat / SSURGO)",
+            "target_grid": "Calendar months at field scale (10 m Sentinel-2 / 30 m SRTM reference grid)",
         },
         "hazards": vuln.hazard_calendar(ctx, obs),
         "insights": b["insights"],
@@ -130,7 +132,7 @@ def _headline_numbers(ctx: FieldContext, s: dict, base: dict) -> list[dict]:
     rows += [
         {"label": "Bare soil", "value": m["bare_months_per_year"], "unit": "months/yr", "baseline": bm["bare_months_per_year"], "higher_is_better": False},
         {"label": "Soil erosion", "value": m["soil_loss_tons_ac_yr"], "unit": "tons/ac/yr", "baseline": bm["soil_loss_tons_ac_yr"], "higher_is_better": False},
-        {"label": "Net return", "value": m["net_return_per_acre_yr"], "unit": "$/ac/yr", "baseline": bm["net_return_per_acre_yr"], "higher_is_better": True},
+        {"label": "Net return", "value": m["net_return_per_ha_yr"], "unit": "RM/ha/yr", "baseline": bm["net_return_per_ha_yr"], "higher_is_better": True},
     ]
     return rows
 
@@ -208,9 +210,12 @@ def crop_suitability(field_id: str, constraints: dict | None = None) -> dict:
     b = bundle(field_id)
     ctx = context(b, None, constraints)
     rows = generate.suitability_screen(ctx, b["farm"]["baseline_rotation"].get("tillage", "conventional"))
+    gaez = b["obs"].get("gaez") or {}
     return {"field_id": field_id, "rows": rows,
             "method": ("Each crop is grown alone on this field in the model. Suitability is its relative yield after water, heat, "
-                       "salinity, pH and drainage limits, in the spirit of FAO GAEZ suitability classes."),
+                       "salinity, pH and drainage limits, in the spirit of FAO GAEZ suitability classes. The FAO GAEZ v4 index "
+                       "for the surrounding 9 km cell (today and 2041-2070, RCP8.5) is shown beside it as a second opinion."),
+            "gaez_provenance": gaez.get("provenance"),
             "mean_suitability": round(mean([r["suitability"] for r in rows if r["feasible"]], 0.0), 2)}
 
 

@@ -1,13 +1,14 @@
 """Spatial harmonisation and confidence scoring.
 
 The sensors feeding FieldShift see the world at wildly different scales: GRACE weighs
-water over ~300 km, MERRA-2 cells are ~55 km, SMAP 9 km, IMERG 10 km, MODIS 250-1000 m,
-SSURGO and SRTM ~30 m, and a field is a few hundred metres across. This module
+water over ~300 km, MERRA-2 cells are ~55 km, GAEZ ~9 km, SMAP 9 km, IMERG 10 km, MODIS
+250-1000 m, SoilGrids 250 m, SRTM 30 m, Sentinel-2 10 m, and a Malaysian smallholding is a
+few hundred metres across. This module
 
   1. fuses redundant estimates of the same variable (three rainfall products) by
      inverse-variance weighting, with the error of each product measured against the
      ground reference rather than assumed;
-  2. rescales coarse soil wetness to the field using the field's own SSURGO texture
+  2. rescales coarse soil wetness to the field using the field's own SoilGrids texture
      (Saxton & Rawls pedotransfer functions);
   3. scores every layer for how well a pixel that size can represent this field
      ("resolution gap"), and rolls the scores up into a confidence per decision dimension.
@@ -26,10 +27,11 @@ from app.utils.stats import clamp, mean
 SPATIAL_SCALE_KM = {
     "temperature": 150.0, "precip": 40.0, "soil_moisture": 15.0, "groundwater": 100.0,
     "vegetation": None, "surface_temp": None, "et": None,  # None -> use the field's own width
-    "soil": 0.10, "terrain": 0.05, "crop_history": None,
+    "soil": 0.10, "terrain": 0.05, "crop_history": None, "suitability": 30.0,
 }
 ACCESS_WEIGHT = {"live": 1.0, "cache": 1.0, "curated": 0.8, "proxy": 0.7, "unavailable": 0.0}
 DEFAULT_REL_ERROR = {"merra2": 0.25, "imerg": 0.22, "ground": 0.10}
+GAUGE_ERROR_PER_KM = 0.004  # a gauge 50 km away carries ~0.2 extra relative error for the field
 
 
 def saxton_rawls(sand_pct: float, clay_pct: float, om_pct: float) -> dict:
@@ -58,13 +60,17 @@ def fuse_precip(comparison: dict) -> dict:
     vs = comparison.get("vs_ground") or {}
     ground = sources.get("ground")
     ground_mean = mean(ground, 0.0) if ground else 0.0
+    gauge_km = float((comparison.get("ground_station") or {}).get("distance_km") or 0.0)
     rel_err = {}
     for name in sources:
         stat = vs.get(name) if name != "ground" else None
         if stat and ground_mean > 0:
-            rel_err[name] = clamp(stat["rmse_mm_month"] / ground_mean, 0.08, 0.9)
+            # part of the mismatch against a distant gauge is the distance itself, not satellite error
+            rel_err[name] = clamp(stat["rmse_mm_month"] / ground_mean - 0.5 * GAUGE_ERROR_PER_KM * gauge_km, 0.08, 0.9)
         else:
             rel_err[name] = DEFAULT_REL_ERROR[name]
+    if "ground" in rel_err:
+        rel_err["ground"] = clamp(DEFAULT_REL_ERROR["ground"] + GAUGE_ERROR_PER_KM * gauge_km, 0.08, 0.9)
     weights = {k: 1.0 / rel_err[k] ** 2 for k in sources}
     wsum = sum(weights.values()) or 1.0
     fused, sigma = [], []
@@ -91,8 +97,10 @@ def fuse_precip(comparison: dict) -> dict:
         "weights": {k: round(weights[k] / wsum, 2) for k in sources},
         "measured_error": {k: round(v, 2) for k, v in rel_err.items()},
         "bias_vs_merra2": bias,
-        "method": ("Inverse-variance weighted mean of MERRA-2 (55 km), GPM IMERG (10 km) and Daymet gauges (1 km). "
-                   "Weights come from each product's monthly error against the gauges at this site."),
+        "method": ("Inverse-variance weighted mean of MERRA-2 (55 km), GPM IMERG (10 km) and the nearest MetMalaysia rain gauge "
+                   "(GHCN-Daily). Weights come from each product's monthly error against the gauge; the gauge's own weight "
+                   "shrinks with its distance from the field."),
+        "gauge_distance_km": gauge_km or None,
         "has_ground": bool(ground),
     }
 
@@ -102,7 +110,7 @@ def downscale_soil_moisture(wet_root: list[float], soil: dict, root_zone_cm: flo
 
     A 55 km model cell reports saturation for an average soil. Two fields in the same cell
     with different textures hold very different amounts of *plant-available* water at the
-    same saturation, so the conversion uses this field's SSURGO sand, clay and organic matter.
+    same saturation, so the conversion uses this field's SoilGrids sand, clay and organic matter.
     """
     h = saxton_rawls(soil.get("sand_pct", 40.0), soil.get("clay_pct", 20.0), soil.get("organic_matter_pct", 2.0))
     out_frac, out_mm, theta = [], [], []
@@ -113,7 +121,7 @@ def downscale_soil_moisture(wet_root: list[float], soil: dict, root_zone_cm: flo
         out_frac.append(round(paw, 3))
         out_mm.append(round(paw * h["available_water"] * root_zone_cm * 10.0, 0))
     return {"volumetric": theta, "plant_available_fraction": out_frac, "plant_available_mm": out_mm, "hydraulics": h,
-            "method": "MERRA-2 / SMAP-class relative wetness x Saxton-Rawls saturation for this field's SSURGO texture."}
+            "method": "MERRA-2 / SMAP-class relative wetness x Saxton-Rawls saturation for this field's SoilGrids texture."}
 
 
 def _layer(layer_id: str, variable: str, label: str, prov: dict | None, field_km: float, *, method: str,
@@ -153,7 +161,11 @@ def layer_inventory(obs: dict, soil: dict | None, area_ha: float) -> list[dict]:
         yrs = len(block.get("years") or [])
         return clamp(block.get("n_observations", 0) / (per_year * yrs)) if yrs else 0.0
 
-    cdl = obs.get("cdl") or {}
+    cycles = obs.get("crop_cycles") or {}
+    suit = obs.get("gaez") or {}
+    from_s2 = "Sentinel" in str((ndvi.get("provenance") or {}).get("source"))
+    ndvi_label = "Vegetation greenness (Sentinel-2 NDVI, 10 m)" if from_s2 else "Vegetation greenness (MODIS NDVI)"
+    ndvi_per_year = 40 if from_s2 else 23
     rows = [
         _layer("power_temp", "temperature", "Air temperature, humidity, sunshine", clim_prov, field_km,
                method="Daily values aggregated to calendar months; extremes counted from the daily record first.",
@@ -163,15 +175,15 @@ def layer_inventory(obs: dict, soil: dict | None, area_ha: float) -> list[dict]:
         _layer("imerg", "precip", "Rainfall from orbit (GPM IMERG)", imerg_prov, field_km,
                method="Daily totals aggregated to months; storm days counted before aggregation.",
                used_for="Storm size, erosive rain days"),
-        _layer("ground_precip", "precip", "Rain gauges (Daymet, ground-based)", ground_prov, field_km,
-               method="Used as the reference that sets the weight of each satellite product.",
+        _layer("ground_precip", "precip", "Rain gauge (MetMalaysia via NOAA GHCN-Daily)", ground_prov, field_km,
+               method="Months with under 70% of days reported are dropped; used as the reference that sets the weight of each satellite product.",
                used_for="Ground truth for rainfall"),
         _layer("soil_moisture", "soil_moisture", "Root-zone soil moisture (SMAP-class)", sm_prov, field_km,
-               method="Relative wetness rescaled with this field's SSURGO texture (Saxton-Rawls).",
+               method="Relative wetness rescaled with this field's SoilGrids texture (Saxton-Rawls).",
                used_for="Drought months, planting moisture"),
-        _layer("ndvi", "vegetation", "Vegetation greenness (MODIS NDVI)", ndvi.get("provenance"), field_km,
-               method="16-day composites averaged to months; cloudy composites dropped.",
-               completeness=complete(ndvi, 23), used_for="Bare-field months, checking the assumed crop calendar"),
+        _layer("ndvi", "vegetation", ndvi_label, ndvi.get("provenance"), field_km,
+               method="Clear looks (cloud, shadow and cirrus masked) averaged to months.",
+               completeness=complete(ndvi, ndvi_per_year), used_for="Bare-field months, crop cycles per year, checking the assumed crop calendar"),
         _layer("lst", "surface_temp", "Land-surface temperature (MODIS, ECOSTRESS stand-in)", lst.get("provenance"), field_km,
                method="8-day daytime composites averaged to months.", completeness=complete(lst, 46),
                used_for="Heat-stress months"),
@@ -182,13 +194,17 @@ def layer_inventory(obs: dict, soil: dict | None, area_ha: float) -> list[dict]:
                method="Regional trend used as context only; never downscaled to the field.",
                used_for="Is the regional aquifer being drawn down?"),
         _layer("srtm", "terrain", "Elevation and slope (SRTM)", (obs.get("terrain") or {}).get("provenance"), field_km,
-               method="3x3 window slope averaged with SSURGO's surveyed slope.", used_for="Runoff and erosion (LS factor)"),
-        _layer("ssurgo", "soil", "Soil survey (USDA SSURGO)", (soil or {}).get("provenance"), field_km,
-               method="Dominant component, horizons depth-weighted over 0-30 cm.",
+               method="3x3 window Horn slope; noise-level relief on flat paddy is ignored.", used_for="Runoff and erosion (LS factor)"),
+        _layer("soil", "soil", "Soil properties (ISRIC SoilGrids 250 m)", (soil or {}).get("provenance"), field_km,
+               method="Depth-weighted over 0-30 cm; Ksat, erodibility and runoff group from pedotransfer functions.",
                used_for="Water-holding capacity, erodibility, organic matter, runoff class"),
-        _layer("cdl", "crop_history", "Crop history (USDA Cropland Data Layer)", cdl.get("provenance"), field_km,
-               method="Point lookup per year.", completeness=clamp(len(cdl.get("years") or []) / 5.0),
-               used_for="Confirming the baseline rotation"),
+        _layer("gaez", "suitability", "Crop suitability (FAO GAEZ v4)", suit.get("provenance"), field_km,
+               method="Grid-cell suitability index read per crop; a cross-check on the field-scale screen.",
+               completeness=clamp(len([1 for v in (suit.get("crops") or {}).values() if v.get("si") is not None]) / 8.0),
+               used_for="Second opinion on which crops suit the area, today and in the 2050s"),
+        _layer("crop_cycles", "crop_history", "Crop cycles (Sentinel-2 NDVI peaks)", cycles.get("provenance"), field_km,
+               method="Green peaks counted on a smoothed 8-day NDVI series.", completeness=clamp(len(cycles.get("years") or []) / 4.0),
+               used_for="Confirming how many crops a year the field carries"),
     ]
     return rows
 
@@ -202,10 +218,10 @@ def confidence_by_dimension(layers: list[dict], has_local_yields: bool, has_loca
     c = {row["id"]: row["confidence"] for row in layers}
     precip = max(c.get("ground_precip", 0), c.get("imerg", 0) * 0.9, c.get("power_precip", 0))
     data = {
-        "water": mean([precip, c.get("power_temp", 0), c.get("ssurgo", 0), max(c.get("soil_moisture", 0), 0.3)]),
-        "soil": mean([c.get("ssurgo", 0), c.get("power_temp", 0), precip]),
-        "erosion": mean([c.get("imerg", 0), c.get("ssurgo", 0), max(c.get("srtm", 0), 0.3), max(c.get("ndvi", 0), 0.3)]),
-        "pest": mean([max(c.get("cdl", 0), 0.35), 0.75]),
+        "water": mean([precip, c.get("power_temp", 0), c.get("soil", 0), max(c.get("soil_moisture", 0), 0.3)]),
+        "soil": mean([c.get("soil", 0), c.get("power_temp", 0), precip]),
+        "erosion": mean([c.get("imerg", 0), c.get("soil", 0), max(c.get("srtm", 0), 0.3), max(c.get("ndvi", 0), 0.3)]),
+        "pest": mean([max(c.get("crop_cycles", 0), 0.35), 0.75]),
         "income": mean([0.8 if has_local_yields else 0.45, 0.8 if has_local_market else 0.4, precip]),
     }
     model = {"water": 0.80, "soil": 0.55, "erosion": 0.65, "pest": 0.65, "income": 0.55}

@@ -15,7 +15,7 @@ import { api, ApiError } from "@/services/apiClient";
 import type { FarmSummary } from "@/types/api";
 
 const STEPS = [
-  { n: 1, title: "Read the field", text: "24 years of NASA weather and satellite records, the USDA soil survey and six years of crop history are fused for the field, with every source's pixel size and reliability shown." },
+  { n: 1, title: "Read the field", text: "24 years of NASA weather and satellite records, SoilGrids soil, FAO GAEZ suitability and five years of Sentinel-2 crop cycles are fused for the field, with every source's pixel size and reliability shown." },
   { n: 2, title: "Say what matters", text: "Set five priorities in plain words, and what the farm can and cannot do: water, equipment, livestock, markets, appetite for change." },
   { n: 3, title: "Compare rotations", text: "Hundreds of rotations are simulated month by month. At least three, always including the current one, are explained: why, evidence, benefits, gaps, and what to check locally." },
   { n: 4, title: "Stress-test them", text: "Turn up the heat, cut the rain or the water allocation, and see which rotation still holds." },
@@ -67,7 +67,7 @@ export function ExplorePage() {
       <section className="hero">
         <div className="container hero-inner">
           <div className="hero-copy">
-            <span className="eyebrow hero-eyebrow">NASA Earth observations · USDA soil data · your priorities</span>
+            <span className="eyebrow hero-eyebrow">NASA Earth observations · Sentinel-2 · SoilGrids · your priorities</span>
             <h1>What should this field grow next, and the year after that?</h1>
             <p>
               FieldShift reads a field's weather, soil and satellite record, then compares crop rotations side by side:
@@ -92,7 +92,7 @@ export function ExplorePage() {
           <div>
             <h2>Five real fields, five different problems</h2>
             <p className="muted" style={{ maxWidth: "75ch" }}>
-              Each benchmark is an actual coordinate with data pulled from NASA and USDA services: the soil survey unit under it,
+              Each benchmark is an actual Malaysian coordinate with data pulled from NASA and global services: the SoilGrids estimate under it,
               the crops satellites saw on it, and its weather since 2001. They load instantly and work offline.
             </p>
           </div>

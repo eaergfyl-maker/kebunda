@@ -1,0 +1,63 @@
+{
+  "mukey": null,
+  "component_pct": null,
+  "texture_class": "clay",
+  "sand_pct": 15.6,
+  "silt_pct": 37.9,
+  "clay_pct": 46.5,
+  "organic_matter_pct": 24.67,
+  "bulk_density_g_cm3": 1.07,
+  "awc_cm_cm": 0.108,
+  "awc_profile_mm": 116.0,
+  "ksat_um_s": 2.76,
+  "ph": 4.7,
+  "ec_ds_m": 0.0,
+  "cec_meq_100g": 26.4,
+  "coarse_fragments_pct": 2.8,
+  "kw_factor": 0.133,
+  "t_factor_tons_ac_yr": 5.0,
+  "hydrologic_group": "C",
+  "hydrologic_group_raw": "C (from Saxton-Rawls Ksat)",
+  "drainage_class": "Moderately well drained",
+  "representative_slope_pct": null,
+  "capability_class_nonirrigated": null,
+  "root_zone_depth_cm": 150.0,
+  "restrictive_layer": null,
+  "derived": [
+    "ksat_um_s",
+    "kw_factor",
+    "hydrologic_group",
+    "drainage_class",
+    "t_factor_tons_ac_yr"
+  ],
+  "taxonomic_order": "Nitisols",
+  "wrb_probabilities": [
+    [
+      "Nitisols",
+      24
+    ],
+    [
+      "Cambisols",
+      19
+    ],
+    [
+      "Histosols",
+      19
+    ]
+  ],
+  "series": "Nitisols (clay, SoilGrids 250 m)",
+  "map_unit_name": "Nitisols (clay, SoilGrids 250 m)",
+  "sample_offset_m": 0.0,
+  "provenance": {
+    "source": "ISRIC SoilGrids 2.0",
+    "dataset": "Soil properties 0-100 cm (texture, SOC, bulk density, pH, CEC, water retention)",
+    "access": "live",
+    "resolution_m": 250,
+    "cadence": "static model (2020)",
+    "period": null,
+    "url": "https://soilgrids.org/",
+    "note": "Machine-learned 250 m estimate, not a surveyed map unit: expect errors of 10-15 % clay and wide organic-carbon ranges, especially on peat and in the highlands. Ksat, erodibility and runoff group are derived with pedotransfer functions.",
+    "retrieved_at": "2026-11-14T17:01:41+00:00"
+  },
+  "id": "sarawak-hill-paddy"
+}

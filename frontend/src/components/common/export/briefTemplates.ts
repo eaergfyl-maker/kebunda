@@ -6,7 +6,7 @@
  * A template turns the field overview and the comparison into a file. To add a format,
  * add one entry to EXPORT_TEMPLATES: it appears as a download button automatically.
  *
- * TODO (Member 3): county Extension PDF layout. The printable page (pages/BriefPage.tsx) already
+ * TODO (Member 3): DOA / MARDI extension-officer PDF layout. The printable page (pages/BriefPage.tsx) already
  *   prints cleanly to PDF from the browser; a dedicated letter-size layout with a signature
  *   block and the office's intake questions would make it a hand-in document.
  * TODO (Member 3): multi-language brief (Spanish first) and a short "read it to me" summary
@@ -49,7 +49,7 @@ function strategySection(s: Strategy, ctx: ExportContext): string {
   lines.push("");
   lines.push(`Key numbers: irrigation ${m.irrigation_mm_yr} mm/yr; crop water stress ${m.water_stress_pct}%; bare soil ${m.bare_months_per_year} months/yr; ` +
     `erosion ${m.soil_loss_tons_ac_yr} tons/ac/yr (${m.soil_loss_vs_tolerable}x tolerable); purchased N ${m.n_fertilizer_kg_ha_yr} kg/ha/yr; ` +
-    `net return ${money(m.net_return_per_acre_yr)}/ac/yr` + (s.history ? `; bad year (1 in 5) ${money(s.history.bad_year_net_per_acre)}/ac.` : "."));
+    `net return ${money(m.net_return_per_ha_yr)}/ac/yr` + (s.history ? `; bad year (1 in 5) ${money(s.history.bad_year_net_per_ha)}/ac.` : "."));
   lines.push("");
   lines.push("### 1. Why it was suggested");
   ex.why.forEach((r) => lines.push(`- ${r.text}`));
@@ -88,7 +88,7 @@ export function buildMarkdownBrief(ctx: ExportContext): string {
   lines.push(`> ${comparison.disclaimer}`);
   lines.push("");
   lines.push(`Prepared ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} with FieldShift. ` +
-    `Location ${f.lat.toFixed(3)}, ${f.lon.toFixed(3)}${f.county ? ` (${f.county} County, ${f.state})` : ""}. Field size ${Math.round(f.area_ha * 2.4711)} acres.`);
+    `Location ${f.lat.toFixed(3)}, ${f.lon.toFixed(3)}${f.district ? ` (${f.district}, ${f.state})` : ""}. Field size ${f.area_ha.toFixed(1)} ha.`);
   lines.push("");
   lines.push("## The field");
   lines.push(`- **Soil:** ${field.soil.series} ${field.soil.texture_class}, ${field.soil.organic_matter_pct}% organic matter, hydrologic group ${field.soil.hydrologic_group}, ` +

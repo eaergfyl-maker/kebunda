@@ -70,26 +70,6 @@ def ls_factor(slope_pct: float, slope_length_m: float) -> float:
     return max(0.03, (slope_length_m / 22.13) ** m * s)
 
 
-def albers_conus(lat: float, lon: float) -> tuple[float, float]:
-    """WGS84 lat/lon -> USA Contiguous Albers Equal Area (EPSG:5070), used by CropScape."""
-    a, e = 6378137.0, 0.0818191910428158
-    phi1, phi2, phi0, lam0 = map(math.radians, (29.5, 45.5, 23.0, -96.0))
-
-    def q(phi: float) -> float:
-        s = math.sin(phi)
-        return (1 - e**2) * (s / (1 - e**2 * s**2) - (1 / (2 * e)) * math.log((1 - e * s) / (1 + e * s)))
-
-    def m(phi: float) -> float:
-        return math.cos(phi) / math.sqrt(1 - e**2 * math.sin(phi) ** 2)
-
-    n = (m(phi1) ** 2 - m(phi2) ** 2) / (q(phi2) - q(phi1))
-    c = m(phi1) ** 2 + n * q(phi1)
-    rho0 = a * math.sqrt(c - n * q(phi0)) / n
-    rho = a * math.sqrt(c - n * q(math.radians(lat))) / n
-    theta = n * (math.radians(lon) - lam0)
-    return rho * math.sin(theta), rho0 - rho * math.cos(theta)
-
-
 def usda_texture_class(sand: float, silt: float, clay: float) -> str:
     """USDA soil textural triangle."""
     if silt + 1.5 * clay < 15:

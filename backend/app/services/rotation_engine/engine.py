@@ -56,7 +56,11 @@ def evaluate_candidates(field_key: str, ctx: FieldContext, baseline: dict, const
     has_fallow = any(len(y) == 0 for y in baseline["years"])
     allow_fallow = constraints.get("allow_fallow", has_fallow)
     max_years = int(constraints.get("max_rotation_years") or 4)
-    sequences = generate.base_sequences(pool, baseline["years"], allow_fallow, max(2, min(5, max_years)))
+    if generate.is_tropical(ctx.climate):
+        months = {r["crop_id"]: r["season_months"] or 12 for r in screen}
+        sequences = generate.tropical_sequences(pool, months, allow_fallow, max(1, min(2, max_years)))
+    else:
+        sequences = generate.base_sequences(pool, baseline["years"], allow_fallow, max(2, min(5, max_years)))
 
     stage1 = []
     for years in sequences:
@@ -131,7 +135,7 @@ def select_strategies(ctx: FieldContext, evaluated: dict, priorities: dict, cons
             chosen.append(("resilient", c))
             break
     earners = sorted((c for c in different if c["fit"]["weighted_score"] >= scoring.fit_score(base["scores"], priorities, base, base, constraints)["weighted_score"] - 2),
-                     key=lambda c: -c["metrics"]["net_return_per_acre_yr"])
+                     key=lambda c: -c["metrics"]["net_return_per_ha_yr"])
     for c in earners:
         if distinct(c) and all(_crop_set(c) != _crop_set(o) for _r, o in chosen):
             chosen.append(("income", c))
@@ -183,11 +187,21 @@ def rotation_name(years: list[list[str]]) -> str:
         label = " + ".join(names)
         parts.append(f"{label} ({span} yr)" if span > 1 else label)
         i += span
-    return " → ".join(parts) if len(parts) > 1 else f"Continuous {parts[0].lower()}"
+    if len(parts) > 1:
+        return " → ".join(parts)
+    if len(years) == 1 and len(years[0]) > 1 and crops[years[0][0]]["cycle"] != "perennial":
+        return f"{parts[0]}, every year"  # two or three crops chained through each year
+    if crops[years[0][0]]["cycle"] == "perennial" if years and years[0] else False:
+        return f"{parts[0]}, replanted"
+    return f"Continuous {parts[0][:1].lower()}{parts[0][1:]}"
 
 
 def _short(name: str) -> str:
-    return name.replace(" (grain)", "").replace(" (milo)", "").replace(" (garbanzo)", "").replace(" cover", "").replace("Upland ", "").replace("Processing ", "").strip().capitalize() if name else name
+    """Display name without the bracketed local name or note: "Paddy rice (irrigated)" -> "Paddy rice"."""
+    if not name:
+        return name
+    base = name.split(" (")[0].replace(" cover", "").replace(" green manure", "").strip()
+    return base[:1].upper() + base[1:]
 
 
 def year_labels(years: list[list[str]]) -> list[dict]:

@@ -71,21 +71,12 @@ def ecostress_thermal(lst_series: dict | None, et_series: dict | None) -> dict:
 
 # ------------------------------------------------------------------------ GRACE-FO
 
-# Regional total-water-storage trends (cm of water per year), rounded from published GRACE /
-# GRACE-FO mascon analyses (Rodell et al. 2018, Nature 557; Scanlon et al. 2012, PNAS 109;
-# USGS and state survey well networks). GRACE resolves ~300 km, so one number covers a region.
-GRACE_REGIONS = [
-    {"id": "high-plains-central", "name": "Central High Plains (Ogallala) aquifer", "lat": 37.8, "lon": -100.9, "radius_km": 330,
-     "tws_trend_cm_yr": -1.6, "uncertainty_cm_yr": 0.6, "driver": "irrigation pumping exceeds recharge"},
-    {"id": "central-valley", "name": "California Central Valley aquifer system", "lat": 36.6, "lon": -120.0, "radius_km": 300,
-     "tws_trend_cm_yr": -2.1, "uncertainty_cm_yr": 0.8, "driver": "groundwater pumping during surface-water shortfalls"},
-    {"id": "mississippi-embayment", "name": "Mississippi River Valley alluvial aquifer", "lat": 33.6, "lon": -90.8, "radius_km": 260,
-     "tws_trend_cm_yr": -0.4, "uncertainty_cm_yr": 0.7, "driver": "irrigation drawdown partly masked by wet-year recharge"},
-    {"id": "upper-midwest", "name": "Upper Midwest / Corn Belt", "lat": 42.2, "lon": -93.6, "radius_km": 380,
-     "tws_trend_cm_yr": 0.6, "uncertainty_cm_yr": 0.6, "driver": "wetter decades; storage is not the limiting factor"},
-    {"id": "columbia-plateau", "name": "Columbia Plateau basalt aquifers", "lat": 46.8, "lon": -118.0, "radius_km": 280,
-     "tws_trend_cm_yr": -0.3, "uncertainty_cm_yr": 0.5, "driver": "localised deep-basalt declines; dryland farming does not pump"},
-]
+# Regional total-water-storage trends (cm of water per year) from published GRACE / GRACE-FO
+# mascon analyses. GRACE resolves ~300 km, so one number covers a region. No Malaysian region is
+# curated: published analyses show storage over Peninsular Malaysia and Borneo dominated by
+# monsoon and ENSO swings rather than a clear long-term trend, so FieldShift shows the GRACE map
+# layer and reports the trend as an information gap instead of inventing one.
+GRACE_REGIONS: list[dict] = []
 
 
 def grace_water_storage(lat: float, lon: float) -> dict:
@@ -100,7 +91,8 @@ def grace_water_storage(lat: float, lon: float) -> dict:
             "provenance": base.provenance(
                 "NASA GRACE / GRACE-FO", "JPL mascon RL06 terrestrial water storage", base.ACCESS_UNAVAILABLE,
                 resolution_m=300_000, cadence="monthly", url="https://grace.jpl.nasa.gov/",
-                note="No curated regional trend for this location. Check the GRACE layer on the map and local well records."),
+                note=("No curated regional trend for this location. In Malaysia storage swings with the monsoons and ENSO; "
+                      "check the GRACE layer on the map and JPS river and reservoir records.")),
         }
     region = best[1]
     return {
@@ -113,7 +105,7 @@ def grace_water_storage(lat: float, lon: float) -> dict:
             base.ACCESS_CURATED, resolution_m=300_000, cadence="monthly", period="2002-2023",
             url="https://grace.jpl.nasa.gov/",
             note=("GRACE weighs water over ~300 km footprints. It shows whether the region is being "
-                  "drawn down, not what is under one well. Confirm with local observation wells (USGS NWIS)."),
+                  "drawn down, not what is under one well. Confirm with local water-level records."),
         ),
     }
 
@@ -122,10 +114,10 @@ def grace_water_storage(lat: float, lon: float) -> dict:
 
 MISSION_NOTES = [
     {"id": "smap", "mission": "SMAP", "measures": "Soil moisture and freeze/thaw", "native_resolution": "9-36 km, every 2-3 days",
-     "fieldshift_use": "Drought onset, planting-moisture reliability, how often the root zone runs dry",
+     "fieldshift_use": "Dry-spell onset between monsoons, planting-moisture reliability, how often the root zone runs dry",
      "access": "Keyless subset where available, otherwise MERRA-2 root-zone wetness proxy via NASA POWER"},
     {"id": "gpm", "mission": "GPM IMERG", "measures": "Rain and snow rate", "native_resolution": "10 km, 30 min (daily totals used)",
-     "fieldshift_use": "Storm intensity, erosive rain days, dry-spell length, rainfall reliability",
+     "fieldshift_use": "Monsoon storm intensity, erosive rain days, flood months, dry-spell length",
      "access": "Live and keyless through NASA POWER (IMERG_PRECTOT)"},
     {"id": "ecostress", "mission": "ECOSTRESS", "measures": "Land-surface temperature and evapotranspiration", "native_resolution": "70 m, irregular overpasses",
      "fieldshift_use": "Heat-stress hotspots, crop water demand",
@@ -133,19 +125,19 @@ MISSION_NOTES = [
     {"id": "modis", "mission": "MODIS / VIIRS", "measures": "Vegetation greenness (NDVI/EVI)", "native_resolution": "250-500 m, 16-day",
      "fieldshift_use": "Bare-field months, green-up and harvest timing, crop stress",
      "access": "Live and keyless (ORNL DAAC subsets)"},
-    {"id": "landsat", "mission": "Landsat / Sentinel-2", "measures": "Field-scale reflectance", "native_resolution": "10-30 m, 5-16 day",
-     "fieldshift_use": "Reference scale for harmonisation; within-field variability",
-     "access": "Not pulled live; named as the target grid and as an information gap"},
+    {"id": "sentinel2", "mission": "Copernicus Sentinel-2", "measures": "Field-scale greenness (NDVI)", "native_resolution": "10 m, 5-day",
+     "fieldshift_use": "Crop cycles per year, bare months, crop-calendar check on smallholder plots",
+     "access": "Live and keyless (Microsoft Planetary Computer STAC + point reads)"},
     {"id": "power", "mission": "NASA POWER", "measures": "Temperature, humidity, wind, sunshine", "native_resolution": "about 50 km, daily since 1981",
-     "fieldshift_use": "Frost dates, heat days, growing degree days, reference ET",
+     "fieldshift_use": "Heat days, growing degree days, reference ET, the monsoon calendar",
      "access": "Live and keyless for any coordinate"},
     {"id": "grace", "mission": "GRACE / GRACE-FO", "measures": "Total water storage change", "native_resolution": "about 300 km, monthly",
      "fieldshift_use": "Whether the regional aquifer is being drawn down",
-     "access": "Curated regional trends from published analyses"},
+     "access": "Map layer; no curated Malaysian trend"},
     {"id": "srtm", "mission": "SRTM", "measures": "Elevation", "native_resolution": "30 m, static",
-     "fieldshift_use": "Slope steepness for runoff and erosion",
+     "fieldshift_use": "Slope steepness for runoff and erosion, highland terraces",
      "access": "Live and keyless (OpenTopoData mirror)"},
     {"id": "gedi", "mission": "GEDI", "measures": "Canopy height and woody biomass", "native_resolution": "1 km gridded",
-     "fieldshift_use": "Windbreak and shelter context around the field",
+     "fieldshift_use": "Forest edges, riparian strips and plantation canopy around the field",
      "access": "Map layer only (GIBS)"},
 ]

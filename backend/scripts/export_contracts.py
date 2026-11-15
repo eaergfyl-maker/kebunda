@@ -5,7 +5,7 @@
 
 Writes:
     openapi.json                 the full OpenAPI 3.1 schema (same as GET /openapi.json)
-    examples/*.json              real request and response payloads for the Iowa benchmark farm
+    examples/*.json              real request and response payloads for the Kedah (MADA paddy) benchmark farm
 
 Run it whenever a route or schema changes, and commit the result with the change, so the
 frontend can always develop and mock against files that match the backend exactly.
@@ -23,7 +23,7 @@ from app.config import REPO_ROOT  # noqa: E402
 from app.main import app  # noqa: E402
 
 OUT = REPO_ROOT / "docs" / "api-contracts"
-FIELD = "cornbelt-ia"
+FIELD = "kedah-mada"
 API = "/api/v1"
 
 
@@ -40,7 +40,7 @@ def _trim_strategy(s: dict) -> dict:
     s["months"] = s["months"][:3]
     s["vulnerability"] = {**s["vulnerability"], "cells": s["vulnerability"]["cells"][:3]}
     if s.get("history"):
-        s["history"] = {**s["history"], **{k: s["history"][k][:4] for k in ("years", "net_per_acre", "irrigation_mm", "water_stress_pct")}}
+        s["history"] = {**s["history"], **{k: s["history"][k][:4] for k in ("years", "net_per_ha", "irrigation_mm", "water_stress_pct")}}
     return s
 
 
@@ -60,7 +60,7 @@ def main() -> None:
 
     request = {"field_id": FIELD, "priorities": {"water": 4, "soil": 8, "erosion": 9, "pest": 6, "income": 7},
                "constraints": {"risk_tolerance": "medium", "exclude_crops": []},
-               "custom_strategies": [{"name": "My rotation", "years": [["corn"], ["soybean"], ["oats", "crimson_clover"]], "tillage": "reduced"}]}
+               "custom_strategies": [{"name": "My rotation", "years": [["rice", "mung_bean"], ["sweet_corn", "rice"]], "tillage": "reduced"}]}
     _write("examples/rotations.compare.request.json", request)
     compare = client.post(f"{API}/rotations/compare", json=request).json()
     specs = [{"id": s["id"], "role": s["role"], "name": s["name"], "years": s["years"], "tillage": s["tillage"]} for s in compare["strategies"]]

@@ -38,8 +38,9 @@ TILLAGE = {
     "no_till": {"label": "No-till", "harvest_keep": 1.0, "plant_keep": 0.92, "fallow_keep": 1.0, "plu": 0.38, "k_mult": 0.88, "cn_adj": -3.0},
 }
 
-N_PRICE_PER_KG = 1.20  # USD per kg N (about $0.55/lb)
-ACRES_PER_HA = 2.4711
+N_PRICE_PER_KG = 5.0  # RM per kg N (urea at about RM 2.30/kg, 46% N), unsubsidised
+CURRENCY = "RM"
+PADDY_LAND_PREP_MM = 150.0  # FAO: 150-250 mm to saturate and puddle a paddy field before planting
 SOC_K0 = 0.0075  # yr-1 at 10 C under reduced tillage, calibrated to long-term rotation trials
 HUMIFICATION_SHOOT, HUMIFICATION_ROOT = 0.13, 0.30
 BARE_THRESHOLD = 0.30  # NRCS: under 30% cover is not conservation cover
@@ -103,6 +104,11 @@ def simulate(ctx: FieldContext, years: list[list[str]], tillage: str = "conventi
     crops = crops_by_id()
     cl = ctx.climate
     sched = build_schedule(years, crops, cl)
+    if not ctx.irrigated:
+        # flooded paddy needs a canal or pump to hold standing water; on rainfed land it is not an option
+        for cid in sorted({c for y in years for c in y if crops[c].get("ponding_mm_day")}):
+            sched.feasible = False
+            sched.issues.append(f"{crops[cid]['name']} needs irrigation to keep the field flooded, and this field is rainfed.")
     till = TILLAGE.get(tillage, TILLAGE["conventional"])
     n_plan = _n_plan(ctx, sched)
     core = _run(ctx, sched, till, n_plan, cycles=3, year_indices=None)
@@ -150,6 +156,8 @@ def _run(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, *, cycles
     ph_tpot: dict[tuple[int, int], float] = {}
     ph_tact: dict[tuple[int, int], float] = {}
     ph_irr: dict[tuple[int, int], float] = {}
+    ph_pond_need: dict[tuple[int, int], float] = {}
+    ph_pond_met: dict[tuple[int, int], float] = {}
 
     for t in range(total_steps):
         rm = (t + offset_years * 12) % nm
@@ -217,10 +225,31 @@ def _run(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, *, cycles
             t_act = min(t_act, avail)
             s_water -= t_act
             key = (occ, cycle_no if ph.plant % nm <= rm else cycle_no - 1)
+            # A flooded paddy loses 3-6 mm a day to percolation and seepage through the puddled layer.
+            # Rain beyond what the root zone holds keeps the field ponded first; irrigation tops up the rest.
+            pond = 0.0
+            pond_need = float(crop.get("ponding_mm_day") or 0.0) * DAYS_IN_MONTH[m] * min(1.0, green / 0.3)
+            if pond_need > 0 and rm == ph.plant % nm:
+                pond_need += PADDY_LAND_PREP_MM  # soaking and puddling the field before each season
+            if pond_need > 0:
+                from_rain = min(pond_need, max(0.0, s_water - 0.8 * taw))
+                s_water -= from_rain
+                pond = from_rain
+                if ctx.irrigated:
+                    remaining = max(0.0, ctx.allocation_mm - alloc_used.get(t // 12, 0.0))
+                    extra = min(pond_need - from_rain, remaining * ctx.irrigation_efficiency, MAX_IRRIGATION_MM_MONTH)
+                    if extra > 0:
+                        irr_gross += extra / ctx.irrigation_efficiency
+                        alloc_used[t // 12] = alloc_used.get(t // 12, 0.0) + extra / ctx.irrigation_efficiency
+                        pond += extra
+                ph_pond_need[key] = ph_pond_need.get(key, 0.0) + pond_need
+                ph_pond_met[key] = ph_pond_met.get(key, 0.0) + pond
             ph_tpot[key] = ph_tpot.get(key, 0.0) + t_pot
             ph_tact[key] = ph_tact.get(key, 0.0) + t_act
             ph_irr[key] = ph_irr.get(key, 0.0) + irr_gross
-        drainage = max(0.0, s_water - taw)
+        else:
+            pond = 0.0
+        drainage = max(0.0, s_water - taw) + pond  # ponded water percolates below the roots
         s_water = min(s_water, taw)
 
         # --- erosion (RUSLE with a monthly soil-loss ratio) -----------------------------
@@ -261,12 +290,18 @@ def _run(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, *, cycles
             out["occupant"].append(occ)
 
     out["phase_tpot"], out["phase_tact"], out["phase_irr"] = ph_tpot, ph_tact, ph_irr
+    out["phase_pond_need"], out["phase_pond_met"] = ph_pond_need, ph_pond_met
     out["last_cycle"] = (total_steps - 1 + offset_years * 12) // nm
     return out
 
 
+def _flood_ratio(core: dict, key: tuple[int, int]) -> float | None:
+    need = core.get("phase_pond_need", {}).get(key, 0.0)
+    return core["phase_pond_met"].get(key, 0.0) / need if need > 0 else None
+
+
 def _phase_yield(ctx: FieldContext, sched: Schedule, i: int, t_pot: float, t_act: float,
-                 year_index: int | None = None, calendar_shift: int = 0) -> dict:
+                 year_index: int | None = None, calendar_shift: int = 0, flood_ratio: float | None = None) -> dict:
     """Relative yield of one harvested phase from water, heat, timing, soil-fit and rotation effects."""
     cl = ctx.climate
     ph = sched.phases[i]
@@ -274,6 +309,10 @@ def _phase_yield(ctx: FieldContext, sched: Schedule, i: int, t_pot: float, t_act
     factors: dict[str, float] = {}
     ratio = t_act / t_pot if t_pot > 0 else 1.0
     factors["water"] = clamp(1.0 - crop["ky"] * (1.0 - ratio), 0.0, 1.0)
+    if flood_ratio is not None:
+        # paddy that cannot be kept flooded loses weed control and nutrient supply: aerobic
+        # rice trials lose roughly 20-40 % of yield against continuously flooded fields
+        factors["flooding"] = round(clamp(0.6 + 0.4 * flood_ratio, 0.6, 1.0), 3)
 
     span = max(1, ph.maturity - ph.plant + 1)
     lo, hi = ph.plant + int(0.4 * span), ph.plant + max(int(0.4 * span), math.ceil(0.85 * span) - 1)
@@ -304,7 +343,8 @@ def _phase_yield(ctx: FieldContext, sched: Schedule, i: int, t_pot: float, t_act
 
     mains = [k for k, p in enumerate(sched.phases) if p.kind != "cover"]
     prev = sched.phases[mains[mains.index(i) - 1]] if i in mains else ph
-    back_to_back = sched.n_years == 1 if len(mains) == 1 else (prev.id == crop["id"] and (ph.year_index - prev.year_index) % sched.n_years == 1)
+    # the same crop straight after itself: corn after corn, or a second paddy season in the same year
+    back_to_back = sched.n_years == 1 if len(mains) == 1 else (prev.id == crop["id"] and prev is not ph)
     if back_to_back and ph.kind != "perennial":
         factors["rotation"] = 0.90  # monoculture drag (e.g. corn after corn)
     elif prev.crop["legume"] and not crop["legume"] and prev is not ph:
@@ -322,14 +362,14 @@ def _phase_yield(ctx: FieldContext, sched: Schedule, i: int, t_pot: float, t_act
 
 
 def _economics(ctx: FieldContext, sched: Schedule, n_plan: dict, yields: dict[int, dict], irr: dict[int, float]) -> dict:
-    """Per-phase revenue and cost (USD per acre) for one pass through the rotation."""
+    """Per-phase revenue and cost (RM per hectare) for one pass through the rotation."""
     rows = []
     for i, ph in enumerate(sched.phases):
         crop, econ = ph.crop, ph.crop["economics"]
-        irr_cost = irr.get(i, 0.0) * ctx.irrigation_cost_per_mm_acre
+        irr_cost = irr.get(i, 0.0) * ctx.irrigation_cost_per_mm_ha
         if ph.kind == "cover":
-            grazing = econ.get("grazing_value_per_acre", 0) * ph.biomass_frac if ctx.livestock else 0.0
-            cost = econ["cost_per_acre"] if ph.biomass_frac > 0 else 0.0
+            grazing = econ.get("grazing_value_per_ha", 0) * ph.biomass_frac if ctx.livestock else 0.0
+            cost = econ["cost_per_ha"] if ph.biomass_frac > 0 else 0.0
             rows.append({"phase": i, "crop_id": ph.id, "crop_name": crop["name"], "kind": ph.kind, "yield": None, "yield_unit": None,
                          "relative_yield": None, "revenue": round(grazing, 0), "cost": round(cost, 0), "net": round(grazing - cost, 0),
                          "price": None, "price_cv": 0.0, "n_applied_kg_ha": 0.0, "irrigation_mm": 0.0})
@@ -341,7 +381,7 @@ def _economics(ctx: FieldContext, sched: Schedule, n_plan: dict, yields: dict[in
         actual = ref * y["relative"]
         n_applied = n_plan.get(i, {}).get("applied", 0.0) * span
         revenue = actual * econ["price"] * span
-        cost = econ["cost_per_acre"] * span + n_applied / ACRES_PER_HA * N_PRICE_PER_KG + irr_cost
+        cost = econ["cost_per_ha"] * span + n_applied * N_PRICE_PER_KG + irr_cost
         rows.append({"phase": i, "crop_id": ph.id, "crop_name": crop["name"], "kind": ph.kind,
                      "yield": round(actual, 1 if actual < 1000 else 0), "yield_unit": econ["yield_unit"],
                      "relative_yield": round(y["relative"], 3), "yield_factors": y["factors"], "heat_days": y["heat_days"],
@@ -353,35 +393,62 @@ def _economics(ctx: FieldContext, sched: Schedule, n_plan: dict, yields: dict[in
 
 
 def _pest_metrics(sched: Schedule) -> dict:
-    """Host-interval, functional-group and planting-season diversity (0-100)."""
+    """Host-interval, functional-group and planting-season diversity (0-100).
+
+    Temperate rotations count the break between host crops in years. In the tropics, where a
+    field carries two or three crops a year, the break is counted in crop seasons instead, and
+    planting-season diversity is read from which monsoon window each crop goes in."""
     n = sched.n_years
     mains = [p for p in sched.phases if p.kind != "cover"]
-    occurrences: dict[str, list[tuple[int, Phase, int]]] = {}
-    for ph in mains:
-        for year in range(ph.year_index, ph.year_index + ph.stand_years):
-            for g in ph.crop["pest_groups"]:
-                occurrences.setdefault(g["group"], []).append((year, ph, g["break_years"]))
     ratios, short = [], []
-    for group, occ in occurrences.items():
-        years_hit = sorted({y for y, _, _ in occ})
-        for idx, (year, ph, brk) in enumerate(sorted(occ, key=lambda o: o[0])):
-            if ph.kind == "perennial" and group == ph.crop["pest_groups"][0]["group"]:
-                continue  # a perennial stand hosting itself is expected
-            others = [y for y in years_hit if y != year]
-            gap = min(((year - y) % n or n) for y in others) if others else n
-            interval = gap if others else n  # years until the same host group returns
-            ratio = clamp((interval - 1) / brk) if brk > 0 else 1.0
-            ratios.append(ratio)
-            if ratio < 1.0:
-                short.append({"group": group, "crop_id": ph.id, "crop_name": ph.crop["name"],
-                              "interval_years": interval, "recommended_years": brk + 1,
-                              "named_pests": ph.crop.get("named_pests", [])[:3]})
+    if sched.tropical:
+        unit = "season"
+        order = sorted(mains, key=lambda p: p.plant)
+        count = len(order)
+        for idx, ph in enumerate(order):
+            for g in ph.crop["pest_groups"]:
+                if ph.kind == "perennial" and g["group"] == ph.crop["pest_groups"][0]["group"]:
+                    continue
+                brk = g.get("break_seasons", 2 * g["break_years"])
+                hosts = [j for j, o in enumerate(order) if j != idx and g["group"] in {x["group"] for x in o.crop["pest_groups"]}]
+                interval = min(((j - idx) % count) for j in hosts) if hosts else (count if count > 1 else 1)
+                if not hosts and count == 1:
+                    interval = 1  # a single crop a year returns every season it is grown
+                ratio = clamp((interval - 1) / brk) if brk > 0 else 1.0
+                ratios.append(ratio)
+                if ratio < 1.0:
+                    short.append({"group": g["group"], "crop_id": ph.id, "crop_name": ph.crop["name"],
+                                  "interval_years": interval, "recommended_years": brk + 1, "unit": unit,
+                                  "named_pests": ph.crop.get("named_pests", [])[:3]})
+        windows = ["Dec-Feb", "Mar-May", "Jun-Aug", "Sep-Nov"]
+        seasons = {("perennial" if p.kind == "perennial" else windows[((p.plant % 12) + 1) % 12 // 3]) for p in mains}
+    else:
+        unit = "year"
+        occurrences: dict[str, list[tuple[int, Phase, int]]] = {}
+        for ph in mains:
+            for year in range(ph.year_index, ph.year_index + ph.stand_years):
+                for g in ph.crop["pest_groups"]:
+                    occurrences.setdefault(g["group"], []).append((year, ph, g["break_years"]))
+        for group, occ in occurrences.items():
+            years_hit = sorted({y for y, _, _ in occ})
+            for idx, (year, ph, brk) in enumerate(sorted(occ, key=lambda o: o[0])):
+                if ph.kind == "perennial" and group == ph.crop["pest_groups"][0]["group"]:
+                    continue  # a perennial stand hosting itself is expected
+                others = [y for y in years_hit if y != year]
+                gap = min(((year - y) % n or n) for y in others) if others else n
+                interval = gap if others else n  # years until the same host group returns
+                ratio = clamp((interval - 1) / brk) if brk > 0 else 1.0
+                ratios.append(ratio)
+                if ratio < 1.0:
+                    short.append({"group": group, "crop_id": ph.id, "crop_name": ph.crop["name"],
+                                  "interval_years": interval, "recommended_years": brk + 1, "unit": unit,
+                                  "named_pests": ph.crop.get("named_pests", [])[:3]})
+        seasons = {("fall" if p.crop["cycle"] == "winter" else "perennial" if p.kind == "perennial" else
+                    "early_spring" if p.crop["t_plant_c"] < 9 else "late_spring") for p in mains}
     host = mean(ratios, 1.0)
     groups = {p.crop["functional_group"] for p in mains}
     cover_groups = {p.crop["functional_group"] for p in sched.phases if p.kind == "cover" and p.biomass_frac >= 0.2}
     group_score = clamp((len(groups) + 0.5 * len(cover_groups - groups) - 1) / 3.0)
-    seasons = {("fall" if p.crop["cycle"] == "winter" else "perennial" if p.kind == "perennial" else
-                "early_spring" if p.crop["t_plant_c"] < 9 else "late_spring") for p in mains}
     season_score = clamp((len(seasons) - 1) / 2.0)
     bridges = []
     for i, ph in enumerate(sched.phases):
@@ -419,7 +486,7 @@ def _summarise(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, cor
         # a phase that wraps the cycle boundary is complete in the cycle where it was planted
         key_cycle = last - 1 if (ph.plant % nm) > (ph.end % nm) or (i, last) not in core["phase_tpot"] else last
         tp, ta = core["phase_tpot"].get((i, key_cycle), 0.0), core["phase_tact"].get((i, key_cycle), 0.0)
-        yields[i] = _phase_yield(ctx, sched, i, tp, ta)
+        yields[i] = _phase_yield(ctx, sched, i, tp, ta, flood_ratio=_flood_ratio(core, (i, key_cycle)))
         irr[i] = core["phase_irr"].get((i, key_cycle), 0.0)
     econ = _economics(ctx, sched, n_plan, yields, irr)
 
@@ -524,10 +591,10 @@ def _summarise(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, cor
             "legume_years": legume_years,
             "pest_break_score": round(pests["score"], 0),
             "distinct_cash_crops": pests["distinct_cash_crops"],
-            "net_return_per_acre_yr": round(net_yr, 0),
-            "gross_revenue_per_acre_yr": round(gross_yr, 0),
-            "cost_per_acre_yr": round(econ["cost"] / n, 0),
-            "price_sd_per_acre": round(price_sd, 0),
+            "net_return_per_ha_yr": round(net_yr, 0),
+            "gross_revenue_per_ha_yr": round(gross_yr, 0),
+            "cost_per_ha_yr": round(econ["cost"] / n, 0),
+            "price_sd_per_ha": round(price_sd, 0),
             "market_access": round(market["score"], 2),
             "forage_value": round(forage, 2),
             "net_per_mm_irrigation": round(net_yr / irrigation, 2) if irrigation > 20 else None,
@@ -581,7 +648,8 @@ def _history(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, norma
             hy = end_step // 12
             if not 0 <= hy < n_hist:
                 continue
-            y = _phase_yield(ctx, sched, i, tp, core["phase_tact"].get((i, cyc), 0.0), year_index=hy)
+            y = _phase_yield(ctx, sched, i, tp, core["phase_tact"].get((i, cyc), 0.0), year_index=hy,
+                             flood_ratio=_flood_ratio(core, (i, cyc)))
             rows = _economics(ctx, sched, n_plan, {k: y for k in range(len(sched.phases))}, {i: core["phase_irr"].get((i, cyc), 0.0)})["rows"]
             harvest_net[hy] = harvest_net.get(hy, 0.0) + rows[i]["net"]
         cover_cost = sum(r["net"] for r in normal["economics"] if r["kind"] == "cover") / n
@@ -594,19 +662,19 @@ def _history(ctx: FieldContext, sched: Schedule, till: dict, n_plan: dict, norma
     usable = list(range(1, n_hist))  # the first year carries spin-up effects
     nets = [net_by_year[i] for i in usable]
     climate_sd = stdev(nets)
-    price_sd = normal["metrics"]["price_sd_per_acre"]
+    price_sd = normal["metrics"]["price_sd_per_ha"]
     total_sd = math.sqrt(climate_sd**2 + price_sd**2)
     mean_net = mean(nets)
     order = sorted(usable, key=lambda i: net_by_year[i])
     return {
         "years": [cl.years[i] for i in usable],
-        "net_per_acre": [round(net_by_year[i], 0) for i in usable],
+        "net_per_ha": [round(net_by_year[i], 0) for i in usable],
         "irrigation_mm": [round(irr_by_year[i], 0) for i in usable],
         "water_stress_pct": [round(100 * stress_by_year[i], 1) for i in usable],
-        "mean_net_per_acre": round(mean_net, 0),
-        "weather_sd_per_acre": round(climate_sd, 0),
-        "total_sd_per_acre": round(total_sd, 0),
-        "bad_year_net_per_acre": round(mean_net - 0.84 * total_sd, 0),  # about a 1-in-5 year
+        "mean_net_per_ha": round(mean_net, 0),
+        "weather_sd_per_ha": round(climate_sd, 0),
+        "total_sd_per_ha": round(total_sd, 0),
+        "bad_year_net_per_ha": round(mean_net - 0.84 * total_sd, 0),  # about a 1-in-5 year
         "worst_years": [cl.years[i] for i in order[:3]],
-        "variability_ratio": round(total_sd / max(1.0, normal["metrics"]["gross_revenue_per_acre_yr"]), 3),
+        "variability_ratio": round(total_sd / max(1.0, normal["metrics"]["gross_revenue_per_ha_yr"]), 3),
     }

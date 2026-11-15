@@ -1,5 +1,5 @@
 {
- "field_id": "cornbelt-ia",
+ "field_id": "kedah-mada",
  "priorities": {
   "water": 4,
   "soil": 8,
@@ -16,14 +16,12 @@
    "name": "My rotation",
    "years": [
     [
-     "corn"
+     "rice",
+     "mung_bean"
     ],
     [
-     "soybean"
-    ],
-    [
-     "oats",
-     "crimson_clover"
+     "sweet_corn",
+     "rice"
     ]
    ],
    "tillage": "reduced"

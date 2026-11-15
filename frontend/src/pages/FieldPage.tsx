@@ -135,7 +135,7 @@ export function FieldPage() {
         <section id="trust" className="stack">
           <TrustCard field={field} />
           {cmp && (
-            <Card title="Take it with you" subtitle="A brief for your County Extension agent or crop adviser: the field, your priorities, each rotation's five explanations and the checklist.">
+            <Card title="Take it with you" subtitle="A brief for your DOA extension officer or crop adviser: the field, your priorities, each rotation's five explanations and the checklist.">
               <ExportButtons field={field} comparison={cmp} />
             </Card>
           )}
@@ -156,7 +156,7 @@ function FieldHero({ field }: { field: FieldOverview }) {
         <Link to="/" className="field-back no-print">← All fields</Link>
         <div className="field-hero-grid">
           <div>
-            <span className="eyebrow hero-eyebrow">{f.region}{f.county ? ` · ${f.county} County, ${f.state}` : ""} · {units.area(f.area_ha)}</span>
+            <span className="eyebrow hero-eyebrow">{f.region}{f.district ? ` · ${f.district}, ${f.state}` : ""} · {units.area(f.area_ha)}</span>
             <h1>{f.name}</h1>
             <p className="field-headline">{f.headline}</p>
             <p className="field-story">{f.story}</p>
@@ -164,12 +164,12 @@ function FieldHero({ field }: { field: FieldOverview }) {
           </div>
           <div className="field-stats">
             <Stat label="Grows now" value={<span style={{ fontSize: "1.05rem" }}>{f.baseline_rotation.name}</span>} sub={f.management.irrigation.label} />
-            <Stat label={<Term id="fused_rain">Rain and snow</Term>} value={`${units.water(field.fusion.precip.annual_mm, units.system === "us" ? 1 : 0)}`} sub={`a year · air could take ${units.water(c.annual_et0_mm, 0)}`} />
+            <Stat label={<Term id="fused_rain">Rainfall</Term>} value={`${units.water(field.fusion.precip.annual_mm, units.system === "us" ? 1 : 0)}`} sub={`a year · air could take ${units.water(c.annual_et0_mm, 0)}`} />
             <Stat label="Soil" value={<span style={{ fontSize: "1.05rem" }}>{field.soil.series} {field.soil.texture_class}</span>} sub={<>{field.soil.organic_matter_pct}% <Term id="organic_matter">organic matter</Term> · group <Term id="hsg">{field.soil.hydrologic_group}</Term></>} />
-            <Stat label={<Term id="frost_free">Frost-free season</Term>} value={`${Math.round(c.frost.frost_free_days_median)} days`} sub={`${Math.round(c.monthly.heat_days_35.reduce((a, b) => a + b, 0))} days a year reach ${units.temp(35)}`} />
+            <Stat label={<Term id="monsoon">Mean temperature</Term>} value={units.temp(c.mean_annual_temp_c, 1)} sub={`${Math.round(c.monthly.heat_days_35.reduce((a, b) => a + b, 0))} days a year reach ${units.temp(35)}`} />
             {gw.tws_trend_cm_yr !== null && (
               <Stat label={<Term id="grace">Regional water storage</Term>} tone={gw.tws_trend_cm_yr < -0.3 ? "bad" : undefined}
-                value={`${gw.tws_trend_cm_yr > 0 ? "+" : ""}${units.system === "us" ? (gw.tws_trend_cm_yr / 2.54).toFixed(1) + " in" : gw.tws_trend_cm_yr.toFixed(1) + " cm"}/yr`} sub="GRACE satellites, ~200 mi footprint" />
+                value={`${gw.tws_trend_cm_yr > 0 ? "+" : ""}${units.system === "us" ? (gw.tws_trend_cm_yr / 2.54).toFixed(1) + " in" : gw.tws_trend_cm_yr.toFixed(1) + " cm"}/yr`} sub="GRACE satellites, ~300 km footprint" />
             )}
             <Stat label="Slope" value={`${(field.soil.representative_slope_pct ?? field.terrain?.slope_pct ?? 0).toFixed(1)}%`} sub={field.terrain ? `${units.distance(field.terrain.elevation_m)} elevation` : "soil survey"} />
           </div>

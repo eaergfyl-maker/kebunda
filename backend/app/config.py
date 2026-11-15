@@ -44,8 +44,6 @@ class Settings:
     cache_ttl_hours: float = float(os.getenv("FIELDSHIFT_CACHE_TTL_HOURS", "720"))
     # Optional keys: each one only unlocks an *extra* live source.
     nasa_earthdata_token: str = os.getenv("NASA_EARTHDATA_TOKEN", "")
-    usda_nass_api_key: str = os.getenv("USDA_NASS_API_KEY", "")
-    openet_api_key: str = os.getenv("OPENET_API_KEY", "")
 
     @property
     def cache_dir(self) -> Path:

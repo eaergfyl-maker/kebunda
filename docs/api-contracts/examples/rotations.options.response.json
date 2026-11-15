@@ -121,50 +121,50 @@
  ],
  "equipment": [
   {
-   "id": "row_planter",
-   "label": "Row-crop planter"
+   "id": "hand_tractor",
+   "label": "Two-wheel tractor / rotavator"
   },
   {
-   "id": "grain_drill",
-   "label": "Grain drill or air seeder"
+   "id": "four_wheel_tractor",
+   "label": "Four-wheel tractor"
   },
   {
-   "id": "combine",
-   "label": "Combine with grain platform"
+   "id": "planter",
+   "label": "Seed planter"
   },
   {
-   "id": "corn_header",
-   "label": "Corn header"
+   "id": "combine_hire",
+   "label": "Paddy combine harvester (contract hire)"
   },
   {
-   "id": "flex_header",
-   "label": "Flex or draper header"
+   "id": "harvester_hire",
+   "label": "Contract harvester"
   },
   {
-   "id": "row_crop_header",
-   "label": "Row-crop or sunflower header"
+   "id": "grain_dryer_access",
+   "label": "Access to a grain dryer"
   },
   {
-   "id": "cotton_picker",
-   "label": "Cotton picker or stripper"
+   "id": "knapsack_sprayer",
+   "label": "Knapsack or motorised sprayer"
   },
   {
-   "id": "hay_equipment",
-   "label": "Swather and baler"
+   "id": "drip_fertigation",
+   "label": "Drip fertigation system"
   },
   {
-   "id": "transplanter",
-   "label": "Vegetable transplanter"
+   "id": "rain_shelter",
+   "label": "Rain shelter structures"
   },
   {
-   "id": "tomato_harvester",
-   "label": "Tomato harvester (usually custom)"
+   "id": "trellis",
+   "label": "Trellis poles and netting"
   }
  ],
  "crops": [
   {
-   "id": "corn",
-   "name": "Corn (grain)",
+   "id": "rice",
+   "name": "Paddy rice (irrigated)",
    "role": "cash",
    "family": "grass",
    "cycle": "spring",
@@ -172,53 +172,8 @@
    "legume": false
   },
   {
-   "id": "soybean",
-   "name": "Soybean",
-   "role": "cash",
-   "family": "legume",
-   "cycle": "spring",
-   "functional_group": "warm_broadleaf",
-   "legume": true
-  },
-  {
-   "id": "winter_wheat",
-   "name": "Winter wheat",
-   "role": "cash",
-   "family": "grass",
-   "cycle": "winter",
-   "functional_group": "cool_grass",
-   "legume": false
-  },
-  {
-   "id": "spring_wheat",
-   "name": "Spring wheat",
-   "role": "cash",
-   "family": "grass",
-   "cycle": "spring",
-   "functional_group": "cool_grass",
-   "legume": false
-  },
-  {
-   "id": "barley",
-   "name": "Spring barley",
-   "role": "cash",
-   "family": "grass",
-   "cycle": "spring",
-   "functional_group": "cool_grass",
-   "legume": false
-  },
-  {
-   "id": "oats",
-   "name": "Oats",
-   "role": "cash",
-   "family": "grass",
-   "cycle": "spring",
-   "functional_group": "cool_grass",
-   "legume": false
-  },
-  {
-   "id": "sorghum",
-   "name": "Grain sorghum (milo)",
+   "id": "hill_rice",
+   "name": "Hill rice (dryland padi bukit)",
    "role": "cash",
    "family": "grass",
    "cycle": "spring",
@@ -226,8 +181,8 @@
    "legume": false
   },
   {
-   "id": "millet",
-   "name": "Proso millet",
+   "id": "grain_maize",
+   "name": "Grain maize",
    "role": "cash",
    "family": "grass",
    "cycle": "spring",
@@ -235,71 +190,62 @@
    "legume": false
   },
   {
-   "id": "cotton",
-   "name": "Upland cotton",
+   "id": "sweet_corn",
+   "name": "Sweet corn",
    "role": "cash",
-   "family": "mallow",
+   "family": "grass",
    "cycle": "spring",
-   "functional_group": "warm_broadleaf",
+   "functional_group": "warm_grass",
    "legume": false
   },
   {
-   "id": "sunflower",
-   "name": "Sunflower",
+   "id": "sweet_potato",
+   "name": "Sweet potato",
    "role": "cash",
-   "family": "aster",
+   "family": "morning_glory",
    "cycle": "spring",
-   "functional_group": "warm_broadleaf",
+   "functional_group": "root_crop",
    "legume": false
   },
   {
-   "id": "canola",
-   "name": "Winter canola",
+   "id": "cassava",
+   "name": "Cassava (ubi kayu)",
    "role": "cash",
-   "family": "brassica",
-   "cycle": "winter",
-   "functional_group": "cool_broadleaf",
+   "family": "spurge",
+   "cycle": "spring",
+   "functional_group": "root_crop",
    "legume": false
   },
   {
-   "id": "dry_pea",
-   "name": "Dry pea",
+   "id": "groundnut",
+   "name": "Groundnut (kacang tanah)",
    "role": "cash",
    "family": "legume",
    "cycle": "spring",
-   "functional_group": "cool_broadleaf",
+   "functional_group": "legume",
    "legume": true
   },
   {
-   "id": "chickpea",
-   "name": "Chickpea (garbanzo)",
+   "id": "mung_bean",
+   "name": "Mung bean (kacang hijau)",
    "role": "cash",
    "family": "legume",
    "cycle": "spring",
-   "functional_group": "cool_broadleaf",
+   "functional_group": "legume",
    "legume": true
   },
   {
-   "id": "lentil",
-   "name": "Lentil",
+   "id": "long_bean",
+   "name": "Long bean (kacang panjang)",
    "role": "cash",
    "family": "legume",
    "cycle": "spring",
-   "functional_group": "cool_broadleaf",
+   "functional_group": "legume",
    "legume": true
   },
   {
-   "id": "alfalfa",
-   "name": "Alfalfa hay",
-   "role": "cash",
-   "family": "legume",
-   "cycle": "perennial",
-   "functional_group": "cool_broadleaf",
-   "legume": true
-  },
-  {
-   "id": "tomato",
-   "name": "Processing tomato",
+   "id": "chili",
+   "name": "Chili (cili)",
    "role": "cash",
    "family": "nightshade",
    "cycle": "spring",
@@ -307,84 +253,84 @@
    "legume": false
   },
   {
-   "id": "safflower",
-   "name": "Safflower",
+   "id": "cabbage",
+   "name": "Cabbage (highland)",
    "role": "cash",
-   "family": "aster",
+   "family": "brassica",
+   "cycle": "spring",
+   "functional_group": "cool_broadleaf",
+   "legume": false
+  },
+  {
+   "id": "tomato",
+   "name": "Tomato (highland, rain shelter)",
+   "role": "cash",
+   "family": "nightshade",
    "cycle": "spring",
    "functional_group": "warm_broadleaf",
    "legume": false
   },
   {
-   "id": "triticale",
-   "name": "Triticale forage",
-   "role": "forage",
-   "family": "grass",
-   "cycle": "winter",
-   "functional_group": "cool_grass",
+   "id": "watermelon",
+   "name": "Watermelon (tembikai)",
+   "role": "cash",
+   "family": "cucurbit",
+   "cycle": "spring",
+   "functional_group": "vine",
    "legume": false
   },
   {
+   "id": "kenaf",
+   "name": "Kenaf (fibre)",
+   "role": "cash",
+   "family": "mallow",
+   "cycle": "spring",
+   "functional_group": "fibre",
+   "legume": false
+  },
+  {
+   "id": "pineapple",
+   "name": "Pineapple MD2 (on peat)",
+   "role": "cash",
+   "family": "bromeliad",
+   "cycle": "perennial",
+   "functional_group": "perennial_monocot",
+   "legume": false
+  },
+  {
+   "id": "sesbania",
+   "name": "Sesbania green manure",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "legume",
+   "legume": true
+  },
+  {
+   "id": "sunn_hemp",
+   "name": "Sunn hemp cover",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "legume",
+   "legume": true
+  },
+  {
+   "id": "mucuna",
+   "name": "Velvet bean (mucuna) cover",
+   "role": "cover",
+   "family": "legume",
+   "cycle": "spring",
+   "functional_group": "legume",
+   "legume": true
+  },
+  {
    "id": "sorghum_sudan",
-   "name": "Sorghum-sudangrass",
+   "name": "Sorghum-sudangrass cover",
    "role": "cover",
    "family": "grass",
    "cycle": "spring",
    "functional_group": "warm_grass",
-   "legume": false
-  },
-  {
-   "id": "cereal_rye",
-   "name": "Cereal rye cover",
-   "role": "cover",
-   "family": "grass",
-   "cycle": "winter",
-   "functional_group": "cool_grass",
-   "legume": false
-  },
-  {
-   "id": "crimson_clover",
-   "name": "Crimson clover cover",
-   "role": "cover",
-   "family": "legume",
-   "cycle": "winter",
-   "functional_group": "cool_broadleaf",
-   "legume": true
-  },
-  {
-   "id": "hairy_vetch",
-   "name": "Hairy vetch cover",
-   "role": "cover",
-   "family": "legume",
-   "cycle": "winter",
-   "functional_group": "cool_broadleaf",
-   "legume": true
-  },
-  {
-   "id": "winter_pea",
-   "name": "Austrian winter pea cover",
-   "role": "cover",
-   "family": "legume",
-   "cycle": "winter",
-   "functional_group": "cool_broadleaf",
-   "legume": true
-  },
-  {
-   "id": "radish",
-   "name": "Tillage radish cover",
-   "role": "cover",
-   "family": "brassica",
-   "cycle": "winter",
-   "functional_group": "cool_broadleaf",
-   "legume": false
-  },
-  {
-   "id": "cover_mix",
-   "name": "Rye + vetch + radish mix",
-   "role": "cover",
-   "family": "mix",
-   "cycle": "winter",
-   "functional_group": "cool_grass",
    "legume": false
   }
  ]

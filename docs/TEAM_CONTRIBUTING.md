@@ -164,8 +164,8 @@ real payloads to read or mock against are in `docs/api-contracts/examples/`.
 cd backend
 python -m pytest                              # tests
 python -m scripts.export_contracts            # regenerate docs/api-contracts after schema changes
-python -m scripts.build_benchmark_data        # re-pull real NASA/USDA data for the benchmark farms
-python -m scripts.build_benchmark_data ogallala-ks     # just one
+python -m scripts.build_benchmark_data        # re-pull real NASA and global data for the benchmark farms
+python -m scripts.build_benchmark_data kedah-mada      # just one (add --no-modis if ORNL is down)
 ```
 
 - New route group: add `app/api/routes/<name>/router.py` exposing `router`; it is mounted

@@ -70,7 +70,7 @@ export interface FarmSummary {
   short_name: string;
   region: string;
   state: string | null;
-  county: string | null;
+  district: string | null;
   lat: number;
   lon: number;
   area_ha: number;
@@ -91,7 +91,7 @@ export interface FarmDefinition {
   short_name: string;
   region: string;
   state: string | null;
-  county: string | null;
+  district: string | null;
   lat: number;
   lon: number;
   area_ha: number;
@@ -99,7 +99,7 @@ export interface FarmDefinition {
   story: string;
   challenge_tags: string[];
   management: {
-    irrigation: { type: string; label: string; allocation_mm: number; sustainable_mm: number; efficiency: number; cost_per_mm_acre: number; source: string | null };
+    irrigation: { type: string; label: string; allocation_mm: number; sustainable_mm: number; efficiency: number; cost_per_mm_ha: number; source: string | null };
     tillage: Tillage;
     livestock: boolean;
     custom_hire_available: boolean;
@@ -305,11 +305,22 @@ export interface HazardMonth {
   lst_observed_c: number | null;
 }
 
-export interface CdlYear {
-  year: number;
-  cdl_code: number;
-  cdl_class: string;
-  crop_id: string | null;
+export interface CropCycles {
+  years: { year: number; cycles: number; peak_dates: string[] }[];
+  cycles_per_year: number;
+  peak_month_counts: number[];
+  evergreen: boolean;
+  provenance: Provenance;
+}
+
+export interface GaezCrop {
+  gaez_crop: string;
+  water_supply: string;
+  si: number | null;
+  class: string | null;
+  si_2050s: number | null;
+  class_2050s: string | null;
+  change_2050s: number | null;
 }
 
 export interface FieldOverview {
@@ -339,7 +350,9 @@ export interface FieldOverview {
     provenance: Provenance;
     local: FarmDefinition["water_context"];
   };
-  crop_history: { years: CdlYear[]; provenance: Provenance } | null;
+  crop_history: CropCycles | null;
+  ndvi_series?: { dates: string[]; values: number[] } | null;
+  gaez?: { crops: Record<string, GaezCrop>; provenance: Provenance } | null;
   fusion: Fusion;
   hazards: { months: HazardMonth[] };
   insights: { facts: Fact[]; signals: Record<string, unknown>; period: string };
@@ -417,10 +430,10 @@ export interface Metrics {
   legume_years: number;
   pest_break_score: number;
   distinct_cash_crops: number;
-  net_return_per_acre_yr: number;
-  gross_revenue_per_acre_yr: number;
-  cost_per_acre_yr: number;
-  price_sd_per_acre: number;
+  net_return_per_ha_yr: number;
+  gross_revenue_per_ha_yr: number;
+  cost_per_ha_yr: number;
+  price_sd_per_ha: number;
   market_access: number;
   forage_value: number;
   net_per_mm_irrigation: number | null;
@@ -438,13 +451,13 @@ export interface Fit {
 
 export interface History {
   years: number[];
-  net_per_acre: number[];
+  net_per_ha: number[];
   irrigation_mm: number[];
   water_stress_pct: number[];
-  mean_net_per_acre: number;
-  weather_sd_per_acre: number;
-  total_sd_per_acre: number;
-  bad_year_net_per_acre: number;
+  mean_net_per_ha: number;
+  weather_sd_per_ha: number;
+  total_sd_per_ha: number;
+  bad_year_net_per_ha: number;
   worst_years: number[];
   variability_ratio: number;
 }
@@ -688,7 +701,7 @@ export interface StressRow {
   fit: TodayVsScenario;
   scores: Record<DimensionId, TodayVsScenario>;
   metrics: Record<string, TodayVsScenario>;
-  bad_year_net_per_acre: { today: number; scenario: number } | null;
+  bad_year_net_per_ha: { today: number; scenario: number } | null;
   yields: { crop_id: string; crop_name: string; today: number; scenario: number; unit: string; change_pct: number; limiting: string | null }[];
   flags: string[];
   net_retained_pct: number | null;
@@ -778,7 +791,7 @@ export interface SuitabilityRow {
   suitability_class: string;
   limiting_factors: string[];
   reasons: string[];
-  net_return_per_acre: number | null;
+  net_return_per_ha: number | null;
   irrigation_mm: number;
   water_use_mm: number;
   plant_month: number | null;

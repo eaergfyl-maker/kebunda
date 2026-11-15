@@ -1,0 +1,123 @@
+{
+  "id": "kelantan-bris",
+  "name": "Kenaf plot on BRIS coastal sands",
+  "short_name": "BRIS sands, Kelantan",
+  "region": "Beach Ridges Interspersed with Swales (BRIS), Kelantan coast",
+  "state": "Kelantan",
+  "district": "Bachok",
+  "lat": 6.05,
+  "lon": 102.4,
+  "area_ha": 2.0,
+  "headline": "Sand that holds almost no water or nutrients, flooded by the northeast monsoon, then parched by March.",
+  "story": "A 2 ha plot on the BRIS sands of the Kelantan coast, planted to kenaf for the LKTN buy-back scheme once a year after the northeast monsoon floods recede, then left fallow. The sand holds little water, so a dry spell in March-April hurts, and root-knot nematode thrives. Yields of 6-8 t/ha of stems give a thin margin.",
+  "challenge_tags": [
+    "Sandy soil holds little water",
+    "Root-knot nematodes",
+    "Northeast monsoon flooding (Nov-Jan)"
+  ],
+  "management": {
+    "irrigation": {
+      "type": "none",
+      "label": "Rainfed",
+      "allocation_mm": 0,
+      "sustainable_mm": 0,
+      "efficiency": 0,
+      "cost_per_mm_ha": 0,
+      "source": null
+    },
+    "tillage": "conventional",
+    "livestock": false,
+    "custom_hire_available": true,
+    "equipment": [
+      "hand_tractor",
+      "knapsack_sprayer",
+      "harvester_hire"
+    ],
+    "tile_drained": false,
+    "slope_length_m": 60,
+    "erosivity_method": "rusle"
+  },
+  "soil_overrides": {
+    "series": "Arenosols (BRIS beach-ridge sand, Rudua series)",
+    "map_unit_name": "Arenosols (BRIS beach-ridge sand, Rudua series)",
+    "taxonomic_order": "Arenosols",
+    "texture_class": "sand",
+    "sand_pct": 92.0,
+    "silt_pct": 4.0,
+    "clay_pct": 4.0,
+    "organic_matter_pct": 0.8,
+    "ph": 4.8,
+    "bulk_density_g_cm3": 1.55,
+    "awc_cm_cm": 0.05,
+    "awc_profile_mm": 75,
+    "cec_meq_100g": 2.0,
+    "kw_factor": 0.05,
+    "ksat_um_s": 100.0,
+    "hydrologic_group": "A",
+    "hydrologic_group_raw": "A (deep coarse sand)",
+    "drainage_class": "Excessively drained",
+    "note": "SoilGrids blends the narrow BRIS sand ridges with the clayey swales between them at 250 m. The field sits on a sand ridge mapped as Rudua series by the DOA soil survey, so sand values replace the model estimate."
+  },
+  "baseline_rotation": {
+    "name": "Kenaf, then fallow",
+    "years": [
+      [
+        "kenaf"
+      ]
+    ],
+    "tillage": "conventional",
+    "note": "Sentinel-2 shows one crop cycle a year; kenaf is the LKTN crop promoted on BRIS soils in Kelantan."
+  },
+  "water_context": {
+    "aquifer": "Shallow coastal sand aquifer",
+    "in_situ_trend_m_yr": null,
+    "in_situ_source": "JPS tube wells, Kelantan coastal plain",
+    "note": "The shallow sand aquifer refills every monsoon but is easily polluted by nitrate and can turn saline near the coast if over-pumped."
+  },
+  "reference_yields": {
+    "kenaf": 7,
+    "groundnut": 2.0,
+    "sweet_potato": 13,
+    "watermelon": 25,
+    "cassava": 20,
+    "hill_rice": 1.5,
+    "sweet_corn": 12,
+    "long_bean": 12
+  },
+  "local_market": {
+    "kenaf": {
+      "access": 0.9,
+      "note": "LKTN (National Kenaf and Tobacco Board) buys stems back at a contracted price."
+    },
+    "watermelon": {
+      "access": 0.8,
+      "note": "Kelantan is a major watermelon area; collectors come to the farm."
+    },
+    "groundnut": {
+      "access": 0.6,
+      "note": "Local roasters and snack makers in Kota Bharu."
+    },
+    "sweet_potato": {
+      "access": 0.7,
+      "note": "Pasar besar Kota Bharu and processors."
+    },
+    "cassava": {
+      "access": 0.3,
+      "note": "No starch mill nearby; only the fresh-food market."
+    }
+  },
+  "default_priorities": {
+    "water": 7,
+    "soil": 9,
+    "erosion": 5,
+    "pest": 7,
+    "income": 8
+  },
+  "sources": [
+    "NASA POWER, GPM IMERG, SMAP, Sentinel-2 (see observation provenance)",
+    "ISRIC SoilGrids 250 m",
+    "FAO GAEZ v4 crop suitability",
+    "LKTN kenaf production guides and buy-back prices (reference yields)",
+    "MARDI BRIS soil research (groundnut, sweet potato, watermelon)"
+  ]
+}

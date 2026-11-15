@@ -28,8 +28,8 @@ def variability(result: dict) -> float:
     if hist:
         return hist["variability_ratio"]
     m = result["metrics"]
-    gross = max(1.0, m["gross_revenue_per_acre_yr"])
-    return m["price_sd_per_acre"] / gross + 0.5 * m["water_stress_pct"] / 100.0
+    gross = max(1.0, m["gross_revenue_per_ha_yr"])
+    return m["price_sd_per_ha"] / gross + 0.5 * m["water_stress_pct"] / 100.0
 
 
 def dimension_scores(ctx: FieldContext, result: dict, baseline: dict) -> dict[str, float]:
@@ -53,8 +53,8 @@ def dimension_scores(ctx: FieldContext, result: dict, baseline: dict) -> dict[st
                + 0.30 * lerp_score(m["bare_months_per_year"], 7.5, 0.5)
                + 0.20 * lerp_score(m["storm_exposure_pct"], 80, 15))
     pest = float(m["pest_break_score"])
-    scale = max(150.0, abs(b["net_return_per_acre_yr"]), 0.25 * b["gross_revenue_per_acre_yr"])
-    rel = (m["net_return_per_acre_yr"] - b["net_return_per_acre_yr"]) / scale
+    scale = max(1500.0, abs(b["net_return_per_ha_yr"]), 0.25 * b["gross_revenue_per_ha_yr"])  # RM/ha
+    rel = (m["net_return_per_ha_yr"] - b["net_return_per_ha_yr"]) / scale
     profit = 50.0 + 50.0 * clamp(rel / 0.6, -1.0, 1.0)
     forage = lerp_score(m["forage_value"], 0.0, 0.6) if ctx.livestock else 50.0
     income = (0.45 * profit + 0.25 * lerp_score(variability(result), 0.45, 0.10)

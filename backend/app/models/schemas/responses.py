@@ -33,7 +33,7 @@ class FarmSummary(Loose):
     short_name: str
     region: str
     state: str | None
-    county: str | None
+    district: str | None = None
     lat: float
     lon: float
     area_ha: float
@@ -185,9 +185,9 @@ class Metrics(Loose):
     n_leaching_kg_ha_yr: float
     pest_break_score: float
     distinct_cash_crops: int
-    net_return_per_acre_yr: float
-    gross_revenue_per_acre_yr: float
-    cost_per_acre_yr: float
+    net_return_per_ha_yr: float
+    gross_revenue_per_ha_yr: float
+    cost_per_ha_yr: float
     market_access: float
     forage_value: float
 
@@ -210,13 +210,13 @@ class Fit(Loose):
 
 class History(Loose):
     years: list[int]
-    net_per_acre: list[float]
+    net_per_ha: list[float]
     irrigation_mm: list[float]
     water_stress_pct: list[float]
-    mean_net_per_acre: float
-    weather_sd_per_acre: float
-    total_sd_per_acre: float
-    bad_year_net_per_acre: float
+    mean_net_per_ha: float
+    weather_sd_per_ha: float
+    total_sd_per_ha: float
+    bad_year_net_per_ha: float
     worst_years: list[int]
     variability_ratio: float
 

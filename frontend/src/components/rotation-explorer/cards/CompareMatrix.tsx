@@ -19,7 +19,7 @@ const ROWS: { key: keyof Metrics; label: string; unit: string; higher: boolean; 
   { key: "soil_loss_tons_ac_yr", label: "Soil erosion", unit: "tons/ac/yr", higher: false, dim: "erosion" },
   { key: "infiltration_pct", label: "Rain that soaks in", unit: "%", higher: true, dim: "erosion" },
   { key: "pest_break_score", label: "Pest and disease break", unit: "/100", higher: true, dim: "pest" },
-  { key: "net_return_per_acre_yr", label: "Net return per acre", unit: "$/yr", higher: true, dim: "income" },
+  { key: "net_return_per_ha_yr", label: "Net return per hectare", unit: "RM/yr", higher: true, dim: "income" },
 ];
 
 export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies: Strategy[]; selectedId: string; onSelect: (id: string) => void }) {
@@ -62,7 +62,7 @@ export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies
           })}
           <tr>
             <td>Bad-year net return (1 in 5)</td>
-            {strategies.map((s) => <td key={s.id} className={`num ${s.id === selectedId ? "is-selected" : ""}`}>{s.history ? units.money(s.history.bad_year_net_per_acre) : "—"}</td>)}
+            {strategies.map((s) => <td key={s.id} className={`num ${s.id === selectedId ? "is-selected" : ""}`}>{s.history ? units.money(s.history.bad_year_net_per_ha) : "—"}</td>)}
           </tr>
         </tbody>
       </table>

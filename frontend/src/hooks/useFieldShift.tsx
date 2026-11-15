@@ -53,7 +53,7 @@ export function FieldShiftProvider({ children }: { children: ReactNode }) {
   const [scenario, setScenario] = useState<Scenario>(NEUTRAL_SCENARIO);
   const [customStrategies, setCustomStrategies] = useState<RotationSpec[]>([]);
   const [baselineOverride, setBaselineOverride] = useState<RotationSpec | null>(null);
-  const [units, setUnitsState] = useState<UnitSystem>(() => loadJson<UnitSystem>("fieldshift.units", "us"));
+  const [units, setUnitsState] = useState<UnitSystem>(() => loadJson<UnitSystem>("fieldshift.units.my", "metric"));
   const [reviewed, setReviewed] = useState<Record<string, boolean>>(() => loadJson("fieldshift.reviewed", {}));
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function FieldShiftProvider({ children }: { children: ReactNode }) {
   const setUnits = useCallback((u: UnitSystem) => {
     setUnitsState(u);
     try {
-      window.localStorage.setItem("fieldshift.units", JSON.stringify(u));
+      window.localStorage.setItem("fieldshift.units.my", JSON.stringify(u));
     } catch {
       /* ignore */
     }

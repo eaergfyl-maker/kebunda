@@ -53,7 +53,7 @@ export function ScenarioResults({ result, refreshing }: { result: StressTestResp
         <div className="stress-list">
           {rows.map((r) => {
             const color = ROLE_COLOR[(r.role as StrategyRole) ?? "match"] ?? ROLE_COLOR.match;
-            const net = r.metrics.net_return_per_acre_yr;
+            const net = r.metrics.net_return_per_ha_yr;
             const irr = r.metrics.irrigation_mm_yr;
             return (
               <div key={r.id} className="stress-row">
@@ -70,8 +70,8 @@ export function ScenarioResults({ result, refreshing }: { result: StressTestResp
                   <div className="stress-bar"><span style={{ width: `${(r.fit.scenario / maxFit) * 100}%`, background: color }} /><em className="num">{Math.round(r.fit.scenario)}</em></div>
                 </div>
                 <div className="stress-nums small num">
-                  <div><span className="faint">Net/acre</span> {units.money(net.today)} → <strong style={{ color: net.delta < -15 ? "var(--bad)" : net.delta > 15 ? "var(--good)" : undefined }}>{units.money(net.scenario)}</strong></div>
-                  {r.bad_year_net_per_acre && <div><span className="faint">Bad year</span> {units.money(r.bad_year_net_per_acre.today)} → <strong>{units.money(r.bad_year_net_per_acre.scenario)}</strong></div>}
+                  <div><span className="faint">Net/ha</span> {units.money(net.today)} → <strong style={{ color: net.delta < -150 ? "var(--bad)" : net.delta > 150 ? "var(--good)" : undefined }}>{units.money(net.scenario)}</strong></div>
+                  {r.bad_year_net_per_ha && <div><span className="faint">Bad year</span> {units.money(r.bad_year_net_per_ha.today)} → <strong>{units.money(r.bad_year_net_per_ha.scenario)}</strong></div>}
                   {irr && (irr.today > 0 || irr.scenario > 0) && <div><span className="faint">Irrigation</span> {units.water(irr.today)} → <strong>{units.water(irr.scenario)}</strong></div>}
                   <div><span className="faint">Water stress</span> {r.metrics.water_stress_pct.today}% → <strong>{r.metrics.water_stress_pct.scenario}%</strong></div>
                   <div><span className="faint">Erosion</span> {units.soilLoss(r.metrics.soil_loss_tons_ac_yr.today)} → <strong>{units.soilLoss(r.metrics.soil_loss_tons_ac_yr.scenario)}</strong></div>
@@ -109,7 +109,7 @@ export function TippingPoints({ fieldId, strategies, irrigated }: { fieldId: str
         <h4>Where do the rotations trade places?</h4>
         <div className="row-wrap no-print">
           <select value={param} onChange={(e) => setParam(e.target.value as ScenarioKey)} aria-label="Dial to sweep">{options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}</select>
-          <select value={measure} onChange={(e) => setMeasure(e.target.value as "fit" | "net")} aria-label="Measure"><option value="net">Net return per acre</option><option value="fit">Fit score</option></select>
+          <select value={measure} onChange={(e) => setMeasure(e.target.value as "fit" | "net")} aria-label="Measure"><option value="net">Net return per hectare</option><option value="fit">Fit score</option></select>
         </div>
       </div>
       {loading || !data ? <Loading height={200} label="Sweeping the scenario range" /> : (() => {
