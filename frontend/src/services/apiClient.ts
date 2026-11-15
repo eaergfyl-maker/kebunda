@@ -28,7 +28,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     res = await fetch(`${BASE}${path}`, { ...init, headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) } });
   } catch {
-    throw new ApiError(0, "backend_unreachable", "The FieldShift backend is not answering.",
+    throw new ApiError(0, "backend_unreachable", "The Kebunda backend is not answering.",
       "Start it with: cd backend && uvicorn app.main:app --reload --port 8000");
   }
   if (!res.ok) {

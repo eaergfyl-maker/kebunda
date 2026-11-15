@@ -1,5 +1,8 @@
 import { useId, useState, type ReactNode } from "react";
 
+import { useT } from "@/i18n/LanguageProvider";
+import { localizeEntry } from "@/i18n/glossary.ms";
+
 import { GLOSSARY_BY_ID } from "./glossaryData";
 
 /**
@@ -10,7 +13,9 @@ import { GLOSSARY_BY_ID } from "./glossaryData";
  * Unknown ids render the children unchanged, so a typo never breaks a page.
  */
 export function Term({ id, children }: { id: string; children?: ReactNode }) {
-  const entry = GLOSSARY_BY_ID[id];
+  const { t, lang } = useT();
+  const raw = GLOSSARY_BY_ID[id];
+  const entry = raw ? localizeEntry(raw, lang) : undefined;
   const [open, setOpen] = useState(false);
   const popId = useId();
   if (!entry) return <>{children}</>;
@@ -27,7 +32,7 @@ export function Term({ id, children }: { id: string; children?: ReactNode }) {
         <span role="tooltip" id={popId} className="term-pop">
           <strong>{entry.term}</strong>
           {entry.plain}
-          <em>Why it matters: {entry.why}</em>
+          <em>{t("Why it matters:")} {entry.why}</em>
         </span>
       )}
     </span>

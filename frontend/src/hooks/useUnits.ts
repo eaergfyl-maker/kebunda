@@ -5,12 +5,12 @@
  */
 import { useMemo } from "react";
 
-import { useFieldShift } from "@/hooks/useFieldShift";
+import { useKebunda } from "@/hooks/useKebunda";
 
 const nf = (digits: number) => new Intl.NumberFormat("en-MY", { maximumFractionDigits: digits, minimumFractionDigits: digits });
 
 export function useUnits() {
-  const { units } = useFieldShift();
+  const { units } = useKebunda();
   return useMemo(() => {
     const us = units === "us";
     return {

@@ -8,6 +8,7 @@
  */
 import { Delta, ScoreBar } from "@/components/common/ui";
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR, DIM_SHORT, ROLE_COLOR } from "@/styles/theme";
 import type { Strategy } from "@/types/api";
 import { DIMENSIONS } from "@/types/api";
@@ -15,10 +16,11 @@ import { DIMENSIONS } from "@/types/api";
 import { SequenceStrip } from "../sequence-builder/SequenceStrip";
 
 export function FitDial({ value, color, size = 64 }: { value: number; color: string; size?: number }) {
+  const { t } = useT();
   const r = size / 2 - 5;
   const c = 2 * Math.PI * r;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`Fit ${Math.round(value)} out of 100`} className="fit-dial">
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={t("{label} {n} out of 100", { label: t("Fit"), n: Math.round(value) })} className="fit-dial">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--paper-sunk)" strokeWidth={6} />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={6} strokeLinecap="round"
         strokeDasharray={`${(value / 100) * c} ${c}`} transform={`rotate(-90 ${size / 2} ${size / 2})`} style={{ transition: "stroke-dasharray 420ms var(--ease)" }} />
@@ -31,43 +33,44 @@ export function StrategyCard({ strategy, baseline, selected, isTop, tied, onSele
   strategy: Strategy; baseline: Strategy; selected: boolean; isTop: boolean; tied: boolean; onSelect: () => void;
 }) {
   const units = useUnits();
+  const { t, tName } = useT();
   const color = ROLE_COLOR[strategy.role];
   const isBase = strategy.role === "baseline";
   const unc = strategy.explanation.gaps.score_uncertainty;
   const change = strategy.fit.change;
   return (
     <article className={`strategy-card ${selected ? "is-selected" : ""}`} style={{ ["--role" as string]: color }}>
-      <button className="strategy-card-hit" onClick={onSelect} aria-pressed={selected} aria-label={`Show details for ${strategy.title}: ${strategy.name}`} />
+      <button className="strategy-card-hit" onClick={onSelect} aria-pressed={selected} aria-label={t("Show details for {x}", { x: `${t(strategy.title)}: ${tName(strategy.name)}` })} />
       <header className="strategy-card-head">
         <div style={{ minWidth: 0 }}>
           <div className="row-wrap">
-            <span className="strategy-role" style={{ background: color }}>{strategy.title}</span>
-            {isTop && <span className="chip chip-good">Best fit{tied ? " (tied)" : ""}</span>}
-            {!isTop && tied && <span className="chip">Tied with best</span>}
+            <span className="strategy-role" style={{ background: color }}>{t(strategy.title)}</span>
+            {isTop && <span className="chip chip-good">{t("Best fit")}{tied ? ` (${t("tied")})` : ""}</span>}
+            {!isTop && tied && <span className="chip">{t("Tied with best")}</span>}
           </div>
-          <h3 className="strategy-name">{strategy.name}</h3>
-          <p className="small muted">{strategy.tagline}</p>
+          <h3 className="strategy-name">{tName(strategy.name)}</h3>
+          <p className="small muted">{t(strategy.tagline)}</p>
         </div>
         <div className="strategy-fit">
           <FitDial value={strategy.fit.fit} color={color} />
-          <span className="xs faint">fit for your goals</span>
+          <span className="xs faint">{t("fit for your goals")}</span>
         </div>
       </header>
 
       <SequenceStrip years={strategy.year_labels} compact />
       <div className="row-wrap xs">
-        <span className="chip">{strategy.tillage_label}</span>
-        {!isBase && change.new_crops.length > 0 && <span className="chip chip-info">{change.new_crops.length} new crop{change.new_crops.length > 1 ? "s" : ""}</span>}
-        {!isBase && change.adds_cover_crops && <span className="chip chip-info">adds cover crops</span>}
-        {!isBase && change.tillage_change && <span className="chip chip-info">tillage change</span>}
-        {strategy.equipment_needed.length > 0 && <span className="chip chip-warn">needs equipment</span>}
+        <span className="chip">{t(strategy.tillage_label)}</span>
+        {!isBase && change.new_crops.length > 0 && <span className="chip chip-info">{change.new_crops.length > 1 ? t("{n} new crops", { n: change.new_crops.length }) : t("1 new crop")}</span>}
+        {!isBase && change.adds_cover_crops && <span className="chip chip-info">{t("adds cover crops")}</span>}
+        {!isBase && change.tillage_change && <span className="chip chip-info">{t("tillage change")}</span>}
+        {strategy.equipment_needed.length > 0 && <span className="chip chip-warn">{t("needs equipment")}</span>}
       </div>
 
       <div className="strategy-scores">
         {DIMENSIONS.map((d) => (
           <div key={d} className="strategy-score-row">
-            <span className="small">{DIM_SHORT[d]}</span>
-            <ScoreBar value={strategy.scores[d]} color={DIM_COLOR[d]} baseline={isBase ? undefined : baseline.scores[d]} uncertainty={unc[d]} label={DIM_SHORT[d]} />
+            <span className="small">{t(DIM_SHORT[d])}</span>
+            <ScoreBar value={strategy.scores[d]} color={DIM_COLOR[d]} baseline={isBase ? undefined : baseline.scores[d]} uncertainty={unc[d]} label={t(DIM_SHORT[d])} />
             <span className="small num">{Math.round(strategy.scores[d])}</span>
           </div>
         ))}
@@ -80,14 +83,14 @@ export function StrategyCard({ strategy, baseline, selected, isTop, tied, onSele
           const direction = Math.abs(diff) <= tol ? "same" : (diff > 0) === h.higher_is_better ? "better" : "worse";
           return (
             <div key={h.label}>
-              <dt>{h.label}</dt>
+              <dt>{t(h.label)}</dt>
               <dd className="num">{units.metric(h.value, h.unit)}</dd>
-              {!isBase && <Delta direction={direction} rising={diff > 0}>{direction === "same" ? "same" : `${diff > 0 ? "+" : "−"}${units.metric(Math.abs(diff), h.unit).replace(/^[−+]/, "")}`}</Delta>}
+              {!isBase && <Delta direction={direction} rising={diff > 0}>{direction === "same" ? t("same") : `${diff > 0 ? "+" : "−"}${units.metric(Math.abs(diff), h.unit).replace(/^[−+]/, "")}`}</Delta>}
             </div>
           );
         })}
       </dl>
-      <span className="strategy-open small">{selected ? "Showing the full explanation below ↓" : "See why, evidence, gaps and risks →"}</span>
+      <span className="strategy-open small">{selected ? t("Showing the full explanation below ↓") : t("See why, evidence, gaps and risks →")}</span>
     </article>
   );
 }

@@ -23,8 +23,9 @@ import { FieldMap } from "@/components/map/FieldMap";
 import { StrategyExplorer } from "@/components/rotation-explorer/StrategyExplorer";
 import { TimelinePanel } from "@/components/timelines/TimelinePanel";
 import { useComparison, useFarms, useField, useStressTest } from "@/hooks/useData";
-import { isNeutral, useFieldShift } from "@/hooks/useFieldShift";
+import { isNeutral, useKebunda } from "@/hooks/useKebunda";
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR, DIM_SHORT } from "@/styles/theme";
 import type { FieldOverview } from "@/types/api";
 
@@ -39,7 +40,8 @@ const SECTIONS = [
 
 export function FieldPage() {
   const { id = "" } = useParams();
-  const { resetForField, constraints, scenario } = useFieldShift();
+  const { t } = useT();
+  const { resetForField, constraints, scenario } = useKebunda();
   const { data: farms } = useFarms();
   const { data: field, loading, error } = useField(id);
   const comparison = useComparison(field ? id : null);
@@ -52,7 +54,7 @@ export function FieldPage() {
     window.scrollTo({ top: 0 });
   }, [id, resetForField]);
 
-  if (error) return <div className="container" style={{ padding: "48px 24px" }}><ErrorNotice error={error} title="This field could not be loaded" /><p style={{ marginTop: 12 }}><Link to="/">← Back to all fields</Link></p></div>;
+  if (error) return <div className="container" style={{ padding: "48px 24px" }}><ErrorNotice error={error} title="This field could not be loaded" /><p style={{ marginTop: 12 }}><Link to="/">{t("← Back to all fields")}</Link></p></div>;
   if (loading || !field) return <div className="container stack" style={{ padding: "32px 24px" }}><Loading height={180} label="Loading field" /><Loading height={420} /></div>;
 
   const cmp = comparison.data && comparison.data.field_id === id ? comparison.data : null;
@@ -61,24 +63,24 @@ export function FieldPage() {
   return (
     <div className="field-page">
       <FieldHero field={field} />
-      <nav className="section-nav no-print" aria-label="Sections">
+      <nav className="section-nav no-print" aria-label={t("Sections")}>
         <div className="container section-nav-inner">
-          {SECTIONS.map((s) => <a key={s.id} href={`#${s.id}`}>{s.label}</a>)}
+          {SECTIONS.map((s) => <a key={s.id} href={`#${s.id}`}>{t(s.label)}</a>)}
           <span style={{ flex: 1 }} />
-          {cmp && <Link className="btn btn-sm btn-primary" to={`/field/${id}/brief`}>Field Brief</Link>}
+          {cmp && <Link className="btn btn-sm btn-primary" to={`/field/${id}/brief`}>{t("Field Brief")}</Link>}
         </div>
       </nav>
 
       <div className="container stack" style={{ gap: 28, paddingTop: 24, paddingBottom: 56 }}>
         <section id="field" className="field-top">
-          <Card title="What the record shows" subtitle={`Facts from ${field.insights.period} of NASA records and the USDA soil survey. Each carries its source.`}>
+          <Card title={t("What the record shows")} subtitle={t("Facts from {period} of NASA records and the SoilGrids soil estimate. Each carries its source.", { period: field.insights.period })}>
             <ul className="fact-list">
               {field.insights.facts.map((f) => (
                 <li key={f.id} className="fact" style={{ borderLeftColor: DIM_COLOR[f.dimension] }}>
                   <div className="row-wrap">
-                    <span className="xs" style={{ color: DIM_COLOR[f.dimension], fontWeight: 700 }}>{DIM_SHORT[f.dimension].toUpperCase()}</span>
+                    <span className="xs" style={{ color: DIM_COLOR[f.dimension], fontWeight: 700 }}>{t(DIM_SHORT[f.dimension]).toUpperCase()}</span>
                     <ProvenanceBadge access={f.access} source={f.source} />
-                    {f.trend?.significant && <span className="chip chip-warn">clear trend</span>}
+                    {f.trend?.significant && <span className="chip chip-warn">{t("clear trend")}</span>}
                   </div>
                   <strong>{f.headline}</strong>
                   <p>{f.detail}</p>
@@ -89,8 +91,7 @@ export function FieldPage() {
           <div className="stack">
             <FieldMap farms={farms ?? []} selectedId={id} onSelect={() => undefined} field={field} height={460} />
             <p className="xs faint">
-              The gold square is the field. Dashed squares show how much ground a single <Term id="resolution">pixel</Term> of each dataset covers:
-              zoom out to find the 55 km weather cell.
+              {t("The gold square is the field. Dashed squares show how much ground a single")} <Term id="resolution">{t("pixel")}</Term> {t("of each dataset covers: zoom out to find the 55 km weather cell.")}
             </p>
           </div>
         </section>
@@ -100,9 +101,9 @@ export function FieldPage() {
         </section>
 
         <section id="priorities" className="controls-and-results">
-          <Card title="What matters on your farm?" subtitle="Your answers decide the ranking. There is no single best rotation, only the best one for these goals." className="controls-card">
-            <Tabs label="Farmer inputs" value={controlTab} onChange={setControlTab}
-              tabs={[{ id: "priorities", label: "Priorities" }, { id: "constraints", label: "What the farm can do", badge: Object.keys(constraints).length || undefined }]} />
+          <Card title={t("What matters on your farm?")} subtitle={t("Your answers decide the ranking. There is no single best rotation, only the best one for these goals.")} className="controls-card">
+            <Tabs label={t("Farmer inputs")} value={controlTab} onChange={setControlTab}
+              tabs={[{ id: "priorities", label: t("Priorities") }, { id: "constraints", label: t("What the farm can do"), badge: Object.keys(constraints).length || undefined }]} />
             <div style={{ paddingTop: 16 }}>
               {controlTab === "priorities"
                 ? (cmp ? <PrioritySliders effective={cmp.priorities} defaults={field.farm.default_priorities} /> : <Loading height={320} />)
@@ -111,18 +112,18 @@ export function FieldPage() {
           </Card>
           <div className="results-col">
             {comparison.error && <ErrorNotice error={comparison.error} title="The rotations could not be compared" />}
-            {!cmp && !comparison.error && <Card title="Simulating rotations for this field"><Loading height={420} label="Simulating rotations" /></Card>}
+            {!cmp && !comparison.error && <Card title={t("Simulating rotations for this field")}><Loading height={420} label="Simulating rotations" /></Card>}
             {cmp && <StrategyExplorer field={field} comparison={cmp} refreshing={comparison.refreshing} />}
           </div>
         </section>
 
         <section id="stress">
-          <Card title="Would it hold up? Stress-test the rotations"
-            subtitle="Shift the weather this field has actually had since 2001 and re-run every rotation: planting dates, water, heat, erosion and income all respond.">
+          <Card title={t("Would it hold up? Stress-test the rotations")}
+            subtitle={t("Shift the weather this field has actually had since 2001 and re-run every rotation: planting dates, water, heat, erosion and income all respond.")}>
             <div className="stress-layout">
               <div><ScenarioSliders irrigated={irrigated} /></div>
               <div className="stack">
-                {isNeutral(scenario) && <p className="notice notice-info">Move a dial or pick a preset to see how each rotation responds. Below: how the rotations compare across one dial's whole range.</p>}
+                {isNeutral(scenario) && <p className="notice notice-info">{t("Move a dial or pick a preset to see how each rotation responds. Below: how the rotations compare across one dial's whole range.")}</p>}
                 {stress.error && <ErrorNotice error={stress.error} />}
                 {!isNeutral(scenario) && !stress.data && !stress.error && <Loading height={260} label="Running the scenario" />}
                 {!isNeutral(scenario) && stress.data && <ScenarioResults result={stress.data} refreshing={stress.refreshing} />}
@@ -136,7 +137,7 @@ export function FieldPage() {
         <section id="trust" className="stack">
           <TrustCard field={field} />
           {cmp && (
-            <Card title="Take it with you" subtitle="A brief for your County Extension agent or crop adviser: the field, your priorities, each rotation's five explanations and the checklist.">
+            <Card title={t("Take it with you")} subtitle={t("A brief for your DOA extension officer or crop adviser: the field, your priorities, each rotation's five explanations and the checklist.")}>
               <ExportButtons field={field} comparison={cmp} />
             </Card>
           )}
@@ -148,31 +149,32 @@ export function FieldPage() {
 
 function FieldHero({ field }: { field: FieldOverview }) {
   const units = useUnits();
+  const { t, tName } = useT();
   const f = field.farm;
   const c = field.climate;
   const gw = field.groundwater;
   return (
     <header className="field-hero">
       <div className="container">
-        <Link to="/" className="field-back no-print">← All fields</Link>
+        <Link to="/" className="field-back no-print">{t("← All fields")}</Link>
         <div className="field-hero-grid">
           <div>
-            <span className="eyebrow hero-eyebrow">{f.region}{f.county ? ` · ${f.county} County, ${f.state}` : ""} · {units.area(f.area_ha)}</span>
+            <span className="eyebrow hero-eyebrow">{f.region}{f.district ? ` · ${f.district}, ${f.state}` : ""} · {units.area(f.area_ha)}</span>
             <h1>{f.name}</h1>
             <p className="field-headline">{f.headline}</p>
             <p className="field-story">{f.story}</p>
             <div className="row-wrap">{f.challenge_tags.map((t) => <span key={t} className="chip chip-hero">{t}</span>)}</div>
           </div>
           <div className="field-stats">
-            <Stat label="Grows now" value={<span style={{ fontSize: "1.05rem" }}>{f.baseline_rotation.name}</span>} sub={f.management.irrigation.label} />
-            <Stat label={<Term id="fused_rain">Rain and snow</Term>} value={`${units.water(field.fusion.precip.annual_mm, units.system === "us" ? 1 : 0)}`} sub={`a year · air could take ${units.water(c.annual_et0_mm, 0)}`} />
-            <Stat label="Soil" value={<span style={{ fontSize: "1.05rem" }}>{field.soil.series} {field.soil.texture_class}</span>} sub={<>{field.soil.organic_matter_pct}% <Term id="organic_matter">organic matter</Term> · group <Term id="hsg">{field.soil.hydrologic_group}</Term></>} />
-            <Stat label={<Term id="frost_free">Frost-free season</Term>} value={`${Math.round(c.frost.frost_free_days_median)} days`} sub={`${Math.round(c.monthly.heat_days_35.reduce((a, b) => a + b, 0))} days a year reach ${units.temp(35)}`} />
+            <Stat label={t("Grows now")} value={<span style={{ fontSize: "1.05rem" }}>{tName(f.baseline_rotation.name)}</span>} sub={t(f.management.irrigation.label)} />
+            <Stat label={<Term id="fused_rain">{t("Rainfall")}</Term>} value={`${units.water(field.fusion.precip.annual_mm, units.system === "us" ? 1 : 0)}`} sub={t("a year · air could take {et}", { et: units.water(c.annual_et0_mm, 0) })} />
+            <Stat label={t("Soil")} value={<span style={{ fontSize: "1.05rem" }}>{field.soil.series} {field.soil.texture_class}</span>} sub={<>{field.soil.organic_matter_pct}% <Term id="organic_matter">{t("organic matter")}</Term> · {t("group")} <Term id="hsg">{field.soil.hydrologic_group}</Term></>} />
+            <Stat label={<Term id="monsoon">{t("Mean temperature")}</Term>} value={units.temp(c.mean_annual_temp_c, 1)} sub={t("{n} days a year reach {temp}", { n: Math.round(c.monthly.heat_days_35.reduce((a, b) => a + b, 0)), temp: units.temp(35) })} />
             {gw.tws_trend_cm_yr !== null && (
-              <Stat label={<Term id="grace">Regional water storage</Term>} tone={gw.tws_trend_cm_yr < -0.3 ? "bad" : undefined}
-                value={`${gw.tws_trend_cm_yr > 0 ? "+" : ""}${units.system === "us" ? (gw.tws_trend_cm_yr / 2.54).toFixed(1) + " in" : gw.tws_trend_cm_yr.toFixed(1) + " cm"}/yr`} sub="GRACE satellites, ~200 mi footprint" />
+              <Stat label={<Term id="grace">{t("Regional water storage")}</Term>} tone={gw.tws_trend_cm_yr < -0.3 ? "bad" : undefined}
+                value={`${gw.tws_trend_cm_yr > 0 ? "+" : ""}${units.system === "us" ? (gw.tws_trend_cm_yr / 2.54).toFixed(1) + " in" : gw.tws_trend_cm_yr.toFixed(1) + " cm"}/yr`} sub={t("GRACE satellites, ~300 km footprint")} />
             )}
-            <Stat label="Slope" value={`${(field.soil.representative_slope_pct ?? field.terrain?.slope_pct ?? 0).toFixed(1)}%`} sub={field.terrain ? `${units.distance(field.terrain.elevation_m)} elevation` : "soil survey"} />
+            <Stat label={t("Slope")} value={`${(field.soil.representative_slope_pct ?? field.terrain?.slope_pct ?? 0).toFixed(1)}%`} sub={field.terrain ? t("{h} elevation", { h: units.distance(field.terrain.elevation_m) }) : t("soil survey")} />
           </div>
         </div>
       </div>
@@ -183,13 +185,14 @@ function FieldHero({ field }: { field: FieldOverview }) {
 /** How much weight each data layer carries for this field, and anything that failed to load. */
 function TrustCard({ field }: { field: FieldOverview }) {
   const units = useUnits();
+  const { t } = useT();
   const conf = field.fusion.confidence;
   return (
-    <Card title="Where the numbers come from, and how far to trust them"
-      subtitle="Every layer, how it was obtained, how big its pixel is next to this field, and the weight the tool gives it. Nothing is hidden behind the scores.">
+    <Card title={t("Where the numbers come from, and how far to trust them")}
+      subtitle={t("Every layer, how it was obtained, how big its pixel is next to this field, and the weight the tool gives it. Nothing is hidden behind the scores.")}>
       <div className="table-scroll">
         <table className="table">
-          <thead><tr><th>Layer</th><th>Source</th><th>How obtained</th><th className="num">Pixel</th><th className="num">vs. field</th><th>Brought to field scale by</th><th className="num">Weight</th></tr></thead>
+          <thead><tr><th>{t("Layer")}</th><th>{t("Source")}</th><th>{t("How obtained")}</th><th className="num">{t("Pixel")}</th><th className="num">{t("vs. field")}</th><th>{t("Brought to field scale by")}</th><th className="num">{t("Weight")}</th></tr></thead>
           <tbody>
             {field.fusion.layers.map((l) => (
               <tr key={l.id}>
@@ -206,10 +209,10 @@ function TrustCard({ field }: { field: FieldOverview }) {
         </table>
       </div>
       <p className="small muted" style={{ marginTop: 10 }}>
-        All layers are resampled to calendar months and referenced to the field: {field.fusion.target_grid.toLowerCase()}.
-        Overall <Term id="confidence">confidence</Term> for this field: <strong>{Math.round(conf.overall * 100)}/100</strong>.
-        {field.issues.length > 0 && <> Not retrieved: {field.issues.map((i) => i.layer).join(", ")}.</>}{" "}
-        <Link to="/methods">How the models work →</Link>
+        {t("All layers are resampled to calendar months and referenced to the field:")} {field.fusion.target_grid.toLowerCase()}.{" "}
+        {t("Overall")} <Term id="confidence">{t("confidence")}</Term> {t("for this field:")} <strong>{Math.round(conf.overall * 100)}/100</strong>.
+        {field.issues.length > 0 && <> {t("Not retrieved:")} {field.issues.map((i) => i.layer).join(", ")}.</>}{" "}
+        <Link to="/methods">{t("How the models work →")}</Link>
       </p>
     </Card>
   );

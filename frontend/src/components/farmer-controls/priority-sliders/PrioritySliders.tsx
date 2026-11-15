@@ -10,7 +10,8 @@
 import "../controls.css";
 
 import { useRotationOptions } from "@/hooks/useData";
-import { useFieldShift } from "@/hooks/useFieldShift";
+import { useKebunda } from "@/hooks/useKebunda";
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR, DIM_ICON } from "@/styles/theme";
 import type { DimensionId, Priorities } from "@/types/api";
 
@@ -18,17 +19,19 @@ const WORDS = ["Ignore", "Minor", "Minor", "Some", "Some", "Matters", "Matters",
 
 export function PrioritySliders({ effective, defaults }: { effective: Priorities; defaults: Priorities }) {
   const { data: options } = useRotationOptions();
-  const { priorities, setPriority, setPriorities } = useFieldShift();
+  const { priorities, setPriority, setPriorities } = useKebunda();
+  const { t } = useT();
+  const word = (v: number) => t(WORDS[Math.round(v)]);
   const touched = Object.keys(priorities).length > 0;
   const activePreset = options?.priority_presets.find((p) => (Object.keys(p.priorities) as DimensionId[]).every((d) => p.priorities[d] === effective[d]));
 
   return (
     <div className="stack">
-      <div className="row-wrap" role="group" aria-label="Priority presets">
+      <div className="row-wrap" role="group" aria-label={t("Priority presets")}>
         {options?.priority_presets.map((p) => (
-          <button key={p.id} className={`btn btn-sm ${activePreset?.id === p.id ? "btn-primary" : ""}`} title={p.description} onClick={() => setPriorities(p.priorities)}>{p.label}</button>
+          <button key={p.id} className={`btn btn-sm ${activePreset?.id === p.id ? "btn-primary" : ""}`} title={t(p.description)} onClick={() => setPriorities(p.priorities)}>{t(p.label)}</button>
         ))}
-        {touched && <button className="btn btn-ghost btn-sm" onClick={() => setPriorities({})}>Reset to this field's defaults</button>}
+        {touched && <button className="btn btn-ghost btn-sm" onClick={() => setPriorities({})}>{t("Reset to this field's defaults")}</button>}
       </div>
       <div className="slider-list">
         {(options?.dimensions ?? []).map((d) => {
@@ -37,15 +40,15 @@ export function PrioritySliders({ effective, defaults }: { effective: Priorities
             <div key={d.id} className="slider-row">
               <div className="slider-head">
                 <span className="slider-icon" aria-hidden>{DIM_ICON[d.id]}</span>
-                <label htmlFor={`prio-${d.id}`}><strong>{d.label}</strong></label>
-                <span className="slider-word" style={{ color: DIM_COLOR[d.id] }}>{WORDS[Math.round(v)]}</span>
+                <label htmlFor={`prio-${d.id}`}><strong>{t(d.label)}</strong></label>
+                <span className="slider-word" style={{ color: DIM_COLOR[d.id] }}>{word(v)}</span>
               </div>
               <input
-                id={`prio-${d.id}`} type="range" min={0} max={10} step={1} value={v} aria-valuetext={`${WORDS[Math.round(v)]} (${v} of 10)`}
+                id={`prio-${d.id}`} type="range" min={0} max={10} step={1} value={v} aria-valuetext={t("{word} ({v} of 10)", { word: word(v), v })}
                 style={{ ["--pct" as string]: `${v * 10}%`, ["--track-fill" as string]: DIM_COLOR[d.id] }}
                 onChange={(e) => setPriority(d.id, Number(e.target.value))}
               />
-              <p className="xs faint">{d.help}{defaults[d.id] !== v && <span> · field default: {WORDS[Math.round(defaults[d.id])].toLowerCase()}</span>}</p>
+              <p className="xs faint">{t(d.help)}{defaults[d.id] !== v && <span> · {t("field default:")} {word(defaults[d.id]).toLowerCase()}</span>}</p>
             </div>
           );
         })}

@@ -1,3 +1,4 @@
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR } from "@/styles/theme";
 import type { Reason } from "@/types/api";
 
@@ -17,20 +18,21 @@ const DRIVER: Record<Reason["driver"], { label: string; color: string }> = {
 
 /** Pillar 1. Each reason is tagged with what drove it, so the logic is inspectable. */
 export function WhyPanel({ strategy }: PanelProps) {
+  const { t } = useT();
   return (
     <ul className="why-list">
       {strategy.explanation.why.map((r, i) => {
         const d = DRIVER[r.driver] ?? DRIVER.reference;
         return (
           <li key={i} className="why-item" style={{ borderLeftColor: r.dimension ? DIM_COLOR[r.dimension] : d.color }}>
-            <span className="why-driver" style={{ color: d.color }}>{d.label}</span>
+            <span className="why-driver" style={{ color: d.color }}>{t(d.label)}</span>
             <p>{r.text}</p>
           </li>
         );
       })}
       {strategy.issues.length > 0 && (
         <li className="why-item" style={{ borderLeftColor: "var(--warn)" }}>
-          <span className="why-driver" style={{ color: "var(--warn)" }}>Fit notes</span>
+          <span className="why-driver" style={{ color: "var(--warn)" }}>{t("Fit notes")}</span>
           <p>{strategy.issues.join(" ")}</p>
         </li>
       )}

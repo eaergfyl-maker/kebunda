@@ -7,6 +7,7 @@
 import { useState } from "react";
 
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import { CHART, ROLE_COLOR } from "@/styles/theme";
 import type { Strategy } from "@/types/api";
 
@@ -17,6 +18,7 @@ const PALETTE = ["#2c6e91", "#c9952b", "#9a5ba0", "#4f8f4a", "#c8553d"];
 
 export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
   const units = useUnits();
+  const { t } = useT();
   const [hidden, setHidden] = useState<Set<string>>(new Set());
 
   const withHistory = strategies.filter((s): s is Strategy & { history: NonNullable<Strategy["history"]> } => s.history !== null);
@@ -34,7 +36,7 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
     });
 
   if (!withHistory.length) {
-    return <div className="notice notice-warn">Year-by-year returns were not available for these rotations.</div>;
+    return <div className="notice notice-warn">{t("Year-by-year returns were not available for these rotations.")}</div>;
   }
 
   const years = withHistory[0].history.years;
@@ -58,14 +60,16 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
   }
   const money = (v: number) => units.money(v);
   const sentence = best
-    ? `In a typical year, ${best.title} earns about ${money(Math.abs(best.history.mean_net_per_ha - baseline.history.mean_net_per_ha))} per hectare ${best.history.mean_net_per_ha >= baseline.history.mean_net_per_ha ? "more" : "less"} than your current rotation. In a bad year it earns ${money(best.history.bad_year_net_per_ha)}, against ${money(baseline.history.bad_year_net_per_ha)} for the current one.`
-    : `In a typical year your current rotation earns ${money(baseline.history.mean_net_per_ha)} per hectare, and about ${money(baseline.history.bad_year_net_per_ha)} in a bad year.`;
+    ? t(best.history.mean_net_per_ha >= baseline.history.mean_net_per_ha
+        ? "In a typical year, {name} earns about {diff} per hectare more than your current rotation. In a bad year it earns {bad}, against {base} for the current one."
+        : "In a typical year, {name} earns about {diff} per hectare less than your current rotation. In a bad year it earns {bad}, against {base} for the current one.",
+      { name: t(best.title), diff: money(Math.abs(best.history.mean_net_per_ha - baseline.history.mean_net_per_ha)), bad: money(best.history.bad_year_net_per_ha), base: money(baseline.history.bad_year_net_per_ha) })
+    : t("In a typical year your current rotation earns {avg} per hectare, and about {bad} in a bad year.", { avg: money(baseline.history.mean_net_per_ha), bad: money(baseline.history.bad_year_net_per_ha) });
 
   return (
     <div className="stack">
       <p className="small muted" style={{ maxWidth: "70ch" }}>
-        What each rotation would have earned on this field in every year of the weather record, per hectare after costs.
-        Lines that swing far up and down are riskier; shaded columns are the worst years for your current rotation.
+        {t("What each rotation would have earned on this field in every year of the weather record, per hectare after costs. Lines that swing far up and down are riskier; shaded columns are the worst years for your current rotation.")}
       </p>
 
       <Takeaway>{sentence}</Takeaway>
@@ -76,17 +80,17 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
           return (
             <button key={s.id} type="button" className="chip" aria-pressed={!off} onClick={() => toggle(s.id)}
               style={{ opacity: off ? 0.45 : 1, cursor: "pointer", border: "none" }}>
-              <span className="dot" style={{ background: colorOf.get(s.id) }} /> {s.role === "baseline" ? "Current rotation" : s.title}
+              <span className="dot" style={{ background: colorOf.get(s.id) }} /> {s.role === "baseline" ? t("Current rotation") : t(s.title)}
             </button>
           );
         })}
       </div>
 
-      <Svg b={b} label="Net return per hectare by weather year for each rotation">
+      <Svg b={b} label={t("Net return per hectare by weather year")}>
         <YAxis b={b} ticks={niceTicks(lo, hi, 4)} y={y} format={(v) => units.money(v)} />
         {years.map((yr, i) => worst.has(yr) && (
           <rect key={`w${yr}`} x={x(i) - bandW / 2} y={b.top} width={bandW} height={b.height - b.bottom - b.top} fill="#c8553d" opacity={0.1}>
-            <title>{`${yr}: one of the worst years for the current rotation`}</title>
+            <title>{t("{y}: one of the worst years for the current rotation", { y: yr })}</title>
           </rect>
         ))}
         {lo < 0 && hi > 0 && <line x1={b.left} x2={b.width - b.right} y1={y(0)} y2={y(0)} stroke={CHART.ink} strokeWidth={1.2} strokeDasharray="4 3" opacity={0.6} />}
@@ -98,7 +102,7 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
               <path d={linePath(s.history.net_per_ha, x, y)} fill="none" stroke={c} strokeWidth={isBase ? 2.8 : 2} strokeDasharray={isBase ? undefined : "6 4"} strokeLinejoin="round" />
               {s.history.net_per_ha.map((v, i) => (
                 <circle key={i} cx={x(i)} cy={y(v)} r={2.6} fill={c}>
-                  <title>{`${years[i]} · ${isBase ? "Current rotation" : s.title}: ${units.money(v)} per ha`}</title>
+                  <title>{`${years[i]} · ${isBase ? t("Current rotation") : t(s.title)}: ${units.money(v)}/ha`}</title>
                 </circle>
               ))}
             </g>
@@ -112,12 +116,12 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
       <div className="table-scroll">
         <table className="table">
           <thead>
-            <tr><th>Rotation</th><th className="num">Average year</th><th className="num">A bad year</th><th className="num">Swing from weather</th></tr>
+            <tr><th>{t("Rotation")}</th><th className="num">{t("Average year")}</th><th className="num">{t("A bad year")}</th><th className="num">{t("Swing from weather")}</th></tr>
           </thead>
           <tbody>
             {withHistory.map((s) => (
               <tr key={s.id}>
-                <td><span className="dot" style={{ background: colorOf.get(s.id), marginRight: 6 }} />{s.role === "baseline" ? "Current rotation" : s.title}</td>
+                <td><span className="dot" style={{ background: colorOf.get(s.id), marginRight: 6 }} />{s.role === "baseline" ? t("Current rotation") : t(s.title)}</td>
                 <td className="num">{units.money(s.history.mean_net_per_ha)}</td>
                 <td className="num">{units.money(s.history.bad_year_net_per_ha)}</td>
                 <td className="num">±{units.money(s.history.weather_sd_per_ha)}</td>
@@ -127,7 +131,7 @@ export function NetReturnByYear({ strategies }: { strategies: Strategy[] }) {
         </table>
       </div>
       <p className="xs faint">
-        Simulated from 24 years of weather. Prices and costs are planning averages from DOA, FAMA and MARDI sources, excluding land rent and subsidies, so treat them as a way to compare rotations, not a budget.
+        {t("Simulated from 24 years of weather. Prices and costs are planning averages from DOA, FAMA and MARDI sources, excluding land rent and subsidies, so treat them as a way to compare rotations, not a budget.")}
       </p>
       <LocalAdviceNote />
     </div>

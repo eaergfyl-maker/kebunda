@@ -1,9 +1,12 @@
 import { CircleMarker, Tooltip } from "react-leaflet";
 
+import { useT } from "@/i18n/LanguageProvider";
+
 import type { OverlayProps } from "./overlayRegistry";
 
 /** Clickable benchmark-farm markers. The open farm is drawn larger and in wheat gold. */
 export function FarmPins({ farms, selectedId, onSelect }: OverlayProps) {
+  const { t, tName } = useT();
   return (
     <>
       {farms.map((f) => {
@@ -17,9 +20,9 @@ export function FarmPins({ farms, selectedId, onSelect }: OverlayProps) {
             <Tooltip direction="top" offset={[0, -8]} opacity={1} className="farm-tooltip">
               <strong>{f.short_name}</strong>
               <br />
-              {f.baseline_name}
+              {tName(f.baseline_name)}
               <br />
-              <span className="faint">{f.irrigation} · {f.soil_series} {f.soil_texture}</span>
+              <span className="faint">{t(f.irrigation)} · {f.soil_series} {f.soil_texture}</span>
             </Tooltip>
           </CircleMarker>
         );

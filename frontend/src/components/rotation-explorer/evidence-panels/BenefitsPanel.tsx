@@ -1,5 +1,6 @@
 import { Delta } from "@/components/common/ui";
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR, DIM_SHORT } from "@/styles/theme";
 import type { BenefitItem, DimensionId } from "@/types/api";
 import { DIMENSIONS } from "@/types/api";
@@ -9,14 +10,15 @@ import type { PanelProps } from "./panelRegistry";
 /** Pillar 3. Every change against the current rotation, gains and costs alike, with its confidence. */
 export function BenefitsPanel({ strategy, baseline }: PanelProps) {
   const units = useUnits();
+  const { t, tName } = useT();
   if (strategy.role === "baseline") {
     return (
       <div className="stack">
-        <p className="muted">This is the reference every alternative is measured against. Its own numbers:</p>
+        <p className="muted">{t("This is the reference every alternative is measured against. Its own numbers:")}</p>
         <div className="grid-auto">
           {strategy.headline_numbers.map((h) => (
             <div key={h.label} className="benefit-tile">
-              <div className="eyebrow">{h.label}</div>
+              <div className="eyebrow">{t(h.label)}</div>
               <div className="benefit-value num">{units.metric(h.value, h.unit)}</div>
             </div>
           ))}
@@ -32,7 +34,7 @@ export function BenefitsPanel({ strategy, baseline }: PanelProps) {
       <div className="table-scroll">
         <table className="table benefits-table">
           <thead>
-            <tr><th>What changes</th><th className="num">Now</th><th className="num">With this rotation</th><th className="num">Change</th><th>How sure</th></tr>
+            <tr><th>{t("What changes")}</th><th className="num">{t("Now")}</th><th className="num">{t("With this rotation")}</th><th className="num">{t("Change")}</th><th>{t("How sure")}</th></tr>
           </thead>
           <tbody>
             {byDim.map(({ d, rows }) => rows.map((b, i) => <Row key={b.metric} b={b} d={d} first={i === 0} span={rows.length} units={units} />))}
@@ -40,32 +42,32 @@ export function BenefitsPanel({ strategy, baseline }: PanelProps) {
         </table>
       </div>
       <p className="xs faint">
-        Compared with “{baseline.name}”. Ranges in brackets are the plausible spread given data and model confidence for that topic.
-        Dollar figures exclude land cost and are for ranking options, not budgeting.
+        {t("Compared with “{x}”.", { x: tName(baseline.name) })} {t("Ranges in brackets are the plausible spread given data and model confidence for that topic. Ringgit figures exclude land cost and are for ranking options, not budgeting.")}
       </p>
     </div>
   );
 }
 
 function Row({ b, d, first, span, units }: { b: BenefitItem; d: DimensionId; first: boolean; span: number; units: ReturnType<typeof useUnits> }) {
+  const { t } = useT();
   const sign = b.delta > 0 ? "+" : "";
   const deltaText = b.unit.startsWith("$") ? `${b.delta < 0 ? "−" : "+"}${units.money(Math.abs(b.delta))}` : `${sign}${units.metric(b.delta, b.unit).replace(/^\+/, "")}`;
   return (
     <tr>
       <td>
-        {first && <span className="benefit-dim" style={{ color: DIM_COLOR[d] }} data-span={span}>{DIM_SHORT[d]}</span>}
-        <strong>{b.label}</strong>
+        {first && <span className="benefit-dim" style={{ color: DIM_COLOR[d] }} data-span={span}>{t(DIM_SHORT[d])}</span>}
+        <strong>{t(b.label)}</strong>
         <div className="xs faint">{b.meaning}</div>
       </td>
       <td className="num muted">{units.metric(b.baseline, b.unit)}</td>
       <td className="num"><strong>{units.metric(b.value, b.unit)}</strong></td>
       <td className="num">
-        <Delta direction={b.direction} rising={b.delta > 0}>{b.direction === "same" ? "about the same" : deltaText}</Delta>
+        <Delta direction={b.direction} rising={b.delta > 0}>{b.direction === "same" ? t("about the same") : deltaText}</Delta>
         {b.range && b.direction !== "same" && (
-          <div className="xs faint num">[{units.metric(b.range[0], b.unit)} to {units.metric(b.range[1], b.unit)}]</div>
+          <div className="xs faint num">[{units.metric(b.range[0], b.unit)} – {units.metric(b.range[1], b.unit)}]</div>
         )}
       </td>
-      <td><span className={`chip ${b.confidence === "high" ? "chip-good" : b.confidence === "moderate" ? "chip-warn" : "chip-bad"}`}>{b.confidence}</span></td>
+      <td><span className={`chip ${b.confidence === "high" ? "chip-good" : b.confidence === "moderate" ? "chip-warn" : "chip-bad"}`}>{t(b.confidence)}</span></td>
     </tr>
   );
 }

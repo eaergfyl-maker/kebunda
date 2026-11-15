@@ -8,7 +8,7 @@
 import { useMemo } from "react";
 
 import { useAsync } from "@/hooks/useAsync";
-import { isNeutral, useFieldShift } from "@/hooks/useFieldShift";
+import { isNeutral, useKebunda } from "@/hooks/useKebunda";
 import { api } from "@/services/apiClient";
 import type { RotationSpec, ScenarioKey, Strategy } from "@/types/api";
 
@@ -34,7 +34,7 @@ export function usePowerPoint(point: { lat: number; lon: number } | null) {
  * constraints, baseline correction and own rotations (all read from shared state).
  */
 export function useComparison(fieldId: string | null) {
-  const { priorities, constraints, customStrategies, baselineOverride } = useFieldShift();
+  const { priorities, constraints, customStrategies, baselineOverride } = useKebunda();
   const body = useMemo(
     () => ({
       field_id: fieldId ?? "",
@@ -55,7 +55,7 @@ export function toSpecs(strategies: Strategy[]): RotationSpec[] {
 
 /** Stress-test the compared strategies under the scenario in shared state. Skipped while the scenario is neutral. */
 export function useStressTest(fieldId: string | null, strategies: Strategy[] | null) {
-  const { scenario, priorities, constraints } = useFieldShift();
+  const { scenario, priorities, constraints } = useKebunda();
   const specs = useMemo(() => (strategies ? toSpecs(strategies) : []), [strategies]);
   const active = Boolean(fieldId && specs.length && !isNeutral(scenario));
   const body = useMemo(
@@ -71,7 +71,7 @@ export function useStressTest(fieldId: string | null, strategies: Strategy[] | n
 
 /** Vary one scenario dial across its range for the compared strategies. */
 export function useSweep(fieldId: string | null, strategies: Strategy[] | null, parameter: ScenarioKey | null) {
-  const { priorities, constraints } = useFieldShift();
+  const { priorities, constraints } = useKebunda();
   const specs = useMemo(() => (strategies ? toSpecs(strategies) : []), [strategies]);
   const body = useMemo(
     () => ({

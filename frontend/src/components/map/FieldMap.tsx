@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MapContainer, ScaleControl, useMap } from "react-leaflet";
 
 import { useGibsLayers } from "@/hooks/useData";
+import { useT } from "@/i18n/LanguageProvider";
 import type { FarmSummary, FieldOverview } from "@/types/api";
 
 import { LayerPanel } from "./controls/LayerPanel";
@@ -62,6 +63,7 @@ function ViewController({ field }: { field: FieldOverview | null }) {
 }
 
 export function FieldMap({ farms, selectedId = null, onSelect, field = null, onAnalyzePoint, analyzing, height = 520, defaultLayerId = "MODIS_Terra_L3_NDVI_Monthly" }: FieldMapProps) {
+  const { t } = useT();
   const { data: gibs } = useGibsLayers();
   const layers = useMemo(() => buildLayerList(gibs?.layers), [gibs]);
   const [activeId, setActiveId] = useState<string | null>(defaultLayerId);
@@ -99,7 +101,7 @@ export function FieldMap({ farms, selectedId = null, onSelect, field = null, onA
 
       <div className={`fieldmap-panel ${panelOpen ? "" : "is-collapsed"}`}>
         <button className="fieldmap-panel-toggle" onClick={() => setPanelOpen((o) => !o)} aria-expanded={panelOpen}>
-          {panelOpen ? "Hide layers" : "Layers"}
+          {panelOpen ? t("Hide layers") : t("Layers")}
         </button>
         {panelOpen && (
           <>
@@ -108,11 +110,11 @@ export function FieldMap({ farms, selectedId = null, onSelect, field = null, onA
               opacity={opacity} onOpacity={setOpacity} date={date} onDate={setDate}
             />
             <div className="layer-panel-section">
-              <div className="eyebrow">On the map</div>
+              <div className="eyebrow">{t("On the map")}</div>
               {overlays.map((o) => (
-                <label key={o.id} className="check" title={o.help} style={{ display: "flex", marginTop: 6 }}>
+                <label key={o.id} className="check" title={t(o.help)} style={{ display: "flex", marginTop: 6 }}>
                   <input type="checkbox" checked={Boolean(enabled[o.id])} onChange={(e) => setEnabled((s) => ({ ...s, [o.id]: e.target.checked }))} />
-                  {o.label}
+                  {t(o.label)}
                 </label>
               ))}
             </div>

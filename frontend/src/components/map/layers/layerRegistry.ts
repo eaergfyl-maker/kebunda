@@ -130,11 +130,11 @@ export function resolveTileUrl(layer: MapLayerDef, date: string): string {
 }
 
 /** Month choices for the date scrubber: the last `count` months, oldest first, mid-month dates. */
-export function monthSteps(count = 48, now = new Date()): { date: string; label: string }[] {
+export function monthSteps(count = 48, now = new Date(), locale = "en-MY"): { date: string; label: string }[] {
   const out: { date: string; label: string }[] = [];
   for (let i = count; i >= 1; i--) {
     const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 15));
-    out.push({ date: iso(d), label: d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" }) });
+    out.push({ date: iso(d), label: d.toLocaleDateString(locale, { month: "short", year: "numeric", timeZone: "UTC" }) });
   }
   return out;
 }

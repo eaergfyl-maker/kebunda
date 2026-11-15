@@ -6,6 +6,7 @@
  * TODO (Member 3): let the farmer choose which rows to show and remember the choice.
  */
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 import { DIM_COLOR, DIM_SHORT, ROLE_COLOR } from "@/styles/theme";
 import type { DimensionId, Metrics, Strategy } from "@/types/api";
 
@@ -24,6 +25,7 @@ const ROWS: { key: keyof Metrics; label: string; unit: string; higher: boolean; 
 
 export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies: Strategy[]; selectedId: string; onSelect: (id: string) => void }) {
   const units = useUnits();
+  const { t } = useT();
   const irrigated = strategies.some((s) => s.metrics.irrigation_mm_yr > 0);
   const rows = ROWS.filter((r) => !r.irrigatedOnly || irrigated);
   return (
@@ -35,7 +37,7 @@ export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies
             {strategies.map((s) => (
               <th key={s.id} className={s.id === selectedId ? "is-selected" : ""}>
                 <button onClick={() => onSelect(s.id)} className="matrix-head">
-                  <span className="dot" style={{ background: ROLE_COLOR[s.role] }} /> {s.role === "baseline" ? "Now" : s.title}
+                  <span className="dot" style={{ background: ROLE_COLOR[s.role] }} /> {s.role === "baseline" ? t("Now") : t(s.title)}
                 </button>
               </th>
             ))}
@@ -43,7 +45,7 @@ export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies
         </thead>
         <tbody>
           <tr>
-            <td><strong>Fit for your goals</strong></td>
+            <td><strong>{t("Fit for your goals")}</strong></td>
             {strategies.map((s) => <td key={s.id} className={`num ${s.id === selectedId ? "is-selected" : ""}`}><strong>{Math.round(s.fit.fit)}</strong></td>)}
           </tr>
           {rows.map((r) => {
@@ -51,7 +53,7 @@ export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies
             const best = r.higher ? Math.max(...vals) : Math.min(...vals);
             return (
               <tr key={r.key}>
-                <td><span className="matrix-dim" style={{ background: DIM_COLOR[r.dim] }} title={DIM_SHORT[r.dim]} />{r.label}</td>
+                <td><span className="matrix-dim" style={{ background: DIM_COLOR[r.dim] }} title={t(DIM_SHORT[r.dim])} />{t(r.label)}</td>
                 {strategies.map((s, i) => (
                   <td key={s.id} className={`num ${s.id === selectedId ? "is-selected" : ""} ${vals[i] === best && new Set(vals).size > 1 ? "is-best" : ""}`}>
                     {units.metric(vals[i], r.unit)}
@@ -61,7 +63,7 @@ export function CompareMatrix({ strategies, selectedId, onSelect }: { strategies
             );
           })}
           <tr>
-            <td>Bad-year net return (1 in 5)</td>
+            <td>{t("Bad-year net return (1 in 5)")}</td>
             {strategies.map((s) => <td key={s.id} className={`num ${s.id === selectedId ? "is-selected" : ""}`}>{s.history ? units.money(s.history.bad_year_net_per_ha) : "—"}</td>)}
           </tr>
         </tbody>

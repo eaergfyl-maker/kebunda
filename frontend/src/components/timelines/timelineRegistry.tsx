@@ -14,7 +14,7 @@
  *   comparison.strategies[i].months / .vulnerability / .history   per-rotation simulation output
  *
  * TODO (Member 2), high-impact additions:
- *   - Animated seasonal NDVI scrubber synced with the map date (lift `date` into useFieldShift).
+ *   - Animated seasonal NDVI scrubber synced with the map date (lift `date` into useKebunda).
  *   - CoCoRaHS rain-gauge vs. GPM IMERG comparison (see SatelliteVsGround.tsx).
  *   - GRACE-FO groundwater trend view (see ClimateRecord.tsx).
  *   - Soil-water tank animation: strategy.months[i].soil_water_frac through the rotation.

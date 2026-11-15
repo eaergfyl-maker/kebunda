@@ -1,4 +1,5 @@
-import { useFieldShift } from "@/hooks/useFieldShift";
+import { useKebunda } from "@/hooks/useKebunda";
+import { useT } from "@/i18n/LanguageProvider";
 import type { RiskItem } from "@/types/api";
 
 import type { PanelProps } from "./panelRegistry";
@@ -17,7 +18,8 @@ const SEVERITY: Record<RiskItem["severity"], { label: string; cls: string }> = {
  *   DOA (Jabatan Pertanian) office for field.farm.district (the directory is public).
  */
 export function RisksPanel({ strategy, comparison }: PanelProps) {
-  const { reviewed, toggleReviewed } = useFieldShift();
+  const { reviewed, toggleReviewed } = useKebunda();
+  const { t } = useT();
   const risks = strategy.explanation.risks;
   const key = (r: RiskItem) => `${comparison.field_id}:${strategy.id}:${r.id}`;
   const done = risks.filter((r) => reviewed[key(r)]).length;
@@ -27,9 +29,9 @@ export function RisksPanel({ strategy, comparison }: PanelProps) {
     <div className="stack">
       <div className="spread" style={{ flexWrap: "wrap" }}>
         <p className="small muted" style={{ maxWidth: "68ch" }}>
-          These are the questions this tool cannot answer. Take them to the people who can. Tick each one off as it is reviewed.
+          {t("These are the questions this tool cannot answer. Take them to the people who can. Tick each one off as it is reviewed.")}
         </p>
-        <span className="chip num">{done} of {risks.length} reviewed</span>
+        <span className="chip num">{t("{a} of {b} reviewed", { a: done, b: risks.length })}</span>
       </div>
       <ul className="risk-list">
         {sorted.map((r) => {
@@ -37,18 +39,18 @@ export function RisksPanel({ strategy, comparison }: PanelProps) {
           return (
             <li key={r.id} className={`risk-item ${checked ? "is-done" : ""}`}>
               <label className="risk-check">
-                <input type="checkbox" checked={checked} onChange={() => toggleReviewed(key(r))} aria-label={`Mark "${r.title}" as reviewed`} />
+                <input type="checkbox" checked={checked} onChange={() => toggleReviewed(key(r))} aria-label={t("Mark \"{x}\" as reviewed", { x: r.title })} />
               </label>
               <div>
                 <div className="row-wrap">
                   <strong>{r.title}</strong>
-                  <span className={`chip ${SEVERITY[r.severity].cls}`}>{SEVERITY[r.severity].label}</span>
-                  <span className="chip">{r.category}</span>
+                  <span className={`chip ${SEVERITY[r.severity].cls}`}>{t(SEVERITY[r.severity].label)}</span>
+                  <span className="chip">{t(r.category)}</span>
                 </div>
                 <p>{r.detail}</p>
                 <div className="row-wrap xs" style={{ marginTop: 4 }}>
-                  <span className="faint">Review with:</span>
-                  {r.who.map((w) => <span key={w} className="who-tag">{w}</span>)}
+                  <span className="faint">{t("Review with:")}</span>
+                  {r.who.map((w) => <span key={w} className="who-tag">{t(w)}</span>)}
                 </div>
               </div>
             </li>

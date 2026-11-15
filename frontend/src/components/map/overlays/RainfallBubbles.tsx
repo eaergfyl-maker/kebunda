@@ -1,6 +1,7 @@
 import { CircleMarker, Tooltip } from "react-leaflet";
 
 import { useUnits } from "@/hooks/useUnits";
+import { useT } from "@/i18n/LanguageProvider";
 
 import type { OverlayProps } from "./overlayRegistry";
 
@@ -14,6 +15,7 @@ const radiusFor = (mm: number) => 6 + Math.sqrt(Math.max(mm, 0)) * 0.35;
  */
 export function RainfallBubbles({ farms }: OverlayProps) {
   const units = useUnits();
+  const { t } = useT();
   return (
     <>
       {farms.map((f) => (
@@ -29,7 +31,7 @@ export function RainfallBubbles({ farms }: OverlayProps) {
           <Tooltip direction="bottom" opacity={1} permanent={false}>
             <strong>{f.short_name}</strong>
             <br />
-            {units.water(f.annual_precip_mm)}/yr of rain
+            {t("{r}/yr of rain", { r: units.water(f.annual_precip_mm) })}
           </Tooltip>
         </CircleMarker>
       ))}
