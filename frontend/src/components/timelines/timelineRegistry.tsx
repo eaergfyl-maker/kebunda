@@ -18,7 +18,7 @@
  *   - CoCoRaHS rain-gauge vs. GPM IMERG comparison (see SatelliteVsGround.tsx).
  *   - GRACE-FO groundwater trend view (see ClimateRecord.tsx).
  *   - Soil-water tank animation: strategy.months[i].soil_water_frac through the rotation.
- *   - Year-by-year net return ribbons from strategy.history for all strategies at once.
+
  */
 import type { ComponentType } from "react";
 
@@ -28,6 +28,8 @@ import { ClimateRecord } from "./ClimateRecord";
 import { SatelliteVsGround } from "./SatelliteVsGround";
 import { SeasonYear } from "./SeasonYear";
 import { VulnerabilityCalendar } from "./VulnerabilityCalendar";
+import { SoilWaterThroughRotation } from "./SoilWaterThroughRotation";
+import { NetReturnByYear } from "./NetReturnByYear";
 
 export interface TimelineProps {
   field: FieldOverview;
@@ -55,5 +57,13 @@ export const TIMELINES: TimelineDef[] = [
   {
     id: "ground", label: "Satellite vs. ground", question: "How far can a pixel be trusted for one field?",
     Component: ({ field, comparison }) => <SatelliteVsGround field={field} validation={comparison?.strategies[0]?.calendar_validation} />,
+  },
+    {
+    id: "soilwater", label: "Soil water", question: "Does the soil stay supplied with water through each rotation?", needsComparison: true,
+    Component: ({ comparison }) => <SoilWaterThroughRotation strategies={comparison!.strategies} />,
+  },
+  {
+    id: "returns", label: "Money by year", question: "How much does each rotation's income swing from year to year?", needsComparison: true,
+    Component: ({ comparison }) => <NetReturnByYear strategies={comparison!.strategies} />,
   },
 ];

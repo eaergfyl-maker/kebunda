@@ -17,6 +17,7 @@ import { CHART } from "@/styles/theme";
 import type { FieldOverview } from "@/types/api";
 
 import { box, extent, innerW, linePath, niceTicks, scale, Svg, trendLine, YAxis } from "./chartKit";
+import { LocalAdviceNote, Takeaway } from "./Takeaway";
 
 type SeriesId = "precip_mm" | "heat_days_35" | "tmean_c" | "max_1day_mm" | "warm_season_wet_root" | "erosive_days";
 
@@ -50,6 +51,14 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
   const values = field.climate.annual[series] ?? [];
   const trend = field.climate.trends[series];
   const fit = trendLine(values);
+  const yearZ = years
+    .map((yr, yi) => {
+      const v = (z[yi] ?? []).filter((q): q is number => q !== null);
+      return { yr, m: v.length ? v.reduce((a, c) => a + c, 0) / v.length : null };
+    })
+    .filter((r): r is { yr: number; m: number } => r.m !== null);
+  const driestYear = yearZ.length ? yearZ.reduce((a, c) => (c.m < a.m ? c : a)) : null;
+  const wettestYear = yearZ.length ? yearZ.reduce((a, c) => (c.m > a.m ? c : a)) : null;
 
   const b = box(720, 220);
   const x = scale(0, years.length - 1, b.left + 8, b.width - b.right - 8);
@@ -60,6 +69,11 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
 
   return (
     <div className="stack">
+      {driestYear && wettestYear && (
+        <Takeaway>
+          Since {years[0]}, the soil here was driest in {driestYear.yr} and wettest in {wettestYear.yr}. Use the squares below to see whether dry spells are becoming more common, and the second chart to see whether rain, heat or temperature is changing.
+        </Takeaway>
+      )}
       <div>
         <h4>Drought fingerprint: every month since {years[0]}</h4>
         <p className="small muted">
@@ -119,6 +133,7 @@ export function ClimateRecord({ field }: { field: FieldOverview }) {
           </p>
         )}
       </div>
+      <LocalAdviceNote />
     </div>
   );
 }

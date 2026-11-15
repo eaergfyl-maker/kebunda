@@ -1,5 +1,6 @@
 import { CircleMarker, Popup, useMapEvents } from "react-leaflet";
 
+import { Term } from "@/components/common/glossary/Term";
 import { usePowerPoint } from "@/hooks/useData";
 import { useUnits } from "@/hooks/useUnits";
 
@@ -8,6 +9,7 @@ import type { OverlayProps } from "./overlayRegistry";
 /**
  * Click anywhere: a live, keyless NASA POWER query for that coordinate, with the option to
  * build a full custom field there (POWER + IMERG + Sentinel-2 + SRTM + SoilGrids + FAO GAEZ).
+ * Labels are written for farmers: plain words first, technical terms behind a glossary link.
  */
 export function PointProbe({ probe, setProbe, onAnalyzePoint, analyzing }: OverlayProps) {
   const units = useUnits();
@@ -23,26 +25,25 @@ export function PointProbe({ probe, setProbe, onAnalyzePoint, analyzing }: Overl
       eventHandlers={{ add: (e) => window.setTimeout(() => e.target.openPopup(), 0) }} pathOptions={{ color: "#fff", weight: 2, fillColor: "#c8553d", fillOpacity: 1 }}>
       <Popup autoPan closeButton closeOnClick={false} minWidth={260} maxWidth={300}>
         <div className="probe">
-          <div className="eyebrow">NASA POWER · live query</div>
+          <div className="eyebrow">NASA climate data for this spot</div>
           <div className="probe-coord num">{probe.lat.toFixed(3)}°, {probe.lon.toFixed(3)}°</div>
-          {loading && <p className="small muted">Pulling 24 years of daily records from NASA…</p>}
+          {loading && <p className="small muted">Reading 24 years of NASA records for this spot…</p>}
           {error && <p className="small" style={{ color: "var(--bad)" }}>{error.message}</p>}
           {data && (
             <>
               <dl className="probe-grid">
-                <div><dt>Rain and snow</dt><dd className="num">{units.water(data.annual_precip_mm)}/yr</dd></div>
-                <div><dt>Air's thirst (ET0)</dt><dd className="num">{units.water(data.annual_et0_mm)}/yr</dd></div>
-                <div><dt>Average temp</dt><dd className="num">{units.temp(data.mean_annual_temp_c)}</dd></div>
-                
-                <div><dt>Days ≥ {units.temp(35)}</dt><dd className="num">{Math.round(data.monthly.heat_days_35.reduce((a, b) => a + b, 0))}/yr</dd></div>
-                <div><dt>Warming</dt><dd className="num">{units.tempDelta(data.trends.tmean_c?.per_decade ?? 0)}/decade</dd></div>
+                <div><dt>Rain per year</dt><dd className="num">{units.water(data.annual_precip_mm)}/yr</dd></div>
+                <div><dt><Term id="et0">Water the air can take</Term></dt><dd className="num">{units.water(data.annual_et0_mm)}/yr</dd></div>
+                <div><dt>Average temperature</dt><dd className="num">{units.temp(data.mean_annual_temp_c)}</dd></div>
+                <div><dt>Very hot days ({units.temp(35)} or more)</dt><dd className="num">{Math.round(data.monthly.heat_days_35.reduce((a, b) => a + b, 0))}/yr</dd></div>
+                <div><dt>Warming trend</dt><dd className="num">{units.tempDelta(data.trends.tmean_c?.per_decade ?? 0)}/decade</dd></div>
               </dl>
               {onAnalyzePoint && (
                 <button className="btn btn-primary btn-sm" style={{ width: "100%", marginTop: 8 }} disabled={analyzing} onClick={() => onAnalyzePoint(probe.lat, probe.lon)}>
                   {analyzing ? "Building this field…" : "Explore rotations for this spot →"}
                 </button>
               )}
-              <p className="xs faint" style={{ marginTop: 6 }}>MERRA-2 cell about 50 km wide, 2001-2024. Soil and crop history are added when you explore the spot (U.S. only for soil).</p>
+              <p className="xs faint" style={{ marginTop: 6 }}>Averaged over about 50 km, 2001-2024, so this describes the area, not your exact field. Soil and crop history are added when you explore the spot (U.S. only for soil).</p>
             </>
           )}
         </div>
