@@ -40,7 +40,7 @@ PRESETS = [
 ]
 
 KEY_METRICS = ["irrigation_mm_yr", "water_stress_pct", "soil_loss_tons_ac_yr", "bare_months_per_year", "runoff_mm_yr",
-               "net_return_per_acre_yr", "soc_change_t_ha_yr", "crop_water_use_mm_yr"]
+               "net_return_per_ha_yr", "soc_change_t_ha_yr", "crop_water_use_mm_yr"]
 
 
 def clean_scenario(raw: dict | None) -> dict:
@@ -126,14 +126,14 @@ def stress_test(field_id: str, strategies: list[dict], scenario: dict | None, pr
             "fit": {"today": fit0, "scenario": fit1, "delta": r(fit1 - fit0, 1)},
             "scores": {d: {"today": t["scores"][d], "scenario": f["scores"][d], "delta": r(f["scores"][d] - t["scores"][d], 1)} for d in scoring.DIMENSIONS},
             "metrics": {k: {"today": m0[k], "scenario": m1[k], "delta": r(m1[k] - m0[k], 2)} for k in KEY_METRICS if m0.get(k) is not None and m1.get(k) is not None},
-            "bad_year_net_per_acre": {"today": t["history"]["bad_year_net_per_acre"], "scenario": f["history"]["bad_year_net_per_acre"]} if t.get("history") and f.get("history") else None,
+            "bad_year_net_per_ha": {"today": t["history"]["bad_year_net_per_ha"], "scenario": f["history"]["bad_year_net_per_ha"]} if t.get("history") and f.get("history") else None,
             "yields": yields, "flags": flags,
-            "net_retained_pct": r(100 * m1["net_return_per_acre_yr"] / m0["net_return_per_acre_yr"], 0) if m0["net_return_per_acre_yr"] > 50 else None,
+            "net_retained_pct": r(100 * m1["net_return_per_ha_yr"] / m0["net_return_per_ha_yr"], 0) if m0["net_return_per_ha_yr"] > 500 else None,
             "phases": f["phases"],
         })
     order0 = [x["id"] for x in sorted(rows, key=lambda x: -x["fit"]["today"])]
     order1 = [x["id"] for x in sorted(rows, key=lambda x: (not x["feasible"], -x["fit"]["scenario"]))]
-    steadiest = min(rows, key=lambda x: abs(x["metrics"]["net_return_per_acre_yr"]["delta"]) if x["feasible"] else 1e9)
+    steadiest = min(rows, key=lambda x: abs(x["metrics"]["net_return_per_ha_yr"]["delta"]) if x["feasible"] else 1e9)
     best = next(x for x in rows if x["id"] == order1[0])
     verdict = (f"Under this scenario \"{best['name']}\" comes out ahead"
                + (" (it also leads today)." if order0[0] == order1[0] else f"; today the leader is \"{next(x['name'] for x in rows if x['id'] == order0[0])}\".")
@@ -170,7 +170,7 @@ def sweep(field_id: str, strategies: list[dict], parameter: str, priorities: dic
         for i, x in enumerate(res):
             key = x["spec"].get("id") or str(i)
             series[key]["fit"].append(x["fit"]["fit"])
-            series[key]["net"].append(x["metrics"]["net_return_per_acre_yr"])
+            series[key]["net"].append(x["metrics"]["net_return_per_ha_yr"])
             series[key]["feasible"].append(x["feasible"])
     crossings = []
     ids = list(series)

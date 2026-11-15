@@ -15,9 +15,9 @@ from app.utils.geo import DAYS_IN_MONTH, MID_MONTH_DOY, hargreaves_et0_mm_day, l
 
 NEUTRAL_SCENARIO = {"temp_delta_c": 0.0, "rain_pct": 0.0, "storm_intensity_pct": 0.0, "water_cap_pct": 100.0}
 
-# Used only when SSURGO has nothing for the coordinate (outside the U.S.). Flagged low-confidence.
+# Used only when SoilGrids has nothing for the coordinate (masked pixel or no answer). Flagged low-confidence.
 GENERIC_SOIL = {
-    "series": "Generic loam (no soil survey found)", "texture_class": "loam", "sand_pct": 40.0, "silt_pct": 40.0,
+    "series": "Generic loam (no soil data found)", "texture_class": "loam", "sand_pct": 40.0, "silt_pct": 40.0,
     "clay_pct": 20.0, "organic_matter_pct": 2.5, "bulk_density_g_cm3": 1.4, "awc_cm_cm": 0.16, "ph": 6.8,
     "ec_ds_m": 0.0, "kw_factor": 0.32, "t_factor_tons_ac_yr": 5.0, "hydrologic_group": "B",
     "drainage_class": "Well drained", "root_zone_depth_cm": 120.0, "generic": True,
@@ -130,7 +130,7 @@ class FieldContext:
     irrigated: bool
     allocation_mm: float
     irrigation_efficiency: float
-    irrigation_cost_per_mm_acre: float
+    irrigation_cost_per_mm_ha: float
     tile_drained: bool
     equipment: set[str]
     custom_hire: bool
@@ -139,6 +139,7 @@ class FieldContext:
     local_market: dict
     scenario: dict
     data_confidence: float = 0.7
+    gaez: dict = field(default_factory=dict)  # FAO GAEZ suitability per crop id for the field's grid cell
 
     # ---- derived soil hydraulics -------------------------------------------------
     @property
@@ -207,7 +208,7 @@ def build_context(farm: dict, obs: dict, soil: dict | None, *, scenario: dict | 
         irrigated=bool(irrigated) and allocation > 0,
         allocation_mm=allocation if irrigated else 0.0,
         irrigation_efficiency=float(irr.get("efficiency") or 0.8),
-        irrigation_cost_per_mm_acre=float(irr.get("cost_per_mm_acre") or 0.4),
+        irrigation_cost_per_mm_ha=float(irr.get("cost_per_mm_ha") or 1.0),
         tile_drained=bool(mgmt.get("tile_drained", False)),
         equipment=equipment,
         custom_hire=bool(c.get("custom_hire_available", mgmt.get("custom_hire_available", True))),
@@ -216,4 +217,5 @@ def build_context(farm: dict, obs: dict, soil: dict | None, *, scenario: dict | 
         local_market=farm.get("local_market", {}),
         scenario=sc,
         data_confidence=data_confidence,
+        gaez=(obs.get("gaez") or {}).get("crops") or {},
     )
