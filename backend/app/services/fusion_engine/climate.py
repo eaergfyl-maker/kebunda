@@ -245,11 +245,15 @@ def monthly_climatology(series: dict, how: str = "mean") -> dict:
             "provenance": series.get("provenance")}
 
 
-def compare_precip_sources(power: dict, daymet: dict | None) -> dict:
-    """Satellite/reanalysis rain vs the ground-gauge reference, month by month."""
+def compare_precip_sources(power: dict, ground: dict | None) -> dict:
+    """Satellite/reanalysis rain vs the ground-gauge reference, month by month.
+
+    Gauge months with fewer than 70% of days reported are dropped: a station that skipped
+    the wettest week would otherwise look like a satellite error."""
     pm = _month_buckets(power["dates"], power["series"]["precip"])
     im = _month_buckets(power["dates"], power["series"]["precip_imerg"])
-    gm = _month_buckets(daymet["dates"], daymet["series"]["precip"]) if daymet else {}
+    gm = _month_buckets(ground["dates"], ground["series"]["precip"]) if ground else {}
+    gm = {k: v for k, v in gm.items() if len(v) >= 0.7 * DAYS_IN_MONTH[k[1]]}
     keys = sorted(set(pm) & set(gm)) if gm else sorted(pm)
 
     def total(bk, k):
@@ -278,7 +282,7 @@ def compare_precip_sources(power: dict, daymet: dict | None) -> dict:
         if not daily:
             return None
         vals = [v for v in daily["series"][key] if v is not None]
-        n_years = max(1, len({d[:4] for d in daily["dates"]}))
+        n_years = max(1.0, len(vals) / 365.25)  # reported days only, so station gaps do not read as dry days
         return r(sum(1 for v in vals if v >= 25.0) / n_years, 1)
 
     recent = sorted({k[0] for k in keys})[-3:]
@@ -287,11 +291,12 @@ def compare_precip_sources(power: dict, daymet: dict | None) -> dict:
         "vs_ground": {"merra2": stats(1), "imerg": stats(2)} if gm else None,
         "heavy_rain_days_per_year": {
             "merra2": heavy_days(power, "precip"), "imerg": heavy_days(power, "precip_imerg"),
-            "ground": heavy_days(daymet, "precip"),
+            "ground": heavy_days(ground, "precip"),
         },
         "recent_months": [
             {"year": k[0], "month": k[1], "merra2": r(a, 1), "imerg": r(c, 1), "ground": r(g, 1)}
             for k, a, c, g in rows if k[0] in recent
         ],
-        "ground_provenance": daymet.get("provenance") if daymet else None,
+        "ground_provenance": ground.get("provenance") if ground else None,
+        "ground_station": ground.get("station") if ground else None,
     }

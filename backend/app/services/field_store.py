@@ -16,7 +16,7 @@ SOIL_DIR = settings.data_dir / "soil-profiles"
 _custom: dict[str, dict] = {}
 _lock = threading.Lock()
 
-DEFAULT_EQUIPMENT = ["row_planter", "grain_drill", "combine", "corn_header", "flex_header"]
+DEFAULT_EQUIPMENT = ["hand_tractor", "knapsack_sprayer", "planter", "combine_hire"]
 
 
 class FieldNotFound(KeyError):
@@ -65,7 +65,7 @@ def list_benchmarks() -> list[dict]:
         c = obs["climate"]
         out.append({
             "id": fid, "kind": "benchmark", "name": farm["name"], "short_name": farm["short_name"], "region": farm["region"],
-            "state": farm["state"], "county": farm["county"], "lat": farm["lat"], "lon": farm["lon"], "area_ha": farm["area_ha"],
+            "state": farm["state"], "district": farm.get("district"), "lat": farm["lat"], "lon": farm["lon"], "area_ha": farm["area_ha"],
             "headline": farm["headline"], "challenge_tags": farm["challenge_tags"],
             "baseline_name": farm["baseline_rotation"]["name"],
             "irrigation": farm["management"]["irrigation"]["label"],
@@ -76,78 +76,77 @@ def list_benchmarks() -> list[dict]:
     return out
 
 
-def _baseline_from_cdl(cdl: dict | None) -> dict | None:
-    """Read the rotation off the Cropland Data Layer history, if it resolves to crops we model."""
-    crops = crops_by_id()
-    if not cdl or len(cdl.get("years", [])) < 3:
+def _baseline_from_cycles(cycles: dict | None, soil: dict | None, terrain: dict | None, irrigated: bool) -> dict | None:
+    """Guess the current system from how many crop cycles a year Sentinel-2 sees.
+
+    The satellite counts green-up and harvest cycles; it cannot name the crop. Flat, heavy,
+    poorly drained land carrying two cycles is almost always double-cropped paddy in
+    Malaysia; elsewhere the commonest smallholder annuals stand in. The note says so."""
+    if not cycles or not cycles.get("years"):
         return None
-    seq: list[list[str]] = []
-    for y in cdl["years"]:
-        if y.get("double_crop"):
-            seq.append([c for c in y["double_crop"] if c in crops])
-        elif y.get("crop_id") == "fallow":
-            seq.append([])
-        elif y.get("crop_id") in crops:
-            seq.append([y["crop_id"]])
-        else:
-            return None  # pasture, orchard, developed land...: not an annual-crop rotation
-    for length in (1, 2, 3):
-        cycle = seq[-length:]
-        if all(seq[i] == cycle[(i - (len(seq) - length)) % length] for i in range(len(seq))):
-            break
+    if cycles.get("evergreen"):
+        return None  # oil palm, rubber or forest: not an annual-crop field
+    n = cycles["cycles_per_year"]
+    soil = soil or {}
+    flat = (terrain or {}).get("slope_pct", 5.0) < 2.0
+    heavy = soil.get("clay_pct", 0) >= 35 or soil.get("hydrologic_group") == "D"
+    paddy_land = flat and heavy
+    if n >= 1.6:
+        years = [["rice", "rice"]] if paddy_land else [["sweet_corn", "long_bean"]]
+        name = "Double-cropped paddy" if paddy_land else "Two vegetable crops a year"
+    elif n >= 0.6:
+        years = [["rice"]] if paddy_land else [["sweet_corn"]]
+        name = "One paddy season a year" if paddy_land else "One crop a year"
     else:
-        cycle = seq[-3:]
-    if not any(cycle):
         return None
-    span = f"{cdl['years'][0]['year']}-{cdl['years'][-1]['year']}"
-    return {"name": "Rotation seen by the Cropland Data Layer", "years": cycle, "tillage": "conventional",
-            "note": f"Read from USDA CDL {span}. Tillage is assumed conventional. Edit both to match your records."}
+    return {"name": f"{name} (from Sentinel-2 crop cycles)", "years": years, "tillage": "conventional",
+            "note": (f"Sentinel-2 counted about {n:.1f} crop cycles a year here. The crops themselves are assumed from the land "
+                     "type; edit them, and the tillage, to match your records.")}
 
 
 def create_custom_field(lat: float, lon: float, name: str | None = None, area_ha: float = 40.0,
                         irrigated: bool = False, allocation_mm: float = 400.0) -> dict:
-    """Pull live NASA/USDA layers for a coordinate and assemble a field the engines can run on."""
+    """Pull live NASA and global layers for a coordinate and assemble a field the engines can run on."""
     field_id = "custom-" + hashlib.sha1(f"{lat:.4f},{lon:.4f},{irrigated},{allocation_mm:.0f},{area_ha:.1f}".encode()).hexdigest()[:10]
     try:
         existing = get_field(field_id)
-        if existing["soil"] is not None:  # a field built without its soil survey is rebuilt on the next request
+        if existing["soil"] is not None:  # a field built without its soil layer is rebuilt on the next request
             if name and existing["farm"]["name"] != name:
                 existing["farm"]["name"] = existing["farm"]["short_name"] = name
             return existing
     except FieldNotFound:
         pass
-    obs = observe.collect(lat, lon, depth="fast")  # raises ConnectorError if NASA POWER is unreachable
+    obs = observe.collect(lat, lon, depth="fast", irrigated=irrigated)  # raises ConnectorError if NASA POWER is unreachable
     soil = obs.pop("soil")
-    c = obs["climate"]
-    baseline = _baseline_from_cdl(obs["cdl"])
+    baseline = _baseline_from_cycles(obs.get("crop_cycles"), soil, obs.get("terrain"), irrigated)
     assumed = baseline is None
     if assumed:
-        humid = c["aridity_index"] >= 0.7 or irrigated
         baseline = {
-            "name": "Assumed baseline: corn - soybean" if humid else "Assumed baseline: winter wheat - fallow",
-            "years": [["corn"], ["soybean"]] if humid else [["winter_wheat"], []], "tillage": "conventional",
-            "note": "No crop history could be read for this point, so a regional default was assumed. Replace it with your real rotation.",
+            "name": "Assumed baseline: sweet corn, then long bean",
+            "years": [["sweet_corn", "long_bean"]], "tillage": "conventional",
+            "note": ("Sentinel-2 could not resolve annual crop cycles here (cloud, a perennial crop or a mixed pixel), so a common "
+                     "smallholder vegetable sequence was assumed. Replace it with your real rotation."),
         }
     label = name or f"Field at {abs(lat):.3f}°{'N' if lat >= 0 else 'S'}, {abs(lon):.3f}°{'E' if lon >= 0 else 'W'}"
     farm = {
-        "id": field_id, "name": label, "short_name": label, "region": "Custom field", "state": None, "county": None,
+        "id": field_id, "name": label, "short_name": label, "region": "Custom field", "state": None, "district": None,
         "lat": lat, "lon": lon, "area_ha": area_ha,
-        "headline": "Built live from NASA POWER, GPM IMERG, MODIS, SRTM and the USDA soil survey for this coordinate.",
+        "headline": "Built live from NASA POWER, GPM IMERG, SRTM, Sentinel-2, SoilGrids and FAO GAEZ for this coordinate.",
         "story": "This field was assembled on request from public data. Local yields, buyers, equipment and the baseline rotation are defaults until you correct them.",
         "challenge_tags": [],
         "management": {
             "irrigation": ({"type": "generic", "label": "Irrigated", "allocation_mm": allocation_mm, "sustainable_mm": 0.6 * allocation_mm,
-                            "efficiency": 0.8, "cost_per_mm_acre": 0.4, "source": "user entry"} if irrigated else
-                           {"type": "none", "label": "Rainfed", "allocation_mm": 0, "sustainable_mm": 0, "efficiency": 0, "cost_per_mm_acre": 0, "source": None}),
+                            "efficiency": 0.7, "cost_per_mm_ha": 1.0, "source": "user entry"} if irrigated else
+                           {"type": "none", "label": "Rainfed", "allocation_mm": 0, "sustainable_mm": 0, "efficiency": 0, "cost_per_mm_ha": 0, "source": None}),
             "tillage": "conventional", "livestock": False, "custom_hire_available": True, "equipment": DEFAULT_EQUIPMENT,
             "tile_drained": False, "slope_length_m": 80, "erosivity_method": "rusle",
         },
         "baseline_rotation": baseline, "baseline_assumed": assumed,
         "water_context": {"aquifer": None, "in_situ_trend_m_yr": None, "in_situ_source": None,
-                          "note": "No local water-level record on file. See USGS NWIS for nearby observation wells."},
+                          "note": "No local water record on file. JPS (Department of Irrigation and Drainage) publishes river and reservoir levels."},
         "reference_yields": {}, "local_market": {},
         "default_priorities": {"water": 6, "soil": 6, "erosion": 6, "pest": 5, "income": 6},
-        "sources": ["NASA POWER", "GPM IMERG", "MODIS (ORNL DAAC)", "SRTM", "USDA SSURGO", "USDA CDL"],
+        "sources": ["NASA POWER", "GPM IMERG", "SRTM", "Copernicus Sentinel-2", "ISRIC SoilGrids", "FAO GAEZ v4", "NOAA GHCN-Daily"],
     }
     field = {"id": field_id, "kind": "custom", "farm": farm, "obs": obs, "soil": soil}
     with _lock:
