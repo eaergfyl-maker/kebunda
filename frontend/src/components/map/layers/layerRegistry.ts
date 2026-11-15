@@ -76,7 +76,22 @@ export const BASE_LAYERS: BaseLayerDef[] = [
 ];
 
 /** Layers added from the frontend. See the header comment for the shape. */
-export const EXTRA_LAYERS: MapLayerDef[] = [];
+export const EXTRA_LAYERS: MapLayerDef[] = [
+  {
+    id: "MODIS_Terra_L3_NDVI_Monthly", title: "Greenness (MODIS monthly)", group: "vegetation", mission: "MODIS",
+    tileUrl: gibsUrl("MODIS_Terra_L3_NDVI_Monthly", "GoogleMapsCompatible_Level9", "png"),
+    temporal: "monthly", start: "2000-02-01", end: null, maxNativeZoom: 9, resolution_m: 1000,
+    plain: "How green the plants are this month. Darker green means healthier, denser crops or forest.",
+    legend: null,
+  },
+  {
+    id: "MODIS_Terra_Land_Surface_Temp_Day", title: "Ground heat, daytime (MODIS)", group: "heat", mission: "MODIS",
+    tileUrl: gibsUrl("MODIS_Terra_Land_Surface_Temp_Day", "GoogleMapsCompatible_Level7", "png"),
+    temporal: "daily", start: "2000-02-24", end: null, maxNativeZoom: 7, resolution_m: 1000,
+    plain: "How hot the ground surface got in the daytime. Hot patches can mean dry or stressed land.",
+    legend: null,
+  },
+];
 
 export function buildLayerList(apiLayers: GibsLayerMeta[] | null | undefined): MapLayerDef[] {
   const fromApi: MapLayerDef[] = (apiLayers ?? []).map((l) => ({
