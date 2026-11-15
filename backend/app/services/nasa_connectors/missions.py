@@ -74,7 +74,7 @@ def ecostress_thermal(lst_series: dict | None, et_series: dict | None) -> dict:
 # Regional total-water-storage trends (cm of water per year) from published GRACE / GRACE-FO
 # mascon analyses. GRACE resolves ~300 km, so one number covers a region. No Malaysian region is
 # curated: published analyses show storage over Peninsular Malaysia and Borneo dominated by
-# monsoon and ENSO swings rather than a clear long-term trend, so FieldShift shows the GRACE map
+# monsoon and ENSO swings rather than a clear long-term trend, so Kebunda shows the GRACE map
 # layer and reports the trend as an information gap instead of inventing one.
 GRACE_REGIONS: list[dict] = []
 
@@ -114,30 +114,30 @@ def grace_water_storage(lat: float, lon: float) -> dict:
 
 MISSION_NOTES = [
     {"id": "smap", "mission": "SMAP", "measures": "Soil moisture and freeze/thaw", "native_resolution": "9-36 km, every 2-3 days",
-     "fieldshift_use": "Dry-spell onset between monsoons, planting-moisture reliability, how often the root zone runs dry",
+     "kebunda_use": "Dry-spell onset between monsoons, planting-moisture reliability, how often the root zone runs dry",
      "access": "Keyless subset where available, otherwise MERRA-2 root-zone wetness proxy via NASA POWER"},
     {"id": "gpm", "mission": "GPM IMERG", "measures": "Rain and snow rate", "native_resolution": "10 km, 30 min (daily totals used)",
-     "fieldshift_use": "Monsoon storm intensity, erosive rain days, flood months, dry-spell length",
+     "kebunda_use": "Monsoon storm intensity, erosive rain days, flood months, dry-spell length",
      "access": "Live and keyless through NASA POWER (IMERG_PRECTOT)"},
     {"id": "ecostress", "mission": "ECOSTRESS", "measures": "Land-surface temperature and evapotranspiration", "native_resolution": "70 m, irregular overpasses",
-     "fieldshift_use": "Heat-stress hotspots, crop water demand",
+     "kebunda_use": "Heat-stress hotspots, crop water demand",
      "access": "MODIS LST (1 km) and MOD16 ET (500 m) stand in; live and keyless"},
     {"id": "modis", "mission": "MODIS / VIIRS", "measures": "Vegetation greenness (NDVI/EVI)", "native_resolution": "250-500 m, 16-day",
-     "fieldshift_use": "Bare-field months, green-up and harvest timing, crop stress",
+     "kebunda_use": "Bare-field months, green-up and harvest timing, crop stress",
      "access": "Live and keyless (ORNL DAAC subsets)"},
     {"id": "sentinel2", "mission": "Copernicus Sentinel-2", "measures": "Field-scale greenness (NDVI)", "native_resolution": "10 m, 5-day",
-     "fieldshift_use": "Crop cycles per year, bare months, crop-calendar check on smallholder plots",
+     "kebunda_use": "Crop cycles per year, bare months, crop-calendar check on smallholder plots",
      "access": "Live and keyless (Microsoft Planetary Computer STAC + point reads)"},
     {"id": "power", "mission": "NASA POWER", "measures": "Temperature, humidity, wind, sunshine", "native_resolution": "about 50 km, daily since 1981",
-     "fieldshift_use": "Heat days, growing degree days, reference ET, the monsoon calendar",
+     "kebunda_use": "Heat days, growing degree days, reference ET, the monsoon calendar",
      "access": "Live and keyless for any coordinate"},
     {"id": "grace", "mission": "GRACE / GRACE-FO", "measures": "Total water storage change", "native_resolution": "about 300 km, monthly",
-     "fieldshift_use": "Whether the regional aquifer is being drawn down",
+     "kebunda_use": "Whether the regional aquifer is being drawn down",
      "access": "Map layer; no curated Malaysian trend"},
     {"id": "srtm", "mission": "SRTM", "measures": "Elevation", "native_resolution": "30 m, static",
-     "fieldshift_use": "Slope steepness for runoff and erosion, highland terraces",
+     "kebunda_use": "Slope steepness for runoff and erosion, highland terraces",
      "access": "Live and keyless (OpenTopoData mirror)"},
     {"id": "gedi", "mission": "GEDI", "measures": "Canopy height and woody biomass", "native_resolution": "1 km gridded",
-     "fieldshift_use": "Forest edges, riparian strips and plantation canopy around the field",
+     "kebunda_use": "Forest edges, riparian strips and plantation canopy around the field",
      "access": "Map layer only (GIBS)"},
 ]

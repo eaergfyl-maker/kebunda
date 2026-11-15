@@ -1,4 +1,4 @@
-"""FieldShift API entry point.
+"""Kebunda API entry point.
 
     cd backend
     uvicorn app.main:app --reload --port 8000
@@ -35,7 +35,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="FieldShift API",
+    title="Kebunda API",
     version=VERSION,
     summary="Crop-rotation decision support for Malaysian farms from NASA Earth observations, global soil and crop data, and farmer priorities.",
     description=(
@@ -69,5 +69,5 @@ def health() -> dict:
 
 @app.get(f"{API_PREFIX}/meta", tags=["meta"])
 def meta() -> dict:
-    return {"name": "FieldShift", "version": VERSION, "disclaimer": analysis.DISCLAIMER, "sources": SOURCES,
+    return {"name": "Kebunda", "version": VERSION, "disclaimer": analysis.DISCLAIMER, "sources": SOURCES,
             "challenge": "NASA Space Apps Challenge 2026 - Field Shift: Adapting Farms with NASA Data"}

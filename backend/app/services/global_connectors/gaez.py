@@ -1,13 +1,13 @@
 """FAO GAEZ v4 crop suitability at a point, from FAO's public ArcGIS image service.
 
 GAEZ (Global Agro-Ecological Zones) rates land for each crop from climate, soil and
-terrain on a 0-10000 suitability index at about 9 km. FieldShift reads two numbers per
+terrain on a 0-10000 suitability index at about 9 km. Kebunda reads two numbers per
 crop for the field's grid cell:
 
   * baseline   1981-2010 climate (CRU TS 3.2), high-input management, rainfed or irrigated
   * future     2041-2070 under RCP8.5, median of the five GAEZ climate models
 
-The index is a regional, potential-yield based rating. FieldShift uses it as an
+The index is a regional, potential-yield based rating. Kebunda uses it as an
 independent cross-check on its own field-scale screen, never as a replacement for it.
 
 Service: https://gaez-services.fao.org/server/rest/services/res05/ImageServer

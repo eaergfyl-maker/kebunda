@@ -1,4 +1,4 @@
-# FieldShift architecture
+# Kebunda architecture
 
 ## System diagram
 
@@ -97,7 +97,7 @@ pulls), then cached.
 - Every layer is optional. A failed source is recorded in `issues`, lowers confidence, and
   shows up as an information gap. Only NASA POWER is required for a custom field.
 - Benchmark farms never need the network at runtime.
-- `FIELDSHIFT_OFFLINE=1` forbids outbound requests entirely (tests, demos without wifi).
+- `KEBUNDA_OFFLINE=1` forbids outbound requests entirely (tests, demos without wifi).
 - Every number carries provenance: `live`, `cache`, `curated`, `proxy` or `unavailable`.
 
 ## Data layout
@@ -123,7 +123,7 @@ pulls), then cached.
 | `pages/` | Member 3 | `pageRegistry.tsx` |
 
 State lives in three places only: server data in `hooks/useData.ts` (cached by request
-key), farmer inputs in `hooks/useFieldShift.tsx` (context), and local UI state inside
+key), farmer inputs in `hooks/useKebunda.tsx` (context), and local UI state inside
 components. Components never call `fetch`.
 
 ## Design decisions

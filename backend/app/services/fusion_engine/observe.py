@@ -25,7 +25,7 @@ from app.services.fusion_engine import climate
 from app.services.global_connectors import gaez, ghcn, sentinel2, soilgrids
 from app.services.nasa_connectors import base, land_products, missions, power, terrain
 
-log = logging.getLogger("fieldshift.observe")
+log = logging.getLogger("kebunda.observe")
 
 LAND_START, LAND_END = "2019-01-01", "2023-12-31"
 S2_START, S2_END = "2020-01-01", "2024-12-31"

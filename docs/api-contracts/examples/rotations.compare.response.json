@@ -689,7 +689,7 @@
      {
       "kind": "modelled",
       "id": "cover_calendar",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "Crop calendar from NASA POWER heat units and the monsoon rainfall pattern + RUSLE",
       "access": "model",
       "statement": "Bare or nearly bare for 5.0 months a year (Dec-Apr); 23% of the year's erosive rain lands on that exposed soil.",
@@ -701,7 +701,7 @@
      {
       "kind": "modelled",
       "id": "water_budget",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "Monthly FAO-56 soil-water balance on fused rainfall and SoilGrids water-holding capacity",
       "access": "model",
       "statement": "Uses 939 mm of water a year; 20% of rain and irrigation goes through the crop",
@@ -713,7 +713,7 @@
      {
       "kind": "modelled",
       "id": "carbon",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "One-pool soil carbon balance driven by residue, roots, temperature and tillage",
       "access": "model",
       "statement": "Returns 5.5 t/ha of carbon a year; soil carbon trend -3.24 t/ha a year",
@@ -725,7 +725,7 @@
      {
       "kind": "modelled",
       "id": "history",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "24 years of NASA POWER weather run through the rotation, every phase in every year",
       "access": "model",
       "statement": "Replaying 2001-2024 weather: RM2,784/ha on average, RM2,130 in a bad year",
@@ -1624,7 +1624,7 @@
      {
       "kind": "modelled",
       "id": "cover_calendar",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "Crop calendar from NASA POWER heat units and the monsoon rainfall pattern + RUSLE",
       "access": "model",
       "statement": "The soil is covered in every month of the rotation.",
@@ -1636,7 +1636,7 @@
      {
       "kind": "modelled",
       "id": "carbon",
-      "source": "FieldShift model",
+      "source": "Kebunda model",
       "dataset": "One-pool soil carbon balance driven by residue, roots, temperature and tillage",
       "access": "model",
       "statement": "Returns 8.1 t/ha of carbon a year; soil carbon trend -1.58 t/ha a year",
@@ -2145,5 +2145,5 @@
   },
   "overall": 0.64
  },
- "disclaimer": "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers."
+ "disclaimer": "Kebunda surfaces patterns and possibilities from public data. It supports, and never replaces, the judgment of the farmer and of local agronomists, DOA and MARDI extension officers and crop advisers."
 }

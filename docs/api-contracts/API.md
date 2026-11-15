@@ -1,4 +1,4 @@
-# FieldShift API contract
+# Kebunda API contract
 
 Base URL: `http://localhost:8000/api/v1` · JSON in, JSON out · no authentication · no API keys needed.
 
@@ -131,7 +131,7 @@ Scenario dials: `temp_delta_c` (-1..5), `rain_pct` (-50..30), `storm_intensity_p
 | GET | `/nasa/terrain?lat=&lon=` | SRTM elevation, slope, relief |
 | GET | `/nasa/gibs/layers[?check=true]` | NASA GIBS map layers with XYZ tile templates and legends |
 | GET | `/nasa/missions` | What each mission contributes and how it is accessed |
-| GET | `/nasa/sources` | Every dataset on the challenge list and its status in FieldShift |
+| GET | `/nasa/sources` | Every dataset on the challenge list and its status in Kebunda |
 
 ### Soil and crops
 
