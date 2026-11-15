@@ -47,6 +47,8 @@ class Settings:
 
     @property
     def cache_dir(self) -> Path:
+        if os.getenv("VERCEL"):
+            return Path("/tmp/kebunda-cache")
         return self.data_dir / "cache"
 
 
