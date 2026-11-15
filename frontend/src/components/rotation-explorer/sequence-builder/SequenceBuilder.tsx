@@ -101,7 +101,7 @@ export function SequenceBuilder({ baselineYears, baselineTillage }: { baselineYe
         {baselineOverride && <button className="btn btn-ghost" onClick={() => setBaselineOverride(null)}>Restore the original baseline</button>}
       </div>
       <p className="xs faint">
-        List crops in the order they are planted within a year. Put a fall-sown crop (winter wheat, canola) in the year it is harvested.
+        List crops in the order they are planted within a year: two paddy seasons, or a vegetable followed by a legume. Leave a year empty for a fallow.
         A cover crop listed after a cash crop grows until the next crop is planted. The model works out planting and harvest months from this field's temperatures.
       </p>
     </div>

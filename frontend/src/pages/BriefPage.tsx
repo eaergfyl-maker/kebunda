@@ -1,5 +1,5 @@
 /**
- * Printable Agronomy Field Brief: one document a farmer can hand to an Extension agent or
+ * Printable Agronomy Field Brief: one document a farmer can hand to a DOA extension officer or
  * crop adviser. Uses the browser's print dialog for paper or PDF.
  *
  * OWNER: Member 3. See components/common/export/briefTemplates.ts for the download formats.
@@ -36,7 +36,7 @@ export function BriefPage() {
         <span className="eyebrow">Agronomy Field Brief · {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
         <h1>{f.name}</h1>
         <p className="muted">
-          {f.lat.toFixed(3)}°, {f.lon.toFixed(3)}°{f.county ? ` · ${f.county} County, ${f.state}` : ""} · {units.area(f.area_ha)} · {f.management.irrigation.label}
+          {f.lat.toFixed(3)}°, {f.lon.toFixed(3)}°{f.district ? ` · ${f.district}, ${f.state}` : ""} · {units.area(f.area_ha)} · {f.management.irrigation.label}
         </p>
         <SupportNotJudgment text={cmp.disclaimer} />
       </header>
@@ -45,7 +45,7 @@ export function BriefPage() {
         <h2>The field</h2>
         <ul className="brief-list">
           <li><strong>Soil:</strong> {field.soil.series} {field.soil.texture_class}, {field.soil.organic_matter_pct}% organic matter, hydrologic group {field.soil.hydrologic_group}, pH {field.soil.ph}, {String(field.soil.drainage_class).toLowerCase()}.</li>
-          <li><strong>Climate {field.climate.years[0]}–{field.climate.years[field.climate.years.length - 1]}:</strong> {units.water(field.fusion.precip.annual_mm)} of precipitation a year, reference ET {units.water(field.climate.annual_et0_mm)}, about {Math.round(field.climate.frost.frost_free_days_median)} frost-free days.</li>
+          <li><strong>Climate {field.climate.years[0]}–{field.climate.years[field.climate.years.length - 1]}:</strong> {units.water(field.fusion.precip.annual_mm)} of precipitation a year, reference ET {units.water(field.climate.annual_et0_mm)}, mean temperature {units.temp(field.climate.mean_annual_temp_c, 1)}.</li>
           <li><strong>Current rotation:</strong> {f.baseline_rotation.name}. {cmp.baseline_note}</li>
           <li><strong>Priorities stated (0–10):</strong> {DIMENSIONS.map((d) => `${DIM_SHORT[d]} ${cmp.priorities[d]}`).join(" · ")}.</li>
         </ul>
@@ -59,7 +59,7 @@ export function BriefPage() {
         <h2>Rotations compared</h2>
         <p>{cmp.summary.statement}</p>
         <table className="table" style={{ marginTop: 10 }}>
-          <thead><tr><th>Rotation</th><th className="num">Fit</th>{DIMENSIONS.map((d) => <th key={d} className="num">{DIM_SHORT[d]}</th>)}<th className="num">Bare months</th><th className="num">Erosion</th><th className="num">Net / acre</th></tr></thead>
+          <thead><tr><th>Rotation</th><th className="num">Fit</th>{DIMENSIONS.map((d) => <th key={d} className="num">{DIM_SHORT[d]}</th>)}<th className="num">Bare months</th><th className="num">Erosion</th><th className="num">Net / ha</th></tr></thead>
           <tbody>
             {cmp.strategies.map((s) => (
               <tr key={s.id}>
@@ -68,7 +68,7 @@ export function BriefPage() {
                 {DIMENSIONS.map((d) => <td key={d} className="num">{Math.round(s.scores[d])}</td>)}
                 <td className="num">{s.metrics.bare_months_per_year}</td>
                 <td className="num">{units.soilLoss(s.metrics.soil_loss_tons_ac_yr)}</td>
-                <td className="num">{units.money(s.metrics.net_return_per_acre_yr)}</td>
+                <td className="num">{units.money(s.metrics.net_return_per_ha_yr)}</td>
               </tr>
             ))}
           </tbody>

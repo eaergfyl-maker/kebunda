@@ -13,8 +13,8 @@ const SEVERITY: Record<RiskItem["severity"], { label: string; cls: string }> = {
  * Pillar 5. A working checklist: each item says who should review it, and ticks are remembered
  * in this browser so the list can be worked through over several visits.
  *
- * TODO (Member 3): county Extension office lookup. Link each "County Extension" tag to the
- *   office for field.farm.county (the land-grant directory is public).
+ * TODO (Member 3): extension office lookup. Link each "Extension officer" tag to the district
+ *   DOA (Jabatan Pertanian) office for field.farm.district (the directory is public).
  */
 export function RisksPanel({ strategy, comparison }: PanelProps) {
   const { reviewed, toggleReviewed } = useFieldShift();

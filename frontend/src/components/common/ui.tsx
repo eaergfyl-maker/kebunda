@@ -127,7 +127,7 @@ export function SupportNotJudgment({ text }: { text?: string }) {
       <span aria-hidden className="support-icon">🤝</span>
       <p>
         <strong>A second opinion, not a prescription.</strong>{" "}
-        {text ?? "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, your judgment and the advice of local agronomists, Extension agents and crop advisers."}
+        {text ?? "FieldShift surfaces patterns and possibilities from public data. It supports, and never replaces, your judgment and the advice of local agronomists, DOA and MARDI extension officers and crop advisers."}
       </p>
     </aside>
   );
