@@ -2,9 +2,9 @@
  * What the scenario does: to the weather, to each rotation's fit and income, and to each crop.
  *
  * OWNER: Member 3.
- * TODO (Member 3): tipping-point explorer. useSweep(fieldId, strategies, "rain_pct") returns fit
+ * Tipping-point explorer (Member 3). useSweep(fieldId, strategies, "rain_pct") returns fit
  *   and net return across a dial's whole range plus `crossings` (where the leader changes).
- *   The chart below draws it for one dial; add a small-multiples view for all four.
+ *   DONE: TippingOverview (below) shows all dials as small multiples.
  */
 import { useState } from "react";
 
@@ -53,7 +53,7 @@ export function ScenarioResults({ result, refreshing }: { result: StressTestResp
         <div className="stress-list">
           {rows.map((r) => {
             const color = ROLE_COLOR[(r.role as StrategyRole) ?? "match"] ?? ROLE_COLOR.match;
-            const net = r.metrics.net_return_per_ha_yr;
+            const net = r.metrics.net_return_per_acre_yr;
             const irr = r.metrics.irrigation_mm_yr;
             return (
               <div key={r.id} className="stress-row">
@@ -70,8 +70,8 @@ export function ScenarioResults({ result, refreshing }: { result: StressTestResp
                   <div className="stress-bar"><span style={{ width: `${(r.fit.scenario / maxFit) * 100}%`, background: color }} /><em className="num">{Math.round(r.fit.scenario)}</em></div>
                 </div>
                 <div className="stress-nums small num">
-                  <div><span className="faint">Net/ha</span> {units.money(net.today)} → <strong style={{ color: net.delta < -150 ? "var(--bad)" : net.delta > 150 ? "var(--good)" : undefined }}>{units.money(net.scenario)}</strong></div>
-                  {r.bad_year_net_per_ha && <div><span className="faint">Bad year</span> {units.money(r.bad_year_net_per_ha.today)} → <strong>{units.money(r.bad_year_net_per_ha.scenario)}</strong></div>}
+                  <div><span className="faint">Net/acre</span> {units.money(net.today)} → <strong style={{ color: net.delta < -15 ? "var(--bad)" : net.delta > 15 ? "var(--good)" : undefined }}>{units.money(net.scenario)}</strong></div>
+                  {r.bad_year_net_per_acre && <div><span className="faint">Bad year</span> {units.money(r.bad_year_net_per_acre.today)} → <strong>{units.money(r.bad_year_net_per_acre.scenario)}</strong></div>}
                   {irr && (irr.today > 0 || irr.scenario > 0) && <div><span className="faint">Irrigation</span> {units.water(irr.today)} → <strong>{units.water(irr.scenario)}</strong></div>}
                   <div><span className="faint">Water stress</span> {r.metrics.water_stress_pct.today}% → <strong>{r.metrics.water_stress_pct.scenario}%</strong></div>
                   <div><span className="faint">Erosion</span> {units.soilLoss(r.metrics.soil_loss_tons_ac_yr.today)} → <strong>{units.soilLoss(r.metrics.soil_loss_tons_ac_yr.scenario)}</strong></div>
@@ -109,7 +109,7 @@ export function TippingPoints({ fieldId, strategies, irrigated }: { fieldId: str
         <h4>Where do the rotations trade places?</h4>
         <div className="row-wrap no-print">
           <select value={param} onChange={(e) => setParam(e.target.value as ScenarioKey)} aria-label="Dial to sweep">{options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}</select>
-          <select value={measure} onChange={(e) => setMeasure(e.target.value as "fit" | "net")} aria-label="Measure"><option value="net">Net return per hectare</option><option value="fit">Fit score</option></select>
+          <select value={measure} onChange={(e) => setMeasure(e.target.value as "fit" | "net")} aria-label="Measure"><option value="net">Net return per acre</option><option value="fit">Fit score</option></select>
         </div>
       </div>
       {loading || !data ? <Loading height={200} label="Sweeping the scenario range" /> : (() => {
@@ -146,6 +146,68 @@ export function TippingPoints({ fieldId, strategies, irrigated }: { fieldId: str
           </>
         );
       })()}
+    </div>
+  );
+}
+
+/** One compact chart for a single dial, with a plain-language verdict underneath. */
+function SweepMini({ fieldId, strategies, param, title, measure }: { fieldId: string; strategies: Strategy[]; param: ScenarioKey; title: string; measure: "fit" | "net" }) {
+  const { data, loading } = useSweep(fieldId, strategies, param);
+  const b = box(340, 130, { left: 38, right: 8, top: 8, bottom: 22 });
+  const roleOf = (id: string | null) => strategies.find((s) => s.id === id)?.role ?? "match";
+  const fmtX = (v: number, unit: string) => `${v > 0 && param !== "water_cap_pct" ? "+" : ""}${v}${unit.startsWith("%") ? "%" : "°C"}`;
+  return (
+    <div className="mini-card">
+      <strong className="small">{title}</strong>
+      {loading || !data ? <Loading height={130} label="Sweeping" /> : (() => {
+        const [lo, hi] = extent(data.series.flatMap((s) => s[measure]), 0.08);
+        const x = scale(0, data.values.length - 1, b.left + 4, b.width - b.right - 4);
+        const y = scale(lo, hi, b.height - b.bottom, b.top);
+        const last = data.values.length - 1;
+        const mid = Math.floor(last / 2);
+        const robust = data.crossings.length === 0;
+        return (
+          <>
+            <Svg b={b} label={`${title}: ${measure === "net" ? "net return" : "fit"} of each rotation`}>
+              <YAxis b={b} ticks={niceTicks(lo, hi, 3)} y={y} format={(v) => (measure === "net" ? `$${v}` : String(v))} />
+              {data.crossings.map((c, i) => {
+                const i0 = data.values.indexOf(c.between[0]);
+                return <rect key={i} x={x(i0)} width={x(i0 + 1) - x(i0)} y={b.top} height={b.height - b.top - b.bottom} fill="#e9b44c" opacity={0.2} />;
+              })}
+              {data.series.map((s) => (
+                <path key={s.id} d={linePath(s[measure], x, y)} fill="none" stroke={ROLE_COLOR[roleOf(s.id)]} strokeWidth={roleOf(s.id) === "baseline" ? 1.4 : 2} strokeDasharray={roleOf(s.id) === "baseline" ? "4 3" : undefined} />
+              ))}
+              {[0, mid, last].map((i) => <text key={i} x={x(i)} y={b.height - 6} fontSize={9} fill={CHART.faint} textAnchor="middle">{fmtX(data.values[i], data.unit)}</text>)}
+            </Svg>
+            <span className={`chip ${robust ? "chip-good" : "chip-warn"}`}>
+              {robust ? "Same winner across the range" : `Winner changes at ${data.crossings[0].between[0]} to ${data.crossings[0].between[1]} ${data.unit}`}
+            </span>
+          </>
+        );
+      })()}
+    </div>
+  );
+}
+
+/** Small multiples: every dial's tipping points side by side, so the farmer sees which risk matters most. */
+export function TippingOverview({ fieldId, strategies, irrigated }: { fieldId: string; strategies: Strategy[]; irrigated: boolean }) {
+  const [measure, setMeasure] = useState<"fit" | "net">("net");
+  const dials: { id: ScenarioKey; title: string }[] = [
+    { id: "rain_pct", title: "Rainfall" }, { id: "temp_delta_c", title: "Temperature" }, { id: "storm_intensity_pct", title: "Storm intensity" },
+    ...(irrigated ? [{ id: "water_cap_pct" as ScenarioKey, title: "Irrigation water" }] : []),
+  ];
+  return (
+    <div className="stack-sm">
+      <div className="spread" style={{ flexWrap: "wrap" }}>
+        <h4>Which dial could change the winner?</h4>
+        <select className="no-print" value={measure} onChange={(e) => setMeasure(e.target.value as "fit" | "net")} aria-label="Measure for overview charts">
+          <option value="net">Net return per acre</option><option value="fit">Fit score</option>
+        </select>
+      </div>
+      <div className="mini-grid">
+        {dials.map((d) => <SweepMini key={d.id} fieldId={fieldId} strategies={strategies} param={d.id} title={d.title} measure={measure} />)}
+      </div>
+      <p className="xs faint">Each chart varies one dial across its range. A shaded band means a different rotation takes the lead there; no band means your best choice is robust to that dial.</p>
     </div>
   );
 }

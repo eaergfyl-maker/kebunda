@@ -85,7 +85,7 @@ export function StrategyExplorer({ field, comparison, refreshing }: { field: Fie
         subtitle="Have something else in mind, or is the current rotation shown wrong? Put it together and score it with the same models."
         action={<button className="btn btn-sm" onClick={() => setBuilderOpen((o) => !o)}>{builderOpen ? "Hide builder" : "Open builder"}</button>}
       >
-        {builderOpen ? <SequenceBuilder baselineYears={baseline.years} baselineTillage={baseline.tillage} />
+        {builderOpen ? <SequenceBuilder fieldId={field.id} baselineYears={baseline.years} baselineTillage={baseline.tillage} />
           : <p className="small muted">Add years, pick crops and cover crops, choose a tillage system. Your rotation appears as an extra card above.</p>}
       </Card>
     </div>

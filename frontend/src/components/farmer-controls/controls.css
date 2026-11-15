@@ -34,3 +34,6 @@
 @media (max-width: 860px) {
   .stress-row { grid-template-columns: 1fr; }
 }
+
+.mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s-3); }
+.mini-card { display: flex; flex-direction: column; gap: 6px; padding: var(--s-2); border: 1px solid var(--line, #ddd); border-radius: 10px; }
